@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "oss-paper-ci"
-version = "1.1.0rc1"
+version = "1.2.0rc1"
 description = "CI tool for checking reproducibility readiness of scientific paper repositories"
 readme = "README.md"
 license = {text = "MIT"}
