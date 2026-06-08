@@ -1,0 +1,31 @@
+\documentclass{article}
+\usepackage{graphicx}
+\begin{document}
+\title{Attention Is All You Need -- Reproduction}
+\author{Jane Researcher}
+\maketitle
+
+\begin{abstract}
+We reproduce the Transformer model.
+\end{abstract}
+
+\section{Introduction}
+See Figure~\ref{fig:loss} and Table~\ref{tab:results}.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.8\textwidth]{../figures/training_loss.png}
+\caption{Training loss curve.}
+\label{fig:loss}
+\end{figure}
+
+\begin{table}[h]
+\centering
+\input{../results/table_results.tex}
+\caption{BLEU scores.}
+\label{tab:results}
+\end{table}
+
+\bibliography{references}
+
+\end{document}

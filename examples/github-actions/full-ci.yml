@@ -1,0 +1,84 @@
+# Full CI Pipeline
+#
+# Complete reproducibility check with SARIF upload, PR comments, and artifacts.
+# Uses the GitHub Action. Replace Akastella/oss-paper-ci after publication.
+
+name: Full CI Pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+  pull-requests: write
+  security-events: write
+
+jobs:
+  reproducibility-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run oss-paper-ci (Markdown)
+        uses: Akastella/oss-paper-ci@v1
+        with:
+          path: "."
+          format: "markdown"
+          output: "report.md"
+
+      - name: Run oss-paper-ci (SARIF)
+        uses: Akastella/oss-paper-ci@v1
+        with:
+          path: "."
+          format: "sarif"
+          output: "report.sarif"
+
+      - name: Upload SARIF to Code Scanning
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: report.sarif
+
+      - name: Upload report artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reproducibility-report
+          path: |
+            report.md
+            report.sarif
+
+      - name: Comment PR
+        if: github.event_name == 'pull_request' && always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const report = fs.readFileSync('report.md', 'utf8');
+            const body = `## Reproducibility Report\n\n${report}`;
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            const existing = comments.find(c =>
+              c.user.type === 'Bot' && c.body.includes('Reproducibility Report')
+            );
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }

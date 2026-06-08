@@ -1,0 +1,5 @@
+model:
+  hidden_size: 128
+training:
+  epochs: 100
+  seed: 42

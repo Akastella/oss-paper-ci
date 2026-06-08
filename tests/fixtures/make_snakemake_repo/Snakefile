@@ -1,0 +1,17 @@
+rule all:
+    input: "figures/overview.png"
+
+rule train:
+    input: "data/raw/train.csv"
+    output: "results/model.pt"
+    shell: "python scripts/train.py --config configs/default.yml"
+
+rule evaluate:
+    input: "results/model.pt"
+    output: "results/metrics.json"
+    shell: "python scripts/evaluate.py"
+
+rule figures:
+    input: "results/metrics.json"
+    output: "figures/overview.png"
+    shell: "python scripts/make_figures.py"

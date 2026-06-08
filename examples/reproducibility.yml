@@ -1,0 +1,125 @@
+# Reproducibility Contract -- Example
+#
+# This file describes how to reproduce the computational results of a
+# scientific paper.  It is read by oss-paper-ci to validate that all
+# referenced files, scripts, and datasets are present.
+#
+# Fill in the fields below to match your project.  Remove or comment out
+# sections that do not apply.  Lines starting with '#' are comments.
+#
+# Generate your own contract with:
+#   oss-paper-ci init --contract --template ml
+
+version: "0.3"
+
+# Project identification --------------------------------------------------
+
+project_name: "transformer-reproduction"
+project_type: "ml"  # ml | simulation | data-science | analysis | other
+
+# Paper -------------------------------------------------------------------
+
+paper:
+  # Path to the compiled paper (PDF, LaTeX source, etc.)
+  path: "paper/main.tex"
+
+  # Bibliography files used by the paper
+  bibliography:
+    - "paper/references.bib"
+
+# Environment -------------------------------------------------------------
+
+environment:
+  # How to recreate the environment: python, conda, docker, r, julia, other
+  type: "python"
+
+  # Path to the environment specification file
+  file: "requirements.txt"
+
+  # Python version (optional, informational)
+  python: "3.11"
+
+  # Container definitions (optional)
+  # containers:
+  #   - name: "training"
+  #     dockerfile: "docker/Dockerfile"
+  #     image: "myproject:latest"
+
+# Data --------------------------------------------------------------------
+
+data:
+  - id: "imagenet-subset"
+    path: "data/imagenet-subset/"
+    availability: "public"   # public | private | synthetic | external | not-required
+    source: "https://image-net.org/data/ILSVRC/2012/"
+    license: "https://image-net.org/terms.php"
+
+  - id: "pretrained-weights"
+    path: "data/weights/bert-base.pt"
+    availability: "public"
+    source: "https://huggingface.co/bert-base-uncased"
+    license: "Apache-2.0"
+
+# Experiments -------------------------------------------------------------
+
+experiments:
+  - id: "train"
+    description: "Fine-tune BERT on GLUE benchmark"
+    command: "python scripts/train.py --config configs/glue.yml"
+    timeout_seconds: 3600
+    safe_to_run: true           # safe to run in CI (non-destructive, bounded)
+    expected_outputs:
+      - "results/model.pt"
+      - "results/train_metrics.json"
+
+  - id: "evaluate"
+    description: "Evaluate the trained model on the test set"
+    command: "python scripts/evaluate.py --model results/model.pt"
+    timeout_seconds: 600
+    safe_to_run: true
+    expected_outputs:
+      - "results/test_metrics.json"
+
+  - id: "ablation"
+    description: "Ablation study (not safe for CI -- expensive)"
+    command: "python scripts/ablation.py --full"
+    timeout_seconds: 86400
+    safe_to_run: false
+    expected_outputs:
+      - "results/ablation_table.csv"
+
+# Figures -----------------------------------------------------------------
+
+figures:
+  - id: "loss-curve"
+    path: "figures/loss_curve.png"
+    generated_by: ["train"]
+    referenced_by: ["Section 4.1"]
+
+  - id: "attention-heatmap"
+    path: "figures/attention_heatmap.png"
+    generated_by: ["evaluate"]
+    referenced_by: ["Figure 2"]
+
+# Results -----------------------------------------------------------------
+
+results:
+  - id: "glue-scores"
+    path: "results/test_metrics.json"
+    generated_by: ["evaluate"]
+
+  - id: "ablation-table"
+    path: "results/ablation_table.csv"
+    generated_by: ["ablation"]
+
+# CI integration ----------------------------------------------------------
+
+ci:
+  # Which experiment to run as a lightweight smoke test in CI
+  smoke_experiment: "evaluate"
+
+  # Minimum reproducibility score to pass CI (0-100)
+  min_score: 70
+
+  # Fail CI if the score drops compared to a saved baseline
+  fail_on_regression: true

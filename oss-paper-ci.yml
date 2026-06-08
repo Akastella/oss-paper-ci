@@ -1,0 +1,27 @@
+version: 0.1
+project:
+  name: "oss-paper-ci"
+  paper_dir: "paper"
+  code_dirs:
+    - "src"
+    - "scripts"
+  data_dirs:
+    - "data"
+  results_dirs:
+    - "results"
+    - "figures"
+checks:
+  min_score: 60
+  require_license: true
+  require_citation: false
+  require_environment: true
+  require_quickstart: true
+ignore:
+  paths:
+    - ".git"
+    - ".venv"
+    - "node_modules"
+    - "__pycache__"
+    - ".claude"
+output:
+  default_format: "markdown"

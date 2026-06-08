@@ -1,0 +1,102 @@
+name: 'oss-paper-ci'
+description: 'Check reproducibility readiness of scientific paper repositories'
+
+branding:
+  icon: 'check-circle'
+  color: 'green'
+
+inputs:
+  path:
+    description: 'Path to repository root'
+    required: false
+    default: '.'
+  config:
+    description: 'Path to oss-paper-ci.yml config file'
+    required: false
+    default: ''
+  contract:
+    description: 'Path to reproducibility.yml contract file'
+    required: false
+    default: ''
+  format:
+    description: 'Output format (json, markdown, sarif)'
+    required: false
+    default: 'markdown'
+  output:
+    description: 'Output file path'
+    required: false
+    default: 'oss-paper-ci-report.md'
+  fail-under:
+    description: 'Minimum score threshold (0 = disabled)'
+    required: false
+    default: '0'
+  strict:
+    description: 'Fail on any warning (true/false)'
+    required: false
+    default: 'false'
+  baseline:
+    description: 'Path to baseline file for regression comparison'
+    required: false
+    default: ''
+  fail-on-regression:
+    description: 'Fail if regression detected (true/false)'
+    required: false
+    default: 'false'
+  upload-sarif:
+    description: 'Upload SARIF to GitHub Code Scanning (true/false)'
+    required: false
+    default: 'false'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+
+    - name: Install oss-paper-ci
+      shell: bash
+      run: |
+        # Install from the action source (not the caller's repository)
+        python -m pip install "${{ github.action_path }}"
+
+    - name: Run oss-paper-ci scan
+      shell: bash
+      run: |
+        ARGS="scan ${{ inputs.path }} --format ${{ inputs.format }} --output ${{ inputs.output }}"
+        if [ -n "${{ inputs.config }}" ]; then
+          ARGS="$ARGS --config ${{ inputs.config }}"
+        fi
+        if [ "${{ inputs.fail-under }}" != "0" ]; then
+          ARGS="$ARGS --fail-under ${{ inputs.fail-under }}"
+        fi
+        if [ "${{ inputs.strict }}" = "true" ]; then
+          ARGS="$ARGS --strict"
+        fi
+        python -m oss_paper_ci $ARGS
+
+    - name: Run baseline comparison
+      if: inputs.baseline != ''
+      shell: bash
+      run: |
+        ARGS="baseline compare ${{ inputs.path }} --baseline ${{ inputs.baseline }} --format markdown --output baseline-compare.md"
+        if [ "${{ inputs.fail-on-regression }}" = "true" ]; then
+          ARGS="$ARGS --fail-on-regression"
+        fi
+        python -m oss_paper_ci $ARGS
+
+    - name: Upload SARIF
+      if: inputs.upload-sarif == 'true'
+      uses: github/codeql-action/upload-sarif@v3
+      with:
+        sarif_file: ${{ inputs.output }}
+
+    - name: Upload report
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: oss-paper-ci-report
+        path: |
+          ${{ inputs.output }}
+          baseline-compare.md

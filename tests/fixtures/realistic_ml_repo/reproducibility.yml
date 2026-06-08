@@ -1,0 +1,66 @@
+# Reproducibility Contract — Machine Learning Project
+# Fill in the fields below to describe how to reproduce your paper.
+
+version: "0.3"
+
+project_name: "ml-paper"
+project_type: "ml"
+
+paper:
+  path: "paper/main.tex"
+  bibliography:
+    - "paper/references.bib"
+
+environment:
+  type: "python"
+  file: "requirements.txt"
+  python: "3.11"
+
+data:
+  - id: "train-data"
+    path: "data/train.csv"
+    availability: "public"
+    source: "https://example.com/train.csv"
+    license: "CC-BY-4.0"
+  - id: "test-data"
+    path: "data/test.csv"
+    availability: "public"
+    source: "https://example.com/test.csv"
+    license: "CC-BY-4.0"
+
+experiments:
+  - id: "train"
+    description: "Train the model (smoke test)"
+    command: "python scripts/train.py --config configs/smoke.yml"
+    timeout_seconds: 3600
+    safe_to_run: true
+    expected_outputs:
+      - "results/model.pkl"
+      - "results/metrics.json"
+  - id: "evaluate"
+    description: "Evaluate on test set"
+    command: "python scripts/evaluate.py"
+    timeout_seconds: 600
+    safe_to_run: true
+    expected_outputs:
+      - "results/test_metrics.json"
+
+figures:
+  - id: "loss-curve"
+    path: "figures/loss_curve.png"
+    generated_by: ["train"]
+    referenced_by: ["Section 4"]
+  - id: "confusion-matrix"
+    path: "figures/confusion_matrix.png"
+    generated_by: ["evaluate"]
+    referenced_by: ["Section 5"]
+
+results:
+  - id: "accuracy"
+    path: "results/accuracy.json"
+    generated_by: ["evaluate"]
+
+ci:
+  smoke_experiment: "train"
+  min_score: 70
+  fail_on_regression: true

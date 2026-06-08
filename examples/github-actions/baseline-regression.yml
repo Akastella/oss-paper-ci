@@ -1,0 +1,52 @@
+# Baseline Regression
+#
+# Creates a baseline from main and compares the PR against it.
+# Uses the GitHub Action. Replace Akastella/oss-paper-ci after publication.
+# The baseline file is created from the main branch and compared against the PR.
+
+name: Baseline Regression
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Create baseline from main
+        run: |
+          git checkout main
+
+      - name: Run oss-paper-ci baseline (main)
+        uses: Akastella/oss-paper-ci@v1
+        with:
+          path: "."
+          format: "json"
+          output: "baseline.json"
+        continue-on-error: true
+
+      - name: Checkout PR
+        run: |
+          git checkout ${{ github.head_ref }}
+
+      - name: Run oss-paper-ci baseline compare
+        uses: Akastella/oss-paper-ci@v1
+        with:
+          path: "."
+          format: "markdown"
+          output: "baseline-compare.md"
+          baseline: "baseline.json"
+          fail-on-regression: "true"
+        continue-on-error: true
+
+      - name: Upload comparison
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: baseline-comparison
+          path: baseline-compare.md

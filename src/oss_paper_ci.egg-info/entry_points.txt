@@ -1,0 +1,2 @@
+[console_scripts]
+oss-paper-ci = oss_paper_ci.cli:main

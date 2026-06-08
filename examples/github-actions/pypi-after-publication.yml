@@ -1,0 +1,38 @@
+# PyPI installation workflow
+#
+# Use this only after oss-paper-ci has been published to PyPI.
+# Before publication, use source-checkout.yml or use-action.yml instead.
+
+name: Reproducibility Check (PyPI)
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install oss-paper-ci (after PyPI publication)
+        run: python -m pip install oss-paper-ci  # after PyPI publication
+
+      - name: Run scan
+        run: oss-paper-ci scan . --format markdown --output report.md
+
+      - name: Upload report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reproducibility-report
+          path: report.md

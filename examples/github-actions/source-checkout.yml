@@ -1,0 +1,46 @@
+# Source checkout workflow
+#
+# This workflow checks out the oss-paper-ci tool repository and installs from
+# source. Use this when the GitHub Action or PyPI package is not yet available.
+# Replace Akastella/oss-paper-ci with the actual repository after publication.
+
+name: Reproducibility Check (Source)
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Checkout oss-paper-ci source
+        uses: actions/checkout@v4
+        with:
+          repository: Akastella/oss-paper-ci
+          ref: v1.0.0rc1
+          path: _tools/oss-paper-ci
+
+      - name: Install oss-paper-ci
+        run: python -m pip install ./_tools/oss-paper-ci
+
+      - name: Run scan
+        run: oss-paper-ci scan . --format markdown --output report.md
+
+      - name: Upload report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reproducibility-report
+          path: report.md

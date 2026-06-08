@@ -1,0 +1,6 @@
+[project]
+name = "example-paper"
+version = "0.1.0"
+description = "Deep Learning for Science"
+requires-python = ">=3.9"
+license = "MIT"

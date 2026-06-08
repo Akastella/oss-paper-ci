@@ -1,0 +1,20 @@
+model:
+  d_model: 512
+  nhead: 8
+  num_encoder_layers: 6
+  num_decoder_layers: 6
+  dim_feedforward: 2048
+  dropout: 0.1
+
+training:
+  epochs: 30
+  batch_size: 4096
+  learning_rate: 0.0001
+  warmup_steps: 4000
+  seed: 42
+
+data:
+  src_lang: en
+  tgt_lang: de
+  max_length: 256
+  data_dir: data/processed/

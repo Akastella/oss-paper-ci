@@ -1,0 +1,5 @@
+repos:
+  - repo: https://github.com/Akastella/oss-paper-ci
+    rev: v1.0.0rc1
+    hooks:
+      - id: oss-paper-ci

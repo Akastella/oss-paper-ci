@@ -1,0 +1,10 @@
+[project]
+name = "transformer-reproduction"
+version = "0.1.0"
+description = "PyTorch reproduction of the Transformer model"
+requires-python = ">=3.9"
+license = "MIT"
+
+[project.scripts]
+train = "scripts.train:main"
+evaluate = "scripts.evaluate:main"

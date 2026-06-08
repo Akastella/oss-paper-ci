@@ -1,0 +1,7 @@
+{
+  "R": { "Version": "4.3.0" },
+  "Packages": [
+    { "Package": "ggplot2", "Version": "3.4.0" },
+    { "Package": "dplyr", "Version": "1.1.0" }
+  ]
+}

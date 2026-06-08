@@ -1,0 +1,7 @@
+Package: ExampleRAnalysis
+Title: Example R Analysis for Paper
+Version: 0.1.0
+Authors@R: person("Jane", "Doe", email = "jane@example.com", role = c("aut", "cre"))
+Description: Reproduction code for our paper.
+License: MIT
+Encoding: UTF-8

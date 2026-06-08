@@ -1,0 +1,7 @@
+cff-version: 1.2.0
+title: "Transformer Reproduction"
+authors:
+  - family-names: "Researcher"
+    given-names: "Jane"
+repository-code: "https://github.com/example/transformer-reproduction"
+license: MIT
