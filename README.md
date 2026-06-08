@@ -7,6 +7,28 @@
 
 CI tool for checking reproducibility readiness of scientific paper repositories.
 
+OSS-Paper-CI checks whether a scientific repository is ready for
+reproducibility-oriented CI: metadata, environment files, experiment scripts,
+result artifacts, evidence graph links, baseline regressions, safe smoke runs,
+and GitHub/SARIF reporting.
+
+## Quick demo
+
+```bash
+python -m pip install -e ".[dev]"
+oss-paper-ci scan tests/fixtures/realistic_ml_repo --format markdown
+oss-paper-ci graph tests/fixtures/realistic_ml_repo --format markdown
+```
+
+See example reports:
+- [Markdown scan report](examples/reports/realistic_ml_report.md)
+- [Evidence graph](examples/reports/realistic_ml_graph.md)
+- [Baseline comparison](examples/reports/realistic_ml_baseline_compare.md)
+- [Smoke run report](examples/reports/realistic_ml_smoke.md)
+- [SARIF output](examples/reports/realistic_ml.sarif)
+
+See [docs/demo.md](docs/demo.md) for full reproduction instructions.
+
 ## What it checks
 
 Scans a repository for engineering basics needed for reproducibility: environment
