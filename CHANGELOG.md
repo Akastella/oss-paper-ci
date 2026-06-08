@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.2.0rc1 (2026-06-08)
+
+### Added
+- Example reports in `examples/reports/` generated from realistic_ml_repo fixture
+- Demo GitHub Actions workflow (`demo-report.yml`) with SARIF and PR comments
+- `docs/demo.md` with reproduction instructions
+- `docs/report-formats.md` explaining all output formats
+- `docs/action-usage.md` with three usage paths
+- README "Quick demo" section with links to example reports
+
+### Changed
+- Version bumped to 1.2.0rc1
+
 ## 1.1.0rc1 (2026-06-08)
 
 ### Added

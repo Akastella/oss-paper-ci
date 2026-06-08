@@ -1,0 +1,338 @@
+{
+  "schema_version": "0.3",
+  "created_at": "2026-06-08T11:52:59.512065+00:00",
+  "repo_path": "E:\\Projects\\OSS-Paper-CI\\tests\\fixtures\\realistic_ml_repo",
+  "score": 93,
+  "status": "pass",
+  "check_results": [
+    {
+      "id": "META001",
+      "title": "README file exists",
+      "severity": "error",
+      "status": "pass",
+      "message": "Found README.md."
+    },
+    {
+      "id": "META002",
+      "title": "LICENSE file exists",
+      "severity": "error",
+      "status": "pass",
+      "message": "Found LICENSE."
+    },
+    {
+      "id": "META003",
+      "title": "Citation information exists",
+      "severity": "warning",
+      "status": "pass",
+      "message": "Found CITATION.cff."
+    },
+    {
+      "id": "META004",
+      "title": "Reproduction instructions exist",
+      "severity": "warning",
+      "status": "pass",
+      "message": "Found reproduction instructions with executable code blocks in README.md."
+    },
+    {
+      "id": "META005",
+      "title": "Contributing guidelines exist",
+      "severity": "info",
+      "status": "warn",
+      "message": "No contributing guidelines found."
+    },
+    {
+      "id": "META006",
+      "title": "Version or release information",
+      "severity": "info",
+      "status": "pass",
+      "message": "Found version/release information: pyproject.toml (version)."
+    },
+    {
+      "id": "META007",
+      "title": "Artifact metadata file exists",
+      "severity": "info",
+      "status": "pass",
+      "message": "Found artifact metadata: reproducibility.yml."
+    },
+    {
+      "id": "ENV001",
+      "title": "Environment specification file exists",
+      "severity": "error",
+      "status": "pass",
+      "message": "Found 2 environment specification file(s)"
+    },
+    {
+      "id": "ENV002",
+      "title": "Lock file exists",
+      "severity": "warning",
+      "status": "pass",
+      "message": "Found lock file(s): requirements.txt (pinned versions)"
+    },
+    {
+      "id": "ENV003",
+      "title": "Python version specified",
+      "severity": "warning",
+      "status": "pass",
+      "message": "Python version is specified"
+    },
+    {
+      "id": "ENV004",
+      "title": "System dependencies documented",
+      "severity": "info",
+      "status": "pass",
+      "message": "System dependencies appear to be documented"
+    },
+    {
+      "id": "ENV005",
+      "title": "GPU/CPU requirements documented",
+      "severity": "info",
+      "status": "pass",
+      "message": "No GPU/CPU/hardware requirements documentation found"
+    },
+    {
+      "id": "ENV006",
+      "title": "Multiple environment files consistent",
+      "severity": "warning",
+      "status": "warn",
+      "message": "Both pyproject.toml and requirements.txt exist but no clear guidance found in README"
+    },
+    {
+      "id": "EXP001",
+      "title": "Experiment entry points exist",
+      "severity": "error",
+      "status": "pass",
+      "message": "Found experiment entry points. Warnings: train.py exists but has no 'if __name__' or 'def main'."
+    },
+    {
+      "id": "EXP002",
+      "title": "One-command reproduction script exists",
+      "severity": "warning",
+      "status": "pass",
+      "message": "A one-command reproduction path was found."
+    },
+    {
+      "id": "EXP003",
+      "title": "Smoke test or quickstart exists",
+      "severity": "info",
+      "status": "pass",
+      "message": "Smoke test or quickstart reference found."
+    },
+    {
+      "id": "EXP004",
+      "title": "Long vs short experiment distinction",
+      "severity": "info",
+      "status": "pass",
+      "message": "Repository distinguishes between experiment modes."
+    },
+    {
+      "id": "EXP005",
+      "title": "Random seed setting detected",
+      "severity": "info",
+      "status": "pass",
+      "message": "Random seed or reproducibility mechanism detected."
+    },
+    {
+      "id": "EXP006",
+      "title": "Configuration files exist",
+      "severity": "info",
+      "status": "pass",
+      "message": "Configuration mechanism detected."
+    },
+    {
+      "id": "EXP007",
+      "title": "Notebook risk assessment",
+      "severity": "info",
+      "status": "warn",
+      "message": "Found 1 notebook(s) with script alternatives available."
+    },
+    {
+      "id": "DATA001",
+      "title": "Data source documentation exists",
+      "severity": "warning",
+      "status": "pass",
+      "message": "Found data source documentation."
+    },
+    {
+      "id": "DATA002",
+      "title": "Data download instructions exist",
+      "severity": "warning",
+      "status": "pass",
+      "message": "Found data download instructions."
+    },
+    {
+      "id": "DATA003",
+      "title": "Data categories distinguished",
+      "severity": "info",
+      "status": "warn",
+      "message": "No distinction between data categories found."
+    },
+    {
+      "id": "DATA004",
+      "title": "Large files not in repository",
+      "severity": "warning",
+      "status": "pass",
+      "message": "No large data files found in the repository."
+    },
+    {
+      "id": "DATA005",
+      "title": "Data paths in .gitignore",
+      "severity": "info",
+      "status": "pass",
+      "message": "Found data-related patterns in .gitignore."
+    },
+    {
+      "id": "DATA006",
+      "title": "Privacy and licensing for data",
+      "severity": "info",
+      "status": "pass",
+      "message": "Found data privacy or licensing information."
+    },
+    {
+      "id": "RES001",
+      "title": "Results directory exists",
+      "severity": "warning",
+      "status": "pass",
+      "message": "Found results directories: results."
+    },
+    {
+      "id": "RES002",
+      "title": "Figures referenced in README exist",
+      "severity": "warning",
+      "status": "pass",
+      "message": "No figure references found in README."
+    },
+    {
+      "id": "RES003",
+      "title": "Results have generation scripts",
+      "severity": "info",
+      "status": "pass",
+      "message": "Found generation scripts: scripts\\make_figures.py, Makefile (result-related targets)."
+    },
+    {
+      "id": "RES004",
+      "title": "No orphan figures",
+      "severity": "info",
+      "status": "pass",
+      "message": "No image files found in the repository."
+    },
+    {
+      "id": "RES005",
+      "title": "Result regeneration instructions",
+      "severity": "info",
+      "status": "pass",
+      "message": "Found regeneration instructions: Makefile (result-related targets)."
+    },
+    {
+      "id": "PAP001",
+      "title": "Paper directory detected",
+      "severity": "info",
+      "status": "warn",
+      "message": "Found paper-related files: paper/, paper\\main.tex, results\\table_results.tex."
+    },
+    {
+      "id": "PAP002",
+      "title": "README commands match existing scripts",
+      "severity": "warning",
+      "status": "pass",
+      "message": "All 6 referenced script(s)/module(s)/config(s) exist."
+    },
+    {
+      "id": "PAP003",
+      "title": "README directory references exist",
+      "severity": "warning",
+      "status": "warn",
+      "message": "README references non-existent directories: data/raw."
+    },
+    {
+      "id": "PAP004",
+      "title": "Citation keys consistent",
+      "severity": "info",
+      "status": "warn",
+      "message": "CITATION.cff repository-code URL name 'transformer-reproduction' does not match repo directory name 'realistic_ml_repo'."
+    },
+    {
+      "id": "PAP005",
+      "title": "Figure paths in paper match files",
+      "severity": "info",
+      "status": "warn",
+      "message": "No \\includegraphics commands found in .tex files."
+    },
+    {
+      "id": "CI001",
+      "title": "GitHub Actions workflows exist",
+      "severity": "info",
+      "status": "pass",
+      "message": "Found 1 GitHub Actions workflow(s)."
+    },
+    {
+      "id": "CI002",
+      "title": "Tests exist",
+      "severity": "warning",
+      "status": "warn",
+      "message": "No test files or test configuration found."
+    },
+    {
+      "id": "CI003",
+      "title": "Linting or formatting configured",
+      "severity": "info",
+      "status": "pass",
+      "message": "No linting or formatting configuration found (informational)."
+    },
+    {
+      "id": "CI004",
+      "title": "Issue or PR templates exist",
+      "severity": "warning",
+      "status": "warn",
+      "message": "No issue or PR templates found."
+    },
+    {
+      "id": "CI005",
+      "title": "Security policy exists",
+      "severity": "info",
+      "status": "pass",
+      "message": "No security policy found (informational)."
+    },
+    {
+      "id": "CI006",
+      "title": "Package metadata complete",
+      "severity": "info",
+      "status": "pass",
+      "message": "Package metadata incomplete in pyproject.toml; missing: authors."
+    },
+    {
+      "id": "CONTRACT001",
+      "title": "Reproducibility contract",
+      "severity": "warning",
+      "status": "warn",
+      "message": "Bibliography file does not exist: paper/references.bib"
+    },
+    {
+      "id": "CONTRACT001",
+      "title": "Reproducibility contract",
+      "severity": "warning",
+      "status": "warn",
+      "message": "Data path does not exist: data/train.csv (id=train-data)"
+    },
+    {
+      "id": "CONTRACT001",
+      "title": "Reproducibility contract",
+      "severity": "warning",
+      "status": "warn",
+      "message": "Data path does not exist: data/test.csv (id=test-data)"
+    },
+    {
+      "id": "CONTRACT001",
+      "title": "Reproducibility contract",
+      "severity": "info",
+      "status": "warn",
+      "message": "Figure output directory does not exist yet: E:\\Projects\\OSS-Paper-CI\\tests\\fixtures\\realistic_ml_repo\\figures"
+    },
+    {
+      "id": "CONTRACT001",
+      "title": "Reproducibility contract",
+      "severity": "info",
+      "status": "warn",
+      "message": "Figure output directory does not exist yet: E:\\Projects\\OSS-Paper-CI\\tests\\fixtures\\realistic_ml_repo\\figures"
+    }
+  ]
+}
