@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.1.0rc1 (2026-06-08)
+
+### Added
+- README badges: CI status, License, Python version, Release tag
+- GitHub issue templates: bug report, feature request, reproducibility check problem
+- Pull request template
+- Dependabot configuration for Python dependencies and GitHub Actions
+- Release workflow triggered on version tags (`v*`)
+
+### Changed
+- Version bumped to 1.1.0rc1
+
 ## 1.0.0rc1 (2026-06-07)
 
 ### Changed
