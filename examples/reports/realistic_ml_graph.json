@@ -1,0 +1,716 @@
+{
+  "nodes": [
+    {
+      "id": "ci:.github/workflows/ci.yml",
+      "type": "ci",
+      "path": ".github/workflows/ci.yml",
+      "label": "ci.yml",
+      "exists": true,
+      "metadata": {}
+    },
+    {
+      "id": "config:configs/default.yml",
+      "type": "config",
+      "path": "configs/default.yml",
+      "label": "default.yml",
+      "exists": true,
+      "metadata": {}
+    },
+    {
+      "id": "config:configs/smoke.yml",
+      "type": "config",
+      "path": "configs/smoke.yml",
+      "label": "smoke.yml",
+      "exists": true,
+      "metadata": {}
+    },
+    {
+      "id": "readme:data/README.md",
+      "type": "readme",
+      "path": "data/README.md",
+      "label": "README.md",
+      "exists": true,
+      "metadata": {}
+    },
+    {
+      "id": "environment:Makefile",
+      "type": "environment",
+      "path": "Makefile",
+      "label": "Makefile",
+      "exists": true,
+      "metadata": {}
+    },
+    {
+      "id": "notebook:notebooks/exploration.ipynb",
+      "type": "notebook",
+      "path": "notebooks/exploration.ipynb",
+      "label": "exploration.ipynb",
+      "exists": true,
+      "metadata": {}
+    },
+    {
+      "id": "tex:paper/main.tex",
+      "type": "tex",
+      "path": "paper/main.tex",
+      "label": "main.tex",
+      "exists": true,
+      "metadata": {}
+    },
+    {
+      "id": "environment:pyproject.toml",
+      "type": "environment",
+      "path": "pyproject.toml",
+      "label": "pyproject.toml",
+      "exists": true,
+      "metadata": {}
+    },
+    {
+      "id": "readme:README.md",
+      "type": "readme",
+      "path": "README.md",
+      "label": "README.md",
+      "exists": true,
+      "metadata": {}
+    },
+    {
+      "id": "contract:reproducibility.yml",
+      "type": "contract",
+      "path": "reproducibility.yml",
+      "label": "reproducibility.yml",
+      "exists": true,
+      "metadata": {}
+    },
+    {
+      "id": "environment:requirements.txt",
+      "type": "environment",
+      "path": "requirements.txt",
+      "label": "requirements.txt",
+      "exists": true,
+      "metadata": {}
+    },
+    {
+      "id": "readme:results/README.md",
+      "type": "readme",
+      "path": "results/README.md",
+      "label": "README.md",
+      "exists": true,
+      "metadata": {}
+    },
+    {
+      "id": "tex:results/table_results.tex",
+      "type": "tex",
+      "path": "results/table_results.tex",
+      "label": "table_results.tex",
+      "exists": true,
+      "metadata": {}
+    },
+    {
+      "id": "script:scripts/download_data.py",
+      "type": "script",
+      "path": "scripts/download_data.py",
+      "label": "download_data.py",
+      "exists": true,
+      "metadata": {
+        "is_entrypoint": false,
+        "writes_files": false,
+        "generates_figures": false,
+        "reads_config": false,
+        "sets_seed": false,
+        "hardcoded_paths": []
+      }
+    },
+    {
+      "id": "script:scripts/evaluate.py",
+      "type": "script",
+      "path": "scripts/evaluate.py",
+      "label": "evaluate.py",
+      "exists": true,
+      "metadata": {
+        "is_entrypoint": true,
+        "writes_files": false,
+        "generates_figures": false,
+        "reads_config": false,
+        "sets_seed": false,
+        "hardcoded_paths": []
+      }
+    },
+    {
+      "id": "script:scripts/make_figures.py",
+      "type": "script",
+      "path": "scripts/make_figures.py",
+      "label": "make_figures.py",
+      "exists": true,
+      "metadata": {
+        "is_entrypoint": false,
+        "writes_files": false,
+        "generates_figures": false,
+        "reads_config": false,
+        "sets_seed": false,
+        "hardcoded_paths": []
+      }
+    },
+    {
+      "id": "script:scripts/train.py",
+      "type": "script",
+      "path": "scripts/train.py",
+      "label": "train.py",
+      "exists": true,
+      "metadata": {
+        "is_entrypoint": true,
+        "writes_files": false,
+        "generates_figures": false,
+        "reads_config": true,
+        "sets_seed": true,
+        "hardcoded_paths": []
+      }
+    },
+    {
+      "id": "script:src/transformer_reproduction/__init__.py",
+      "type": "script",
+      "path": "src/transformer_reproduction/__init__.py",
+      "label": "__init__.py",
+      "exists": true,
+      "metadata": {
+        "is_entrypoint": false,
+        "writes_files": false,
+        "generates_figures": false,
+        "reads_config": false,
+        "sets_seed": false,
+        "hardcoded_paths": []
+      }
+    },
+    {
+      "id": "script:src/transformer_reproduction/model.py",
+      "type": "script",
+      "path": "src/transformer_reproduction/model.py",
+      "label": "model.py",
+      "exists": true,
+      "metadata": {
+        "is_entrypoint": false,
+        "writes_files": false,
+        "generates_figures": false,
+        "reads_config": false,
+        "sets_seed": false,
+        "hardcoded_paths": []
+      }
+    },
+    {
+      "id": "figure:paper/../figures/training_loss.png",
+      "type": "figure",
+      "path": "paper/../figures/training_loss.png",
+      "label": "training_loss.png",
+      "exists": false,
+      "metadata": {}
+    },
+    {
+      "id": "tex:paper/../results/table_results.tex",
+      "type": "tex",
+      "path": "paper/../results/table_results.tex",
+      "label": "table_results.tex",
+      "exists": true,
+      "metadata": {}
+    },
+    {
+      "id": "bib:paper/references.bib",
+      "type": "bib",
+      "path": "paper/references.bib",
+      "label": "references.bib",
+      "exists": false,
+      "metadata": {}
+    },
+    {
+      "id": "data:results/checkpoints/best.pt",
+      "type": "data",
+      "path": "results/checkpoints/best.pt",
+      "label": "best.pt",
+      "exists": false,
+      "metadata": {}
+    },
+    {
+      "id": "figure:figures/training_loss.png",
+      "type": "figure",
+      "path": "figures/training_loss.png",
+      "label": "training_loss.png",
+      "exists": false,
+      "metadata": {}
+    },
+    {
+      "id": "make_target:Makefile::data",
+      "type": "make_target",
+      "path": "",
+      "label": "data",
+      "exists": true,
+      "metadata": {}
+    },
+    {
+      "id": "make_target:Makefile::train",
+      "type": "make_target",
+      "path": "",
+      "label": "train",
+      "exists": true,
+      "metadata": {}
+    },
+    {
+      "id": "make_target:Makefile::evaluate",
+      "type": "make_target",
+      "path": "",
+      "label": "evaluate",
+      "exists": true,
+      "metadata": {}
+    },
+    {
+      "id": "make_target:Makefile::figures",
+      "type": "make_target",
+      "path": "",
+      "label": "figures",
+      "exists": true,
+      "metadata": {}
+    },
+    {
+      "id": "data:results/model.pkl",
+      "type": "data",
+      "path": "results/model.pkl",
+      "label": "model.pkl",
+      "exists": false,
+      "metadata": {}
+    },
+    {
+      "id": "config:results/metrics.json",
+      "type": "config",
+      "path": "results/metrics.json",
+      "label": "metrics.json",
+      "exists": false,
+      "metadata": {}
+    },
+    {
+      "id": "config:results/test_metrics.json",
+      "type": "config",
+      "path": "results/test_metrics.json",
+      "label": "test_metrics.json",
+      "exists": false,
+      "metadata": {}
+    },
+    {
+      "id": "figure:figures/loss_curve.png",
+      "type": "figure",
+      "path": "figures/loss_curve.png",
+      "label": "loss_curve.png",
+      "exists": false,
+      "metadata": {}
+    },
+    {
+      "id": "figure:figures/confusion_matrix.png",
+      "type": "figure",
+      "path": "figures/confusion_matrix.png",
+      "label": "confusion_matrix.png",
+      "exists": false,
+      "metadata": {}
+    },
+    {
+      "id": "result:results/accuracy.json",
+      "type": "result",
+      "path": "results/accuracy.json",
+      "label": "accuracy.json",
+      "exists": false,
+      "metadata": {}
+    },
+    {
+      "id": "data:data/train.csv",
+      "type": "data",
+      "path": "data/train.csv",
+      "label": "train.csv",
+      "exists": false,
+      "metadata": {}
+    },
+    {
+      "id": "data:data/test.csv",
+      "type": "data",
+      "path": "data/test.csv",
+      "label": "test.csv",
+      "exists": false,
+      "metadata": {}
+    }
+  ],
+  "edges": [
+    {
+      "source": "tex:paper/main.tex",
+      "target": "figure:paper/../figures/training_loss.png",
+      "relation": "references",
+      "evidence": "\\includegraphics{../figures/training_loss.png}",
+      "confidence": "explicit"
+    },
+    {
+      "source": "tex:paper/main.tex",
+      "target": "tex:paper/../results/table_results.tex",
+      "relation": "references",
+      "evidence": "\\input{../results/table_results.tex}",
+      "confidence": "explicit"
+    },
+    {
+      "source": "tex:paper/main.tex",
+      "target": "bib:paper/references.bib",
+      "relation": "references",
+      "evidence": "\\bibliography{references}",
+      "confidence": "explicit"
+    },
+    {
+      "source": "readme:data/README.md",
+      "target": "script:scripts/download_data.py",
+      "relation": "runs",
+      "evidence": "Command in README: `python scripts/download_data.py`",
+      "confidence": "explicit"
+    },
+    {
+      "source": "readme:data/README.md",
+      "target": "script:scripts/download_data.py",
+      "relation": "runs",
+      "evidence": "Command in README: `bash\npython scripts/download_data.py`",
+      "confidence": "explicit"
+    },
+    {
+      "source": "readme:README.md",
+      "target": "script:scripts/train.py",
+      "relation": "runs",
+      "evidence": "Command in README: `python scripts/train.py --config configs/smoke.yml`",
+      "confidence": "explicit"
+    },
+    {
+      "source": "readme:README.md",
+      "target": "script:scripts/train.py",
+      "relation": "runs",
+      "evidence": "Command in README: `python scripts/train.py --config configs/default.yml`",
+      "confidence": "explicit"
+    },
+    {
+      "source": "readme:README.md",
+      "target": "script:scripts/evaluate.py",
+      "relation": "runs",
+      "evidence": "Command in README: `python scripts/evaluate.py --checkpoint results/checkpoints/best.pt`",
+      "confidence": "explicit"
+    },
+    {
+      "source": "readme:README.md",
+      "target": "script:scripts/make_figures.py",
+      "relation": "runs",
+      "evidence": "Command in README: `python scripts/make_figures.py`",
+      "confidence": "explicit"
+    },
+    {
+      "source": "readme:README.md",
+      "target": "script:scripts/download_data.py",
+      "relation": "runs",
+      "evidence": "Command in README: `python scripts/download_data.py`",
+      "confidence": "explicit"
+    },
+    {
+      "source": "readme:README.md",
+      "target": "script:scripts/train.py",
+      "relation": "runs",
+      "evidence": "Command in README: `bash\n# Smoke test (runs in ~1 minute)\npython scripts/train.py --config configs/smoke.yml\n\n# Full training\npython scripts/train.py --config configs/default.yml\n\n# Evaluate\npython scripts/evaluate.py --checkpoint results/checkpoints/best.pt\n\n# Generate figures\npython scripts/make_figures.py`",
+      "confidence": "explicit"
+    },
+    {
+      "source": "readme:README.md",
+      "target": "script:scripts/download_data.py",
+      "relation": "runs",
+      "evidence": "Command in README: `bash\npython scripts/download_data.py`",
+      "confidence": "explicit"
+    },
+    {
+      "source": "script:scripts/evaluate.py",
+      "target": "data:results/checkpoints/best.pt",
+      "relation": "requires",
+      "evidence": "File reference in evaluate.py",
+      "confidence": "inferred"
+    },
+    {
+      "source": "script:scripts/make_figures.py",
+      "target": "figure:figures/training_loss.png",
+      "relation": "generates",
+      "evidence": "File reference in make_figures.py",
+      "confidence": "inferred"
+    },
+    {
+      "source": "make_target:Makefile::data",
+      "target": "script:scripts/download_data.py",
+      "relation": "runs",
+      "evidence": "Makefile target 'data' runs: python scripts/download_data.py",
+      "confidence": "explicit"
+    },
+    {
+      "source": "make_target:Makefile::train",
+      "target": "script:scripts/train.py",
+      "relation": "runs",
+      "evidence": "Makefile target 'train' runs: python scripts/train.py --config configs/default.yml",
+      "confidence": "explicit"
+    },
+    {
+      "source": "make_target:Makefile::train",
+      "target": "config:configs/default.yml",
+      "relation": "requires",
+      "evidence": "Makefile target 'train' requires config: configs/default.yml",
+      "confidence": "explicit"
+    },
+    {
+      "source": "make_target:Makefile::evaluate",
+      "target": "script:scripts/evaluate.py",
+      "relation": "runs",
+      "evidence": "Makefile target 'evaluate' runs: python scripts/evaluate.py --checkpoint results/checkpoints/best.pt",
+      "confidence": "explicit"
+    },
+    {
+      "source": "make_target:Makefile::evaluate",
+      "target": "data:results/checkpoints/best.pt",
+      "relation": "requires",
+      "evidence": "Makefile target 'evaluate' requires checkpoint: results/checkpoints/best.pt",
+      "confidence": "explicit"
+    },
+    {
+      "source": "make_target:Makefile::figures",
+      "target": "script:scripts/make_figures.py",
+      "relation": "runs",
+      "evidence": "Makefile target 'figures' runs: python scripts/make_figures.py",
+      "confidence": "explicit"
+    },
+    {
+      "source": "ci:.github/workflows/ci.yml",
+      "target": "script:scripts/train.py",
+      "relation": "runs",
+      "evidence": "CI workflow 'CI' (test) runs: python scripts/train.py --config configs/smoke.yml",
+      "confidence": "explicit"
+    },
+    {
+      "source": "ci:.github/workflows/ci.yml",
+      "target": "config:configs/smoke.yml",
+      "relation": "requires",
+      "evidence": "CI workflow 'CI' requires config: configs/smoke.yml",
+      "confidence": "explicit"
+    },
+    {
+      "source": "contract:reproducibility.yml",
+      "target": "script:scripts/train.py",
+      "relation": "declares",
+      "evidence": "Contract experiment 'train' runs: python scripts/train.py --config configs/smoke.yml",
+      "confidence": "explicit"
+    },
+    {
+      "source": "contract:reproducibility.yml",
+      "target": "data:results/model.pkl",
+      "relation": "declares",
+      "evidence": "Contract experiment 'train' declares output: results/model.pkl",
+      "confidence": "explicit"
+    },
+    {
+      "source": "contract:reproducibility.yml",
+      "target": "config:results/metrics.json",
+      "relation": "declares",
+      "evidence": "Contract experiment 'train' declares output: results/metrics.json",
+      "confidence": "explicit"
+    },
+    {
+      "source": "contract:reproducibility.yml",
+      "target": "script:scripts/evaluate.py",
+      "relation": "declares",
+      "evidence": "Contract experiment 'evaluate' runs: python scripts/evaluate.py",
+      "confidence": "explicit"
+    },
+    {
+      "source": "contract:reproducibility.yml",
+      "target": "config:results/test_metrics.json",
+      "relation": "declares",
+      "evidence": "Contract experiment 'evaluate' declares output: results/test_metrics.json",
+      "confidence": "explicit"
+    },
+    {
+      "source": "contract:reproducibility.yml",
+      "target": "figure:figures/loss_curve.png",
+      "relation": "declares",
+      "evidence": "Contract declares figure 'loss-curve'",
+      "confidence": "explicit"
+    },
+    {
+      "source": "script:scripts/train.py",
+      "target": "figure:figures/loss_curve.png",
+      "relation": "generates",
+      "evidence": "Contract: figure 'loss-curve' generated_by experiment 'train'",
+      "confidence": "explicit"
+    },
+    {
+      "source": "contract:reproducibility.yml",
+      "target": "figure:figures/confusion_matrix.png",
+      "relation": "declares",
+      "evidence": "Contract declares figure 'confusion-matrix'",
+      "confidence": "explicit"
+    },
+    {
+      "source": "script:scripts/evaluate.py",
+      "target": "figure:figures/confusion_matrix.png",
+      "relation": "generates",
+      "evidence": "Contract: figure 'confusion-matrix' generated_by experiment 'evaluate'",
+      "confidence": "explicit"
+    },
+    {
+      "source": "contract:reproducibility.yml",
+      "target": "result:results/accuracy.json",
+      "relation": "declares",
+      "evidence": "Contract declares result 'accuracy'",
+      "confidence": "explicit"
+    },
+    {
+      "source": "script:scripts/evaluate.py",
+      "target": "result:results/accuracy.json",
+      "relation": "generates",
+      "evidence": "Contract: result 'accuracy' generated_by experiment 'evaluate'",
+      "confidence": "explicit"
+    },
+    {
+      "source": "contract:reproducibility.yml",
+      "target": "data:data/train.csv",
+      "relation": "declares",
+      "evidence": "Contract declares data 'train-data'",
+      "confidence": "explicit"
+    },
+    {
+      "source": "contract:reproducibility.yml",
+      "target": "data:data/test.csv",
+      "relation": "declares",
+      "evidence": "Contract declares data 'test-data'",
+      "confidence": "explicit"
+    },
+    {
+      "source": "contract:reproducibility.yml",
+      "target": "environment:requirements.txt",
+      "relation": "declares",
+      "evidence": "Contract declares environment file",
+      "confidence": "explicit"
+    },
+    {
+      "source": "contract:reproducibility.yml",
+      "target": "config:configs/default.yml",
+      "relation": "declares",
+      "evidence": "Contract declaration",
+      "confidence": "explicit"
+    },
+    {
+      "source": "contract:reproducibility.yml",
+      "target": "config:configs/smoke.yml",
+      "relation": "declares",
+      "evidence": "Contract declaration",
+      "confidence": "explicit"
+    },
+    {
+      "source": "contract:reproducibility.yml",
+      "target": "environment:Makefile",
+      "relation": "declares",
+      "evidence": "Contract declaration",
+      "confidence": "explicit"
+    },
+    {
+      "source": "contract:reproducibility.yml",
+      "target": "environment:pyproject.toml",
+      "relation": "declares",
+      "evidence": "Contract declaration",
+      "confidence": "explicit"
+    },
+    {
+      "source": "contract:reproducibility.yml",
+      "target": "script:scripts/download_data.py",
+      "relation": "declares",
+      "evidence": "Contract declaration",
+      "confidence": "explicit"
+    },
+    {
+      "source": "contract:reproducibility.yml",
+      "target": "script:scripts/make_figures.py",
+      "relation": "declares",
+      "evidence": "Contract declaration",
+      "confidence": "explicit"
+    },
+    {
+      "source": "contract:reproducibility.yml",
+      "target": "script:src/transformer_reproduction/__init__.py",
+      "relation": "declares",
+      "evidence": "Contract declaration",
+      "confidence": "explicit"
+    },
+    {
+      "source": "contract:reproducibility.yml",
+      "target": "script:src/transformer_reproduction/model.py",
+      "relation": "declares",
+      "evidence": "Contract declaration",
+      "confidence": "explicit"
+    }
+  ],
+  "missing_edges": [],
+  "orphan_nodes": [
+    {
+      "id": "notebook:notebooks/exploration.ipynb",
+      "type": "notebook",
+      "path": "notebooks/exploration.ipynb",
+      "label": "exploration.ipynb",
+      "exists": true,
+      "metadata": {}
+    },
+    {
+      "id": "readme:results/README.md",
+      "type": "readme",
+      "path": "results/README.md",
+      "label": "README.md",
+      "exists": true,
+      "metadata": {}
+    },
+    {
+      "id": "tex:results/table_results.tex",
+      "type": "tex",
+      "path": "results/table_results.tex",
+      "label": "table_results.tex",
+      "exists": true,
+      "metadata": {}
+    }
+  ],
+  "coverage": {
+    "paper_artifacts_with_generation_path": 0,
+    "results_with_generation_path": 1,
+    "figures_with_generation_path": 3,
+    "paper_artifacts_total": 3,
+    "results_total": 1,
+    "figures_total": 4
+  },
+  "summary": {
+    "total_nodes": 36,
+    "total_edges": 44,
+    "orphan_nodes": 3,
+    "broken_edges": 0,
+    "node_types": {
+      "ci": 1,
+      "config": 4,
+      "readme": 3,
+      "environment": 3,
+      "notebook": 1,
+      "tex": 3,
+      "contract": 1,
+      "script": 6,
+      "figure": 4,
+      "bib": 1,
+      "data": 4,
+      "make_target": 4,
+      "result": 1
+    },
+    "edge_relations": {
+      "references": 3,
+      "runs": 14,
+      "requires": 4,
+      "generates": 4,
+      "declares": 19
+    },
+    "edge_confidence": {
+      "explicit": 42,
+      "inferred": 2
+    },
+    "coverage": {
+      "paper_artifacts_with_generation_path": 0,
+      "results_with_generation_path": 1,
+      "figures_with_generation_path": 3
+    }
+  }
+}
