@@ -1,0 +1,68 @@
+name: Reproducibility Check Problem
+description: Report issues with scan results, SARIF upload, GitHub Actions integration, or reproducibility.yml
+labels: ["reproducibility-check"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this template for problems specific to reproducibility checks:
+        - Scan results seem wrong or unexpected
+        - SARIF upload to GitHub Code Scanning fails
+        - GitHub Actions workflow fails
+        - reproducibility.yml parsing errors
+        - Smoke runner blocked by security policy
+        - Baseline regression false positives
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Problem category
+      options:
+        - Scan results unexpected
+        - SARIF upload failed
+        - GitHub Actions workflow failed
+        - reproducibility.yml parsing error
+        - Smoke runner blocked
+        - Baseline regression false positive
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: Describe the problem clearly.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect?
+      description: What should have happened instead?
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Run `oss-paper-ci scan . --format sarif`
+        2. Upload to GitHub Code Scanning
+        3. ...
+
+  - type: textarea
+    id: config
+    attributes:
+      label: Configuration
+      description: Paste your oss-paper-ci.yml or reproducibility.yml if relevant.
+      render: yaml
+
+  - type: textarea
+    id: output
+    attributes:
+      label: Relevant output
+      description: Paste terminal output or error messages.
+      render: shell
