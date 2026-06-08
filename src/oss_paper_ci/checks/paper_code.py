@@ -22,6 +22,8 @@ class Pap001PaperDirectory(BaseChecker):
     check_id = "PAP001"
     title = "Paper directory detected"
     severity = Severity.INFO
+    category = "paper_code"
+    description = "Checks for paper/manuscript directories and .tex files in the repository."
 
     _PAPER_DIRS = ("paper", "manuscript", "latex", "tex", "docs/paper")
 
@@ -84,6 +86,10 @@ class Pap002ReadmeCommandsMatchScripts(BaseChecker):
     check_id = "PAP002"
     title = "README commands match existing scripts"
     severity = Severity.WARNING
+    category = "paper_code"
+    description = "Checks that script paths referenced in README code blocks actually exist in the repository."
+    category = "paper_code"
+    description = "Check that script paths, modules, and configs in README code blocks exist"
 
     # Match fenced code blocks and capture the language tag + body.
     _CODE_BLOCK_RE = re.compile(r"```(\w*)\n(.*?)```", re.DOTALL)
@@ -102,6 +108,15 @@ class Pap002ReadmeCommandsMatchScripts(BaseChecker):
         # Direct ./script.sh or bash ./script.sh
         re.compile(r"(?:\./|bash\s+\.\/)(\S+\.(?:sh|py|R|jl))"),
     ]
+
+    # Patterns for python -m package invocation.
+    _MODULE_PATTERN = re.compile(r"python3?\s+-m\s+(\S+)")
+
+    # Pattern for --config path/to/config arguments.
+    _CONFIG_PATTERN = re.compile(
+        r"--config[=\s]+(\S+\.(?:yaml|yml|json|toml|cfg|ini))",
+        re.IGNORECASE,
+    )
 
     _COMMAND_LANGS = {"bash", "sh", "shell", "zsh", "console", "python", "py"}
 
@@ -131,15 +146,33 @@ class Pap002ReadmeCommandsMatchScripts(BaseChecker):
                     else:
                         missing.append(script_path)
 
+            # Check python -m package: verify package directory exists.
+            for mod_match in self._MODULE_PATTERN.finditer(block):
+                package = mod_match.group(1)
+                # Check if package dir with __init__.py exists, or
+                # package.py exists.
+                if (ctx.has_file(package, "__init__.py")
+                        or ctx.has_file(package + ".py")):
+                    found.append(f"{package} (module)")
+                else:
+                    missing.append(f"{package} (module)")
+
+            # Check --config path/to/config: verify config file exists.
+            for cfg_match in self._CONFIG_PATTERN.finditer(block):
+                config_path = cfg_match.group(1)
+                if ctx.has_file(config_path):
+                    found.append(config_path)
+                else:
+                    missing.append(config_path)
+
         # De-duplicate while preserving order.
         missing = list(dict.fromkeys(missing))
         found = list(dict.fromkeys(found))
 
         if missing:
             return [self._warn(
-                "README references scripts that do not exist: {}.".format(
-                    ", ".join(missing)
-                ),
+                "README references scripts/modules/configs that do not "
+                "exist: {}.".format(", ".join(missing)),
                 evidence=missing,
                 recommendation=(
                     "Update the README commands to reference scripts that "
@@ -149,7 +182,9 @@ class Pap002ReadmeCommandsMatchScripts(BaseChecker):
 
         if found:
             return [self._pass(
-                "All {} referenced script(s) exist.".format(len(found)),
+                "All {} referenced script(s)/module(s)/config(s) exist.".format(
+                    len(found)
+                ),
                 evidence=found,
             )]
 
@@ -176,6 +211,8 @@ class Pap003ReadmeDirectoryReferences(BaseChecker):
     check_id = "PAP003"
     title = "README directory references exist"
     severity = Severity.WARNING
+    category = "paper_code"
+    description = "Checks that directory paths mentioned in the README actually exist in the repository."
 
     # Match directory-like references ending with / that look like real paths
     # (not URLs, not markdown links to other repos, etc.).
@@ -260,6 +297,8 @@ class Pap004CitationKeysConsistent(BaseChecker):
     check_id = "PAP004"
     title = "Citation keys consistent"
     severity = Severity.INFO
+    category = "paper_code"
+    description = "Checks that citation files (CITATION.cff, .bib) reference the correct repo and are used."
 
     def check(self, ctx: CheckContext) -> list[CheckResult]:
         results: list[CheckResult] = []
@@ -400,6 +439,8 @@ class Pap005FigurePathsMatch(BaseChecker):
     check_id = "PAP005"
     title = "Figure paths in paper match files"
     severity = Severity.INFO
+    category = "paper_code"
+    description = "Checks that \\includegraphics paths in .tex files resolve to existing files."
 
     # Matches \includegraphics[...]{path} and \includegraphics{path}.
     _INCLUDEGRAPHICS_RE = re.compile(

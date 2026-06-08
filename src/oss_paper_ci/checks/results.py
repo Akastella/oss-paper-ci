@@ -16,6 +16,8 @@ class Res001ResultsDirectoryExists(BaseChecker):
     check_id = "RES001"
     title = "Results directory exists"
     severity = Severity.WARNING
+    category = "results"
+    description = "Checks that results directories (results/, figures/, output/) exist for storing experiment outputs."
 
     _RESULT_DIRS = (
         "results",
@@ -55,6 +57,8 @@ class Res002FiguresReferencedInReadmeExist(BaseChecker):
     check_id = "RES002"
     title = "Figures referenced in README exist"
     severity = Severity.WARNING
+    category = "results"
+    description = "Checks that figures referenced in the README actually exist in the repository."
 
     # Markdown image: ![alt](path)
     _MD_IMG_RE = re.compile(r"!\[[^\]]*\]\(([^)\s]+)")
@@ -122,10 +126,18 @@ class Res003ResultsHaveGenerationScripts(BaseChecker):
     check_id = "RES003"
     title = "Results have generation scripts"
     severity = Severity.INFO
+    category = "results"
+    description = "Checks that results and figures have generation scripts so they can be regenerated."
 
     _RESULT_DIRS = ("results", "figures", "output", "plots", "tables")
-    _SCRIPT_PATTERNS = ("plot", "generate", "make_figure", "visualize")
+    _SCRIPT_PATTERNS = ("plot", "generate", "make_figure", "make_figures", "visualize")
     _SCRIPT_DIRS = ("scripts", "src")
+
+    _REGEN_KEYWORDS = re.compile(
+        r"\b(?:regenerat|re-run|rerun|reproduce\s+(?:figure|table|result)|"
+        r"generate\s+(?:figure|table|result))\b",
+        re.IGNORECASE,
+    )
 
     def check(self, ctx: CheckContext) -> list[CheckResult]:
         # Only run if at least one results directory exists.
@@ -137,7 +149,7 @@ class Res003ResultsHaveGenerationScripts(BaseChecker):
 
         found_scripts: list[str] = []
 
-        # Check for script files matching known patterns.
+        # Check for specific script files: make_figures.py, plot_*.py, generate_*.py.
         for f in ctx.files:
             name_lower = f.name.lower()
             if f.suffix != ".py":
@@ -159,14 +171,40 @@ class Res003ResultsHaveGenerationScripts(BaseChecker):
             if target_re.search(makefile):
                 found_scripts.append("Makefile (result-related targets)")
 
+        # Check README for regeneration instructions.
+        readme_regens: list[str] = []
+        for readme in ("README.md", "README.rst", "README"):
+            content = ctx.read_file(readme)
+            if content and self._REGEN_KEYWORDS.search(content):
+                readme_regens.append(readme)
+                break
+
+        if found_scripts and readme_regens:
+            return [self._pass(
+                f"Found generation scripts: {', '.join(found_scripts)}; "
+                f"README has regeneration instructions.",
+                evidence=found_scripts + readme_regens,
+            )]
+
         if found_scripts:
             return [self._pass(
                 f"Found generation scripts: {', '.join(found_scripts)}.",
                 evidence=found_scripts,
             )]
 
+        if readme_regens:
+            return [self._info(
+                "README has regeneration instructions but no dedicated "
+                "generation scripts found.",
+                evidence=readme_regens,
+                recommendation=(
+                    "Add scripts (e.g. make_figures.py, plot_*.py, "
+                    "generate_*.py) that produce your figures and tables."
+                ),
+            )]
+
         return [self._info(
-            "No generation scripts found for results.",
+            "No generation scripts or regeneration instructions found.",
             recommendation=(
                 "Add scripts (e.g. plot_*.py, generate_*.py) that produce "
                 "your figures and tables so results can be regenerated."
@@ -193,6 +231,8 @@ class Res004NoOrphanFigures(BaseChecker):
     check_id = "RES004"
     title = "No orphan figures"
     severity = Severity.INFO
+    category = "results"
+    description = "Checks that all image files in the repository are referenced somewhere (no orphan figures)."
 
     _IMAGE_EXTS = {".png", ".jpg", ".jpeg", ".svg", ".pdf", ".eps"}
 
@@ -271,6 +311,8 @@ class Res005ResultRegenerationInstructions(BaseChecker):
     check_id = "RES005"
     title = "Result regeneration instructions"
     severity = Severity.INFO
+    category = "results"
+    description = "Checks for instructions on how to regenerate figures, tables, and other results."
 
     _REGEN_KEYWORDS = re.compile(
         r"\b(?:regenerat|re-run|rerun|reproduce\s+(?:figure|table|result))\b",

@@ -21,6 +21,8 @@ class EnvSpecificationExists(BaseChecker):
     check_id = "ENV001"
     title = "Environment specification file exists"
     severity = Severity.ERROR
+    category = "environment"
+    description = "Checks that at least one environment specification file (requirements.txt, pyproject.toml, Dockerfile, etc.) exists."
 
     SPEC_FILES = [
         "requirements.txt",
@@ -42,19 +44,74 @@ class EnvSpecificationExists(BaseChecker):
     def check(self, ctx: CheckContext) -> list[CheckResult]:
         found = [f for f in self.SPEC_FILES if ctx.has_file(f)]
 
-        if found:
-            return [self._pass(
-                f"Found {len(found)} environment specification file(s)",
-                evidence=found,
+        if not found:
+            return [self._fail(
+                "No environment specification file found",
+                recommendation=(
+                    "Add an environment specification file such as "
+                    "requirements.txt, pyproject.toml, environment.yml, "
+                    "or a Dockerfile so others can reproduce the environment."
+                ),
             )]
 
-        return [self._fail(
-            "No environment specification file found",
-            recommendation=(
-                "Add an environment specification file such as "
-                "requirements.txt, pyproject.toml, environment.yml, "
-                "or a Dockerfile so others can reproduce the environment."
-            ),
+        # Validate content of key specification files.
+        warnings: list[str] = []
+
+        if "requirements.txt" in found:
+            content = ctx.read_file("requirements.txt")
+            if content is not None:
+                lines = [
+                    line.strip()
+                    for line in content.splitlines()
+                    if line.strip() and not line.strip().startswith("#")
+                ]
+                if not lines:
+                    warnings.append(
+                        "requirements.txt exists but is empty (no packages listed)"
+                    )
+
+        if "pyproject.toml" in found:
+            content = ctx.read_file("pyproject.toml")
+            if content is not None:
+                has_project = bool(re.search(
+                    r"^\[(?:project|tool\.poetry)\]", content, re.MULTILINE,
+                ))
+                if not has_project:
+                    warnings.append(
+                        "pyproject.toml exists but has no [project] or "
+                        "[tool.poetry] section"
+                    )
+
+        if "environment.yml" in found:
+            content = ctx.read_file("environment.yml")
+            if content is not None:
+                if "dependencies" not in content:
+                    warnings.append(
+                        "environment.yml exists but has no 'dependencies' key"
+                    )
+
+        if "environment.yaml" in found:
+            content = ctx.read_file("environment.yaml")
+            if content is not None:
+                if "dependencies" not in content:
+                    warnings.append(
+                        "environment.yaml exists but has no 'dependencies' key"
+                    )
+
+        if warnings:
+            return [self._warn(
+                f"Found {len(found)} environment specification file(s), "
+                f"but with issues: {'; '.join(warnings)}",
+                evidence=found,
+                recommendation=(
+                    "Fix the issues in the environment specification files "
+                    "so that the environment can be properly reproduced."
+                ),
+            )]
+
+        return [self._pass(
+            f"Found {len(found)} environment specification file(s)",
+            evidence=found,
         )]
 
 
@@ -65,6 +122,8 @@ class LockFileExists(BaseChecker):
     check_id = "ENV002"
     title = "Lock file exists"
     severity = Severity.WARNING
+    category = "environment"
+    description = "Checks that a lock file (poetry.lock, Pipfile.lock, uv.lock, etc.) exists for reproducible installs."
 
     LOCK_FILES = [
         "poetry.lock",
@@ -116,6 +175,8 @@ class PythonVersionSpecified(BaseChecker):
     check_id = "ENV003"
     title = "Python version specified"
     severity = Severity.WARNING
+    category = "environment"
+    description = "Checks that a Python version is specified in pyproject.toml, setup.cfg, .python-version, or similar."
 
     def check(self, ctx: CheckContext) -> list[CheckResult]:
         sources: list[str] = []
@@ -180,6 +241,8 @@ class SystemDependenciesDocumented(BaseChecker):
     check_id = "ENV004"
     title = "System dependencies documented"
     severity = Severity.INFO
+    category = "environment"
+    description = "Checks that system-level dependencies (apt, brew, etc.) are documented in the README or dedicated files."
 
     SYSTEM_KEYWORDS = [
         r"\bapt\b",
@@ -258,6 +321,8 @@ class GpuCpuRequirementsDocumented(BaseChecker):
     check_id = "ENV005"
     title = "GPU/CPU requirements documented"
     severity = Severity.INFO
+    category = "environment"
+    description = "Checks that GPU, CPU, or other hardware requirements are documented in the README."
 
     HARDWARE_KEYWORDS = [
         "GPU",
@@ -319,6 +384,8 @@ class MultipleEnvironmentFilesConsistent(BaseChecker):
     check_id = "ENV006"
     title = "Multiple environment files consistent"
     severity = Severity.WARNING
+    category = "environment"
+    description = "Checks that when multiple environment files co-exist (e.g., requirements.txt and environment.yml), the README provides guidance on which to use."
 
     # Pairs of (file_a, file_b) to check for co-existence
     FILE_PAIRS = [

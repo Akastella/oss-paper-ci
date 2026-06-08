@@ -16,6 +16,8 @@ class Data001DataSourceDocumentation(BaseChecker):
     check_id = "DATA001"
     title = "Data source documentation exists"
     severity = Severity.WARNING
+    category = "data"
+    description = "Checks that data sources are documented in the README or a dedicated data directory."
 
     _KEYWORDS = re.compile(
         r"\b(?:data(?:set)?|download|data\s+source)\b",
@@ -69,6 +71,8 @@ class Data002DownloadInstructions(BaseChecker):
     check_id = "DATA002"
     title = "Data download instructions exist"
     severity = Severity.WARNING
+    category = "data"
+    description = "Checks for data download instructions (wget/curl commands, download scripts, or data URLs)."
 
     _DOWNLOAD_KEYWORDS = re.compile(
         r"\b(?:wget|curl|gdown|kaggle|huggingface|zenodo|figshare|"
@@ -79,12 +83,19 @@ class Data002DownloadInstructions(BaseChecker):
         r"https?://\S+(?:\.zip|\.tar|\.gz|\.csv|\.h5|\.parquet|\.json)",
         re.IGNORECASE,
     )
+    _DOI_PATTERN = re.compile(
+        r"\b(?:doi\.org/|DOI:\s*\S+|10\.\d{4,}/\S+)\b",
+        re.IGNORECASE,
+    )
 
     _SCRIPT_PATHS = (
         "download_data.sh",
         "get_data.py",
+        "download.py",
         "scripts/download_data.sh",
         "scripts/get_data.py",
+        "scripts/download.py",
+        "scripts/download_data.py",
         "data/download_data.sh",
         "data/get_data.py",
     )
@@ -100,6 +111,8 @@ class Data002DownloadInstructions(BaseChecker):
                     evidence.append(f"{readme} (download keywords)")
                 if self._URL_PATTERN.search(content):
                     evidence.append(f"{readme} (data URL)")
+                if self._DOI_PATTERN.search(content):
+                    evidence.append(f"{readme} (DOI reference)")
 
         # Check for download scripts.
         for path in self._SCRIPT_PATHS:
@@ -129,6 +142,8 @@ class Data003DataCategories(BaseChecker):
     check_id = "DATA003"
     title = "Data categories distinguished"
     severity = Severity.INFO
+    category = "data"
+    description = "Checks that data is organized into categories (raw/, processed/, interim/) to clarify the pipeline."
 
     _CATEGORY_DIRS = (
         "data/raw",
@@ -190,6 +205,8 @@ class Data004LargeFilesNotCommitted(BaseChecker):
     check_id = "DATA004"
     title = "Large files not in repository"
     severity = Severity.WARNING
+    category = "data"
+    description = "Checks that large data files are not committed directly, or are managed via Git LFS or .gitignore."
 
     _LARGE_EXTENSIONS = frozenset({
         ".h5", ".hdf5", ".pkl", ".pickle", ".npy", ".npz",
@@ -262,6 +279,8 @@ class Data005DataPathsInGitignore(BaseChecker):
     check_id = "DATA005"
     title = "Data paths in .gitignore"
     severity = Severity.INFO
+    category = "data"
+    description = "Checks that data-related patterns (data/, *.csv, *.h5) are listed in .gitignore."
 
     _DATA_PATTERNS = re.compile(
         r"(?:^|\s)(?:"
@@ -311,6 +330,8 @@ class Data006PrivacyAndLicensing(BaseChecker):
     check_id = "DATA006"
     title = "Privacy and licensing for data"
     severity = Severity.INFO
+    category = "data"
+    description = "Checks for data privacy or licensing information (DATA_LICENSE, consent, anonymization notes)."
 
     _PRIVACY_KEYWORDS = re.compile(
         r"\b(?:license|privacy|public|synthetic|simulated|anonymized|consent)\b",

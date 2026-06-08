@@ -63,8 +63,6 @@ jobs:
           path: oss-paper-ci-report.md
 ```
 
-Replace `<owner>/<repo>` with the actual GitHub repository after publication.
-
 For more options (SARIF upload, PR comments, baseline regression), see
 [examples/github-actions/](examples/github-actions/) and
 [docs/github-actions.md](docs/github-actions.md).
@@ -207,8 +205,6 @@ repos:
     hooks:
       - id: oss-paper-ci
 ```
-
-Replace `<tag>` with the actual release tag after publication.
 
 See [docs/pre-commit.md](docs/pre-commit.md) for configuration options.
 

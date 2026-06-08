@@ -1,12 +1,12 @@
 Metadata-Version: 2.4
 Name: oss-paper-ci
-Version: 0.1.0
+Version: 1.0.0rc1
 Summary: CI tool for checking reproducibility readiness of scientific paper repositories
 Author: oss-paper-ci contributors
 License: MIT
-Project-URL: Homepage, https://github.com/oss-paper-ci/oss-paper-ci
-Project-URL: Repository, https://github.com/oss-paper-ci/oss-paper-ci
-Project-URL: Issues, https://github.com/oss-paper-ci/oss-paper-ci/issues
+Project-URL: Homepage, https://github.com/Akastella/oss-paper-ci
+Project-URL: Repository, https://github.com/Akastella/oss-paper-ci
+Project-URL: Issues, https://github.com/Akastella/oss-paper-ci/issues
 Keywords: reproducibility,science,ci,paper,open-source
 Classifier: Development Status :: 3 - Alpha
 Classifier: Intended Audience :: Science/Research
@@ -23,115 +23,48 @@ Requires-Dist: pyyaml>=6.0
 Provides-Extra: dev
 Requires-Dist: pytest>=7.0; extra == "dev"
 Requires-Dist: pytest-cov>=4.0; extra == "dev"
+Requires-Dist: build>=1.0; extra == "dev"
+Requires-Dist: twine>=5.0; extra == "dev"
 Dynamic: license-file
 
 # oss-paper-ci
 
 CI tool for checking reproducibility readiness of scientific paper repositories.
 
-## What it does
+## What it checks
 
-oss-paper-ci scans a research repository and checks whether it has the engineering
-basics needed for reproducibility: environment files, README, citation info, data
-documentation, experiment scripts, and CI configuration. It produces a scored report
-with actionable recommendations.
+Scans a repository for engineering basics needed for reproducibility: environment
+files, README, citation info, data documentation, experiment scripts, and CI
+configuration. Produces a scored report with actionable recommendations.
 
-## What it does NOT do
+## What it does NOT check
 
-- Evaluate paper quality or scientific merit
-- Judge whether results are correct
-- Predict paper acceptance
-- Replace peer review
-- Run your experiments
+- Paper quality or scientific merit
+- Whether results are correct
+- Paper acceptance likelihood
+- Peer review
+- Running your experiments
 
-## Installation
+## Quickstart
 
 ```bash
-# From PyPI
-pip install oss-paper-ci
-
-# Or editable install for development
-git clone https://github.com/oss-paper-ci/oss-paper-ci.git
+git clone https://github.com/Akastella/oss-paper-ci.git
 cd oss-paper-ci
-pip install -e ".[dev]"
-```
-
-## Usage
-
-### Scan a repository
-
-```bash
-# Scan current directory (markdown output)
-oss-paper-ci scan
-
-# Scan a specific path, output JSON
-oss-paper-ci scan /path/to/repo --format json
-
-# Write report to file
-oss-paper-ci scan --format markdown -o report.md
-
-# Use a custom config
-oss-paper-ci scan --config my-config.yml
-```
-
-### Generate a default config file
-
-```bash
-oss-paper-ci init
-```
-
-This creates `oss-paper-ci.yml` in the current directory.
-
-### Explain a check
-
-```bash
-oss-paper-ci explain ENV001
-```
-
-### Print version
-
-```bash
+python -m pip install -e ".[dev]"
 oss-paper-ci version
 ```
 
-## Example output
+Then scan a repository:
 
-```
-# Reproducibility Report
-
-**Repository:** ./my-paper-repo
-**Score:** 62 / 100
-**Status:** warn
-
-## Checks (41 total)
-
-| ID      | Title                          | Status | Severity |
-|---------|--------------------------------|--------|----------|
-| META001 | README file exists             | pass   | error    |
-| META002 | LICENSE file exists            | pass   | error    |
-| META003 | Citation information exists    | warn   | warning  |
-| ENV001  | Environment spec file exists   | pass   | error    |
-| ENV002  | Lock file exists               | warn   | warning  |
-| DATA001 | Data source documentation      | warn   | warning  |
-| EXP001  | Experiment entry points exist  | pass   | error    |
-| ...     | ...                            | ...    | ...      |
+```bash
+oss-paper-ci scan /path/to/your/repo
 ```
 
-## Check categories
+## GitHub Actions usage
 
-| Category   | Prefix  | What it checks                                          |
-|------------|---------|---------------------------------------------------------|
-| Metadata   | META    | README, license, citation, contributing guidelines      |
-| Environment| ENV     | Dependency files, lock files, Python version, hardware   |
-| Experiments| EXP     | Entry points, reproduction scripts, seeds, config        |
-| Data       | DATA    | Data docs, download instructions, large files, privacy   |
-| Results    | RES     | Output directories, figure generation, metrics logging   |
-| Paper-Code | PAP     | LaTeX/paper links, figure references, table generation   |
-| CI         | CI      | Workflow files, test config, linting, pinned actions      |
+The recommended way to use oss-paper-ci in your CI is via the GitHub Action.
 
-## GitHub Actions integration
-
-Add this workflow to your repository (`.github/workflows/reproducibility.yml`):
+After oss-paper-ci is published to GitHub with a tag (e.g. `v1`):
 
 ```yaml
 name: Reproducibility Check
@@ -142,24 +75,167 @@ on:
     branches: [main]
 
 jobs:
-  check:
+  oss-paper-ci:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: Akastella/oss-paper-ci@v1.0.0rc1
         with:
-          python-version: "3.12"
-      - run: pip install oss-paper-ci
-      - run: oss-paper-ci scan --format markdown -o report.md
-      - name: Post report
+          path: "."
+          format: "markdown"
+          output: "oss-paper-ci-report.md"
+      - name: Upload report
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: reproducibility-report
-          path: report.md
+          name: oss-paper-ci-report
+          path: oss-paper-ci-report.md
 ```
 
-Exit codes: `0` = all checks pass, `1` = warnings only, `2` = failures.
+For more options (SARIF upload, PR comments, baseline regression), see
+[examples/github-actions/](examples/github-actions/) and
+[docs/github-actions.md](docs/github-actions.md).
+
+## CLI
+
+### Scan
+
+```bash
+# Scan current directory (markdown output)
+oss-paper-ci scan
+
+# Scan specific path, output JSON
+oss-paper-ci scan /path/to/repo --format json
+
+# Write report to file
+oss-paper-ci scan --format markdown -o report.md
+
+# SARIF output for GitHub Code Scanning
+oss-paper-ci scan --format sarif -o results.sarif
+
+# Use custom config
+oss-paper-ci scan --config my-config.yml
+```
+
+### Init
+
+Generate a default config file:
+
+```bash
+oss-paper-ci init
+```
+
+Creates `oss-paper-ci.yml` in the current directory.
+
+### Explain
+
+Get details about a specific check:
+
+```bash
+oss-paper-ci explain ENV001
+```
+
+### List checks
+
+```bash
+oss-paper-ci list-checks
+```
+
+### Version
+
+```bash
+oss-paper-ci version
+```
+
+## Report formats
+
+| Format     | Flag                    | Use case                          |
+|------------|-------------------------|-----------------------------------|
+| Markdown   | `--format markdown`     | Human-readable, CI artifacts      |
+| JSON       | `--format json`         | Programmatic access, CI gates     |
+| SARIF      | `--format sarif`        | GitHub Code Scanning, VS Code     |
+
+## Check categories
+
+| Category    | Prefix | What it checks                                     |
+|-------------|--------|----------------------------------------------------|
+| Metadata    | META   | README, license, citation, contributing guidelines |
+| Environment | ENV    | Dependency files, lock files, Python version       |
+| Experiments | EXP    | Entry points, reproduction scripts, seeds, config  |
+| Data        | DATA   | Data docs, download instructions, large files      |
+| Results     | RES    | Output directories, figure generation, metrics     |
+| Paper-Code  | PAP    | LaTeX/paper links, figure references, tables       |
+| CI          | CI     | Workflow files, test config, linting, templates    |
+
+## Reproducibility contract
+
+Define expected reproduction steps in `reproducibility.yml`:
+
+```yaml
+experiments:
+  - id: train
+    command: python scripts/train.py
+    timeout: 300
+  - id: evaluate
+    command: python scripts/evaluate.py
+    depends_on: [train]
+```
+
+See [docs/reproducibility-contract.md](docs/reproducibility-contract.md).
+
+## Evidence graph
+
+Visualize file dependencies and relationships:
+
+```bash
+oss-paper-ci graph /path/to/repo --format json
+oss-paper-ci graph /path/to/repo --format dot --show-orphans
+```
+
+See [docs/evidence-graph.md](docs/evidence-graph.md).
+
+## Baseline regression
+
+Create a score baseline and detect regressions:
+
+```bash
+oss-paper-ci baseline create /path/to/repo --output baseline.json
+oss-paper-ci baseline compare /path/to/repo --baseline baseline.json
+```
+
+See [docs/baselines.md](docs/baselines.md).
+
+## Smoke runs
+
+Run experiment smoke tests with a security policy:
+
+```bash
+oss-paper-ci smoke /path/to/repo --dry-run
+oss-paper-ci smoke /path/to/repo --experiment train --timeout 120
+```
+
+See [docs/smoke-runs.md](docs/smoke-runs.md).
+
+## Cross-language support
+
+Python has the deepest static analysis. R, Julia, MATLAB, Make, and Snakemake
+currently receive basic reproducibility asset checks (environment files, script
+entry points, data/result directories), not full semantic validation.
+
+See [docs/cross-language.md](docs/cross-language.md) for details.
+
+## Pre-commit hook
+
+```yaml
+# .pre-commit-config.yaml
+repos:
+  - repo: https://github.com/Akastella/oss-paper-ci
+    rev: v1.0.0rc1
+    hooks:
+      - id: oss-paper-ci
+```
+
+See [docs/pre-commit.md](docs/pre-commit.md) for configuration options.
 
 ## Configuration
 
@@ -184,40 +260,57 @@ checks:
   require_citation: true
   require_environment: true
   require_quickstart: true
+  disabled:
+    - "META005"
+  severity_overrides:
+    "CI001": "warning"
 ignore:
   paths:
     - ".git"
     - ".venv"
     - "node_modules"
-    - "__pycache__"
 output:
   default_format: "markdown"
 ```
 
-## Design principles
+See [docs/configuration.md](docs/configuration.md) for the full reference.
 
-- **Explainable evidence.** Every check result includes the specific files or
-  patterns that triggered it, plus a concrete recommendation.
-- **No external API dependencies.** Runs entirely locally. No network calls.
-- **No LLM required.** All checks are deterministic rule-based inspections.
-- **Cross-platform.** Works on Linux, macOS, and Windows.
-- **Zero config sensible defaults.** Works out of the box with no config file.
+## Score interpretation
 
-## Roadmap (v0.2.0)
+The score is 0-100. Status is determined by:
 
-- [ ] Deep LaTeX parsing: extract \input, \includegraphics, \bibliography references
-- [ ] Container verification: check Dockerfile/Singularity for completeness
-- [ ] Custom check plugins: user-defined checks via entry points
-- [ ] SARIF output format for GitHub code scanning integration
-- [ ] Per-directory scoring: identify which parts of the repo need work
-- [ ] R and Julia environment detection
+| Status | Meaning                                                     |
+|--------|-------------------------------------------------------------|
+| pass   | Score >= `min_score` AND no error-level failures            |
+| warn   | Score >= `min_score` with warnings, OR no errors but < 80  |
+| fail   | Any error-level check failed, OR score < 50                 |
 
-## Disclaimer
+A high score means good engineering practices for reproducibility. It does not
+mean the science is correct. A low score means missing engineering basics, not
+bad research.
 
-This tool evaluates repository engineering readiness, not paper quality.
-A high score means the repo is well-structured for reproducibility -- it says
-nothing about whether the science is correct. A low score means the repo is
-missing common engineering practices -- it does not mean the research is bad.
+## Limitations
+
+- No deep LaTeX compilation -- detects `.tex` files but does not compile them.
+- No experiment execution -- checks for scripts but does not run them.
+- No result value verification -- checks for output directories, not correctness.
+- Cross-language checks are shallow: Python has the deepest static analysis;
+  R, Julia, MATLAB, Make, and Snakemake currently receive basic reproducibility
+  asset checks, not full semantic validation.
+- Score is readiness, not quality.
+
+See [docs/limitations.md](docs/limitations.md) for the full list.
+
+## Development
+
+```bash
+git clone https://github.com/Akastella/oss-paper-ci.git
+cd oss-paper-ci
+python -m pip install -e ".[dev]"
+python -m pytest tests/ -v
+```
+
+To add a new check, see [docs/check-authoring.md](docs/check-authoring.md).
 
 ## License
 

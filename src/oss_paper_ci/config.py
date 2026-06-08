@@ -19,6 +19,9 @@ class ChecksConfig:
     require_citation: bool = True
     require_environment: bool = True
     require_quickstart: bool = True
+    enabled: list[str] = field(default_factory=list)   # empty = all enabled
+    disabled: list[str] = field(default_factory=list)
+    severity_overrides: dict[str, str] = field(default_factory=dict)
 
 
 @dataclass
@@ -120,6 +123,9 @@ def _parse_config_file(path: Path) -> Config:
             require_citation=c.get("require_citation", True),
             require_environment=c.get("require_environment", True),
             require_quickstart=c.get("require_quickstart", True),
+            enabled=c.get("enabled", []),
+            disabled=c.get("disabled", []),
+            severity_overrides=c.get("severity_overrides", {}),
         )
 
     if "ignore" in data and isinstance(data["ignore"], dict):

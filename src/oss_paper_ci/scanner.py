@@ -2,14 +2,15 @@
 
 from __future__ import annotations
 
+from datetime import datetime, timezone
 from pathlib import Path
 
 from oss_paper_ci import __version__
 from oss_paper_ci.checks import run_all_checks
 from oss_paper_ci.config import Config, load_config
-from oss_paper_ci.models import Report, RepoInfo, Summary
-from oss_paper_ci.scoring import compute_score
-from oss_paper_ci.utils.fs import find_files_by_extension
+from oss_paper_ci.models import Report, ReportMetadata, RepoInfo, Status, Summary
+from oss_paper_ci.scoring import compute_score, get_score_breakdown
+from oss_paper_ci.utils.fs import find_files_by_extension, list_files
 
 
 def scan(repo_path: str, config: Config | None = None) -> Report:
@@ -42,16 +43,37 @@ def scan(repo_path: str, config: Config | None = None) -> Report:
 
     # Compute score
     score, status, counts = compute_score(checks)
+    breakdown = get_score_breakdown(checks)
 
-    summary = Summary(score=score, status=status, counts=counts)
+    summary = Summary(score=score, status=status, counts=counts, score_breakdown=breakdown)
+
+    # Populate metadata
+    all_files = list_files(repo_path, config.ignore.paths)
+    metadata = ReportMetadata(
+        generated_at=datetime.now(timezone.utc).isoformat(),
+        scanned_files=len(all_files),
+        ignored_paths=list(config.ignore.paths) if config.ignore.paths else [],
+    )
+
+    # Collect recommendations and blocking issues from checks
+    recommendations = []
+    blocking_issues = []
+    for check in checks:
+        if check.recommendation and check.status != Status.PASS:
+            recommendations.append(check.recommendation)
+        if check.status == Status.FAIL:
+            blocking_issues.append(f"{check.id}: {check.message}")
 
     return Report(
-        schema_version="0.1",
+        schema_version="0.2",
         tool="oss-paper-ci",
         version=__version__,
         repository=repo_info,
         summary=summary,
         checks=checks,
+        metadata=metadata,
+        recommendations=recommendations,
+        blocking_issues=blocking_issues,
     )
 
 

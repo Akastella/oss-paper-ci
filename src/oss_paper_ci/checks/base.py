@@ -60,6 +60,9 @@ class BaseChecker(ABC):
     check_id: str = ""
     title: str = ""
     severity: Severity = Severity.INFO
+    category: str = ""
+    default_enabled: bool = True
+    description: str = ""
 
     @abstractmethod
     def check(self, ctx: CheckContext) -> list[CheckResult]:
@@ -72,7 +75,7 @@ class BaseChecker(ABC):
             List of CheckResult objects.
         """
 
-    def _pass(self, message: str, evidence: list[str] | None = None) -> CheckResult:
+    def _pass(self, message: str, evidence: list[str] | None = None, recommendation: str = "") -> CheckResult:
         return CheckResult(
             id=self.check_id,
             title=self.title,
@@ -80,6 +83,7 @@ class BaseChecker(ABC):
             status=Status.PASS,
             message=message,
             evidence=evidence or [],
+            recommendation=recommendation,
         )
 
     def _warn(self, message: str, evidence: list[str] | None = None, recommendation: str = "") -> CheckResult:

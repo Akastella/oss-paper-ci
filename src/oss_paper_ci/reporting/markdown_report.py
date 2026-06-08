@@ -24,12 +24,18 @@ _SEVERITY_EMOJI = {
 }
 
 
-def generate_markdown_report(report: Report, output_path: str | None = None) -> str:
+def generate_markdown_report(
+    report: Report,
+    output_path: str | None = None,
+    verbose: bool = False,
+) -> str:
     """Generate a Markdown report suitable for GitHub PR comments.
 
     Args:
         report: The Report object.
         output_path: If provided, write to this file.
+        verbose: If True, show all check details with evidence.
+                 If False, show summary, blocking issues, and top recommendations only.
 
     Returns:
         Markdown string.
@@ -70,38 +76,47 @@ def generate_markdown_report(report: Report, output_path: str | None = None) -> 
             lines.append(f"- **{c.id}**: {c.message}")
         lines.append("")
 
-    # Check details
-    lines.append("## 📋 Check Details")
-    lines.append("")
-    lines.append("| ID | Title | Status | Severity |")
-    lines.append("|----|-------|--------|----------|")
-    for c in report.checks:
-        s_val = c.status.value if hasattr(c.status, 'value') else c.status
-        sev_val = c.severity.value if hasattr(c.severity, 'value') else c.severity
-        s_emoji = _STATUS_EMOJI.get(s_val, "")
-        sev_emoji = _SEVERITY_EMOJI.get(sev_val, "")
-        lines.append(f"| {c.id} | {c.title} | {s_emoji} {s_val} | {sev_emoji} {sev_val} |")
-    lines.append("")
-
-    # Evidence and recommendations for non-passing checks
-    non_passing = [c for c in report.checks if c.status != Status.PASS]
-    if non_passing:
-        lines.append("## 🔍 Evidence & Recommendations")
+    # Top recommendations (always shown)
+    if report.recommendations:
+        lines.append("## 💡 Recommendations")
         lines.append("")
-        for c in non_passing:
-            lines.append(f"### {c.id}: {c.title}")
+        for rec in report.recommendations:
+            lines.append(f"- {rec}")
+        lines.append("")
+
+    if verbose:
+        # Verbose mode: full check details with evidence
+        lines.append("## 📋 Check Details")
+        lines.append("")
+        lines.append("| ID | Title | Status | Severity |")
+        lines.append("|----|-------|--------|----------|")
+        for c in report.checks:
+            s_val = c.status.value if hasattr(c.status, 'value') else c.status
+            sev_val = c.severity.value if hasattr(c.severity, 'value') else c.severity
+            s_emoji = _STATUS_EMOJI.get(s_val, "")
+            sev_emoji = _SEVERITY_EMOJI.get(sev_val, "")
+            lines.append(f"| {c.id} | {c.title} | {s_emoji} {s_val} | {sev_emoji} {sev_val} |")
+        lines.append("")
+
+        # Evidence and recommendations for non-passing checks
+        non_passing = [c for c in report.checks if c.status != Status.PASS]
+        if non_passing:
+            lines.append("## 🔍 Evidence & Recommendations")
             lines.append("")
-            if c.message:
-                lines.append(f"**Finding:** {c.message}")
+            for c in non_passing:
+                lines.append(f"### {c.id}: {c.title}")
                 lines.append("")
-            if c.evidence:
-                lines.append("**Evidence:**")
-                for e in c.evidence:
-                    lines.append(f"- `{e}`")
-                lines.append("")
-            if c.recommendation:
-                lines.append(f"**Recommendation:** {c.recommendation}")
-                lines.append("")
+                if c.message:
+                    lines.append(f"**Finding:** {c.message}")
+                    lines.append("")
+                if c.evidence:
+                    lines.append("**Evidence:**")
+                    for e in c.evidence:
+                        lines.append(f"- `{e}`")
+                    lines.append("")
+                if c.recommendation:
+                    lines.append(f"**Recommendation:** {c.recommendation}")
+                    lines.append("")
 
     # Disclaimer
     lines.append("---")

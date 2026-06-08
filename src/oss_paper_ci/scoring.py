@@ -1,33 +1,92 @@
 """Scoring engine for oss-paper-ci.
 
-The reproducibility score is a weighted sum of check results.
-It is NOT a quality score for the paper itself — only an indicator
-of whether the repository has the engineering basics for reproducibility.
+Deduction model with finding classification:
+- blocking: error-severity fail → always fail status
+- important: warning-severity fail, error-severity warn → affects status
+- advisory: info-severity warn, maintenance items → only affects score, not status
+
+Status rules:
+- fail: score < 50, or any blocking finding
+- warn: score 50-84, or any important finding
+- pass: score >= 85, no blocking, no important findings
 """
 
 from __future__ import annotations
 
 from oss_paper_ci.models import CheckResult, Severity, Status
 
-# Weight mapping: each check ID prefix maps to a category weight.
-# Weights reflect how critical each category is for reproducibility.
-CATEGORY_WEIGHTS: dict[str, float] = {
-    "META": 15,    # Repository metadata (README, LICENSE, CITATION)
-    "ENV": 20,     # Environment reproducibility
-    "EXP": 20,     # Experiment entry points
-    "DATA": 15,    # Data availability
-    "RES": 10,     # Results and figures
-    "PAP": 10,     # Paper/code consistency
-    "CI": 10,      # CI and maintenance
+# Per-check deduction by (severity, status)
+_UNIT_DEDUCTION: dict[tuple[str, str], int] = {
+    ("error", "fail"): 5,
+    ("error", "warn"): 2,
+    ("error", "unknown"): 3,
+    ("warning", "fail"): 4,
+    ("warning", "warn"): 1,
+    ("warning", "unknown"): 1,
+    ("info", "fail"): 2,
+    ("info", "unknown"): 0,
+    ("info", "pass"): 0,
 }
 
-# Penalty per failed check within a category
-FAIL_PENALTY = {
-    Status.PASS: 0,
-    Status.WARN: 0.3,    # 30% penalty
-    Status.FAIL: 1.0,    # 100% penalty
-    Status.UNKNOWN: 0.1, # 10% penalty for unknown
+# Per-category deduction cap
+_CATEGORY_CAP: dict[str, int] = {
+    "META": 20,
+    "ENV": 20,
+    "EXP": 15,
+    "DATA": 10,
+    "RES": 8,
+    "PAP": 8,
+    "CI": 8,
 }
+
+# Critical penalties — applied ON TOP of per-check deductions
+_CRITICAL_CHECKS: dict[str, int] = {
+    "META001": 15,  # README — most critical
+    "META002": 10,  # LICENSE
+    "ENV001": 15,   # Environment file — most critical
+}
+
+# Advisory checks — these are maintenance items, not reproducibility blockers
+_ADVISORY_CHECKS: set[str] = {
+    "CI003",  # Linting/formatting
+    "CI004",  # Issue/PR templates
+    "CI005",  # Security policy
+    "CI006",  # Package metadata
+    "META005",  # Contributing guidelines
+    "META007",  # Artifact metadata
+}
+
+
+def classify_finding(check: CheckResult) -> str:
+    """Classify a check result as blocking, important, or advisory.
+
+    Returns:
+        "blocking", "important", or "advisory"
+    """
+    sev = check.severity.value if hasattr(check.severity, 'value') else check.severity
+    stat = check.status.value if hasattr(check.status, 'value') else check.status
+
+    # Advisory: maintenance items that don't affect reproducibility
+    if check.id in _ADVISORY_CHECKS:
+        return "advisory"
+    if sev == "info" and stat == "warn":
+        return "advisory"
+
+    # Blocking: error-severity failures
+    if sev == "error" and stat == "fail":
+        return "blocking"
+
+    # Important: warning-severity failures, error-severity warnings
+    if sev == "warning" and stat == "fail":
+        return "important"
+    if sev == "error" and stat == "warn":
+        return "important"
+
+    # Everything else (pass, unknown) is advisory
+    if stat == "pass":
+        return "advisory"
+
+    return "advisory"
 
 
 def compute_score(checks: list[CheckResult]) -> tuple[int, str, dict[str, int]]:
@@ -39,7 +98,6 @@ def compute_score(checks: list[CheckResult]) -> tuple[int, str, dict[str, int]]:
     if not checks:
         return 0, "unknown", {"info": 0, "warning": 0, "error": 0}
 
-    # Count severities
     counts = {"info": 0, "warning": 0, "error": 0}
     for c in checks:
         if c.severity == Severity.INFO:
@@ -49,56 +107,60 @@ def compute_score(checks: list[CheckResult]) -> tuple[int, str, dict[str, int]]:
         elif c.severity == Severity.ERROR:
             counts["error"] += 1
 
-    # Group checks by category (prefix of check ID)
-    category_results: dict[str, list[CheckResult]] = {}
+    # Per-category deduction
+    category_deductions: dict[str, int] = {}
     for c in checks:
         prefix = c.id[:3] if len(c.id) >= 3 else c.id
-        category_results.setdefault(prefix, []).append(c)
+        sev = c.severity.value if hasattr(c.severity, 'value') else c.severity
+        stat = c.status.value if hasattr(c.status, 'value') else c.status
+        unit = _UNIT_DEDUCTION.get((sev, stat), 0)
+        if unit > 0:
+            category_deductions[prefix] = category_deductions.get(prefix, 0) + unit
 
-    # Compute weighted score
-    total_weight = 0.0
-    weighted_score = 0.0
+    # Apply category caps
+    total_deduction = 0
+    for prefix, raw in category_deductions.items():
+        cap = _CATEGORY_CAP.get(prefix, 10)
+        total_deduction += min(raw, cap)
 
-    for prefix, weight in CATEGORY_WEIGHTS.items():
-        cat_checks = category_results.get(prefix, [])
-        if not cat_checks:
-            continue
+    # Critical penalties
+    for c in checks:
+        if c.id in _CRITICAL_CHECKS and c.status == Status.FAIL:
+            total_deduction += _CRITICAL_CHECKS[c.id]
 
-        total_weight += weight
+    score = max(0, 100 - total_deduction)
 
-        # Calculate category score: start at 1.0, subtract penalties
-        cat_penalty = 0.0
-        for c in cat_checks:
-            cat_penalty += FAIL_PENALTY.get(c.status, 0.1)
+    # Status determination using finding classification
+    has_blocking = any(classify_finding(c) == "blocking" for c in checks)
+    has_important = any(classify_finding(c) == "important" for c in checks)
 
-        # Normalize penalty by number of checks in category
-        avg_penalty = cat_penalty / len(cat_checks) if cat_checks else 0
-        cat_score = max(0.0, 1.0 - avg_penalty)
-        weighted_score += weight * cat_score
-
-    # Handle checks with unknown prefixes
-    known_prefixes = set(CATEGORY_WEIGHTS.keys())
-    unknown_checks = [c for c in checks if c.id[:3] not in known_prefixes]
-    if unknown_checks:
-        weight = 10.0
-        total_weight += weight
-        avg_penalty = sum(FAIL_PENALTY.get(c.status, 0.1) for c in unknown_checks) / len(unknown_checks)
-        weighted_score += weight * max(0.0, 1.0 - avg_penalty)
-
-    if total_weight == 0:
-        return 0, "unknown", counts
-
-    score = round(100 * weighted_score / total_weight)
-    score = max(0, min(100, score))
-
-    # Determine overall status based on actual check outcomes
-    has_fail = any(c.status == Status.FAIL for c in checks)
-    has_warn = any(c.status == Status.WARN for c in checks)
-    if has_fail:
+    if score < 50 or has_blocking:
         status = "fail"
-    elif has_warn:
+    elif score < 85 or has_important:
         status = "warn"
     else:
         status = "pass"
 
     return score, status, counts
+
+
+def get_score_breakdown(checks: list[CheckResult]) -> list[dict[str, object]]:
+    """Get a breakdown of deductions for each non-passing check."""
+    breakdown = []
+    for c in checks:
+        sev = c.severity.value if hasattr(c.severity, 'value') else c.severity
+        stat = c.status.value if hasattr(c.status, 'value') else c.status
+        unit = _UNIT_DEDUCTION.get((sev, stat), 0)
+        critical = _CRITICAL_CHECKS.get(c.id, 0) if c.status == Status.FAIL else 0
+        total = unit + critical
+        classification = classify_finding(c)
+        if total > 0:
+            breakdown.append({
+                "id": c.id,
+                "title": c.title,
+                "severity": sev,
+                "status": stat,
+                "deduction": total,
+                "classification": classification,
+            })
+    return breakdown

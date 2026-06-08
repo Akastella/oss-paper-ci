@@ -16,6 +16,8 @@ class CI001WorkflowsExist(BaseChecker):
     check_id = "CI001"
     title = "GitHub Actions workflows exist"
     severity = Severity.INFO
+    category = "ci"
+    description = "Checks that GitHub Actions workflow files exist in .github/workflows/."
 
     def check(self, ctx: CheckContext) -> list[CheckResult]:
         workflows = [
@@ -44,6 +46,8 @@ class CI002TestsExist(BaseChecker):
     check_id = "CI002"
     title = "Tests exist"
     severity = Severity.WARNING
+    category = "ci"
+    description = "Checks that test files or test configuration (pytest, tox) exist in the repository."
 
     _TEST_FILE_PATTERNS = (
         re.compile(r".*_test\.py$"),
@@ -111,6 +115,8 @@ class CI003LintingConfigured(BaseChecker):
     check_id = "CI003"
     title = "Linting or formatting configured"
     severity = Severity.INFO
+    category = "ci"
+    description = "Checks that linting or formatting tools (ruff, black, flake8, pre-commit) are configured."
 
     _LINT_FILES = (
         ".flake8",
@@ -162,6 +168,8 @@ class CI004IssuePRTemplates(BaseChecker):
     check_id = "CI004"
     title = "Issue or PR templates exist"
     severity = Severity.INFO
+    category = "ci"
+    description = "Checks for issue or pull request templates in .github/."
 
     def check(self, ctx: CheckContext) -> list[CheckResult]:
         found: list[str] = []
@@ -208,6 +216,8 @@ class CI005SecurityPolicy(BaseChecker):
     check_id = "CI005"
     title = "Security policy exists"
     severity = Severity.INFO
+    category = "ci"
+    description = "Checks for a SECURITY.md file describing how to report vulnerabilities."
 
     _POLICY_PATHS = (
         "SECURITY.md",
@@ -240,6 +250,8 @@ class CI006PackageMetadata(BaseChecker):
     check_id = "CI006"
     title = "Package metadata complete"
     severity = Severity.INFO
+    category = "ci"
+    description = "Checks that package metadata (name, version, description, license, authors) is complete."
 
     _REQUIRED_FIELDS = ("name", "version", "description", "license", "authors")
 
