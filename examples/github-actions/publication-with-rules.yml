@@ -1,0 +1,20 @@
+# Example: Publication profile with custom rules
+name: Publication with Custom Rules
+on: [push, pull_request]
+
+permissions:
+  contents: read
+
+jobs:
+  reproducibility:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: Akastella/oss-paper-ci@v1
+        with:
+          profile: publication
+          rules: examples/rule-packs/citation-required.yml
+          format: json
+          output: oss-paper-ci-report.json
+          fail-under: '90'
+          step-summary: 'true'
