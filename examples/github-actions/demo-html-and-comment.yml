@@ -1,0 +1,51 @@
+# Demo HTML Report and PR Comment
+#
+# Generates HTML report and PR comment from scan results.
+# Uses the GitHub Action.
+
+name: Demo HTML and PR Comment
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Generate JSON report
+        uses: Akastella/oss-paper-ci@v1.0.0rc1
+        with:
+          path: "."
+          format: "json"
+          output: "report.json"
+
+      - name: Generate HTML report
+        uses: Akastella/oss-paper-ci@v1.0.0rc1
+        with:
+          path: "."
+          format: "html"
+          output: "report.html"
+
+      - name: Generate PR comment
+        run: |
+          pip install oss-paper-ci  # after PyPI publication
+          oss-paper-ci comment --input report.json --output pr-comment.md
+
+      - name: Upload reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reports
+          path: |
+            report.json
+            report.html
+            pr-comment.md

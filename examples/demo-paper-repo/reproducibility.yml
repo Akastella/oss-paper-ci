@@ -1,0 +1,12 @@
+experiments:
+  - id: train
+    command: python scripts/train.py
+    timeout: 60
+  - id: evaluate
+    command: python scripts/evaluate.py
+    depends_on: [train]
+    timeout: 60
+  - id: figures
+    command: python scripts/make_figures.py
+    depends_on: [evaluate]
+    timeout: 60
