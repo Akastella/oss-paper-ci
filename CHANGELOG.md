@@ -1,5 +1,21 @@
 # Changelog
 
+## 1.4.0rc1 (2026-06-09)
+
+### Added
+- `--format github` for GitHub Actions annotation output
+- `--github-step-summary` to write Markdown summary to `$GITHUB_STEP_SUMMARY`
+- `--max-annotations` to limit annotation count
+- SARIF 2.1.0 export with rules, results, and physical locations
+- HTML report improvements: section anchors, metadata, no external CDN
+- PR comment improvements: collapsible details, markdown table, score badge
+- Demo paper repo GitHub Actions workflow example
+- GitHub Actions workflow template in docs and examples
+- CI dogfooding tests
+
+### Changed
+- Version bumped to 1.4.0rc1
+
 ## 1.3.0rc1 (2026-06-08)
 
 ### Added
