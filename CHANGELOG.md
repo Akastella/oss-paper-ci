@@ -1,5 +1,40 @@
 # Changelog
 
+## 1.7.0rc1 (2026-06-09)
+
+### Added
+- Workspace configuration (`oss-paper-ci-workspace.yml`) for multi-project batch scanning
+- `oss-paper-ci workspace validate` — validate workspace file
+- `oss-paper-ci workspace list` — list projects in workspace
+- `oss-paper-ci batch scan` — scan all projects in a workspace
+- `oss-paper-ci batch diff` — compare two batch scan reports
+- `oss-paper-ci cache clean` — remove all cached results
+- `oss-paper-ci cache info` — show cache statistics
+- `--jobs N` flag for parallel batch scanning (default: 1)
+- `--cache` flag for incremental scanning with file/config/rules hashing
+- Batch report JSON schema v0.5 with workspace summary, per-project results, and cache stats
+- Aggregate Markdown report with project table, status counts, and cache summary
+- Aggregate HTML report (single file, no external CDN)
+- Batch diff with project_added, project_removed, score_delta, status_delta, new_failures, resolved_failures
+- Error isolation: single project failure does not crash batch
+- Deterministic output order matching workspace project order
+- `.oss-paper-ci-cache/` directory with JSON cache files
+- Cache invalidation on file/config/rules/profile/version changes
+- Corrupt cache auto-recovery (treats as miss)
+- Workspace examples: demo, strict-publication, mixed-fixtures
+- GitHub Action `workspace`, `jobs`, `cache` inputs
+- GitHub Action batch scan step (conditional on workspace input)
+- GitHub Actions examples: workspace-batch, workspace-cache, workspace-publication-gate
+- Synthetic corpus generator (`scripts/generate_synthetic_corpus.py`)
+- Scale gate benchmark (`scripts/scale_gate.py`)
+- Documentation: workspace.md, batch-scan.md, cache.md, parallelism.md, batch-diff.md, scale-gate.md
+- Tests: workspace config, batch scan, batch reports, batch diff, cache, parallel batch, scale gate, action inputs, docs truthfulness
+
+### Changed
+- Version bumped to 1.7.0rc1
+- Report schema updated to version 0.5 (batch reports)
+- `.gitignore` updated to exclude `.oss-paper-ci-cache/`
+
 ## 1.6.0rc1 (2026-06-09)
 
 ### Added

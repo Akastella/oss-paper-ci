@@ -1,0 +1,26 @@
+name: Publication Gate — Multi-Project
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  publication-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Publication gate scan
+        uses: Akastella/oss-paper-ci@main
+        with:
+          workspace: examples/workspaces/strict-publication-workspace.yml
+          format: markdown
+          output: publication-gate-report.md
+          jobs: '2'
+
+      - name: Upload report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: publication-gate-report
+          path: publication-gate-report.md

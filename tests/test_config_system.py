@@ -328,7 +328,7 @@ class TestReportDiff:
             "policy": {"profile": "default"},
         }
         new = {
-            "version": "1.6.0rc1",
+            "version": "1.7.0rc1",
             "summary": {"score": 82, "status": "warn"},
             "checks": [
                 {"id": "META002", "title": "License", "severity": "error", "status": "pass", "message": "MIT LICENSE"},
@@ -383,7 +383,7 @@ class TestCLIIntegration:
             capture_output=True, text=True, cwd=ROOT, timeout=10,
         )
         assert result.returncode == 0
-        assert "1.6.0rc1" in result.stdout
+        assert "1.7.0rc1" in result.stdout
 
     def test_scan_with_profile(self):
         result = subprocess.run(
@@ -616,15 +616,15 @@ class TestVersionConsistency:
 
     def test_init_version(self):
         content = (ROOT / "src" / "oss_paper_ci" / "__init__.py").read_text()
-        assert "1.6.0rc1" in content
+        assert "1.7.0rc1" in content
 
     def test_pyproject_version(self):
         content = (ROOT / "pyproject.toml").read_text()
-        assert 'version = "1.6.0rc1"' in content
+        assert 'version = "1.7.0rc1"' in content
 
     def test_cli_version_output(self):
         result = subprocess.run(
             [sys.executable, "-m", "oss_paper_ci", "version"],
             capture_output=True, text=True, cwd=ROOT, timeout=10,
         )
-        assert "1.6.0rc1" in result.stdout
+        assert "1.7.0rc1" in result.stdout

@@ -1,0 +1,23 @@
+{
+  "corpus_dir": "tests\\fixtures\\synthetic_corpus",
+  "repo_count": 5,
+  "jobs_1_runtime": 0.0,
+  "jobs_2_runtime": 0.265,
+  "semantic_match": true,
+  "mismatches": [],
+  "pass": true,
+  "summary_jobs_1": {
+    "pass": 0,
+    "warn": 0,
+    "fail": 0,
+    "error": 5,
+    "average_score": 0.0
+  },
+  "summary_jobs_2": {
+    "pass": 0,
+    "warn": 0,
+    "fail": 0,
+    "error": 5,
+    "average_score": 0.0
+  }
+}

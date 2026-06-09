@@ -1,4 +1,4 @@
-"""Release gate tests for v1.6.0rc1.
+"""Release gate tests for v1.7.0rc1.
 
 Tests that verify the release package is truthful, clean, and ready for public upload.
 Covers: clean zip structure, docs truthfulness, action.yml correctness,
@@ -155,9 +155,14 @@ class TestCleanZipNoStaleContent:
             for old in old_rounds:
                 assert old not in n, f"Old dogfooding round found: {n}"
 
-    def test_current_dogfooding_included(self):
+    def test_workspace_examples_included(self):
+        zpath = _find_clean_zip()
+        if zpath is None:
+            pytest.skip("No clean zip found")
+        if "v1.7" not in zpath.name:
+            pytest.skip("Workspace examples only in v1.7+ clean zip")
         names = _zip_names()
-        assert any("round10" in n for n in names), "Current dogfooding (round10) not included"
+        assert any("workspaces" in n for n in names), "Workspace examples not included"
 
     def test_no_stale_dogfooding_summary(self):
         """Root-level dogfooding_summary.md should not be in clean zip."""
@@ -435,13 +440,13 @@ class TestVersionConsistency:
         # Extract version
         for line in content.split("\n"):
             if "__version__" in line:
-                assert "1.6.0rc1" in line
+                assert "1.7.0rc1" in line
                 return
         pytest.fail("Version not found in __init__.py")
 
     def test_pyproject_version(self):
         content = (ROOT / "pyproject.toml").read_text()
-        assert 'version = "1.6.0rc1"' in content
+        assert 'version = "1.7.0rc1"' in content
 
     def test_cli_version_output(self):
         result = subprocess.run(
@@ -449,7 +454,7 @@ class TestVersionConsistency:
             capture_output=True, text=True, cwd=ROOT, timeout=10,
         )
         assert result.returncode == 0
-        assert "1.6.0rc1" in result.stdout
+        assert "1.7.0rc1" in result.stdout
 
     def test_cli_version_matches_pyproject(self):
         # Get CLI version
