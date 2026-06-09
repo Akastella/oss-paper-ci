@@ -1,0 +1,28 @@
+name: Workspace Batch Scan
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  batch-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Batch scan all projects
+        uses: Akastella/oss-paper-ci@main
+        with:
+          workspace: examples/workspaces/demo-workspace.yml
+          format: json
+          output: batch-report.json
+          jobs: '2'
+
+      - name: Upload batch report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: batch-report
+          path: batch-report.json

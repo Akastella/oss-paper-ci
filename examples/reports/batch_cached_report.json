@@ -1,0 +1,67 @@
+{
+  "schema_version": "0.5",
+  "tool": "oss-paper-ci",
+  "version": "1.7.0rc1",
+  "workspace": {
+    "name": "demo-workspace",
+    "project_count": 3
+  },
+  "summary": {
+    "pass": 2,
+    "warn": 0,
+    "fail": 1,
+    "error": 0,
+    "average_score": 86.3
+  },
+  "projects": [
+    {
+      "id": "realistic-ml",
+      "path": "E:\\Projects\\OSS-Paper-CI\\tests\\fixtures\\realistic_ml_repo",
+      "profile": "publication",
+      "status": "pass",
+      "score": 93,
+      "finding_counts": {
+        "blocking": 0,
+        "important": 0,
+        "advisory": 15
+      },
+      "cache_hit": true,
+      "duration_seconds": 0.016
+    },
+    {
+      "id": "demo-paper",
+      "path": "E:\\Projects\\OSS-Paper-CI\\examples\\demo-paper-repo",
+      "profile": "strict",
+      "status": "pass",
+      "score": 91,
+      "finding_counts": {
+        "blocking": 0,
+        "important": 0,
+        "advisory": 19
+      },
+      "cache_hit": true,
+      "duration_seconds": 0.015
+    },
+    {
+      "id": "broken-paper",
+      "path": "E:\\Projects\\OSS-Paper-CI\\tests\\fixtures\\broken_paper_repo",
+      "profile": "default",
+      "status": "fail",
+      "score": 75,
+      "finding_counts": {
+        "blocking": 1,
+        "important": 0,
+        "advisory": 24
+      },
+      "cache_hit": true,
+      "duration_seconds": 0.031
+    }
+  ],
+  "cache": {
+    "total": 3,
+    "hits": 3,
+    "misses": 0,
+    "errors": 0
+  },
+  "duration_seconds": 0.266
+}

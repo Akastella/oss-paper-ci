@@ -355,6 +355,34 @@ oss-paper-ci scan . --rules oss-paper-ci-rules.yml
 
 See [docs/rule-sdk.md](docs/rule-sdk.md) and [examples/rule-packs/](examples/rule-packs/).
 
+## Scaling to multiple repositories
+
+Scan multiple projects in a single batch run using a workspace configuration.
+
+```bash
+# Create a workspace file
+oss-paper-ci workspace validate --workspace oss-paper-ci-workspace.yml
+oss-paper-ci workspace list --workspace oss-paper-ci-workspace.yml
+
+# Batch scan
+oss-paper-ci batch scan --workspace oss-paper-ci-workspace.yml --format json --output batch-report.json
+
+# Parallel execution with cache
+oss-paper-ci batch scan --workspace oss-paper-ci-workspace.yml --jobs 2 --cache --format markdown
+
+# Compare two batch reports
+oss-paper-ci batch diff --old old-batch.json --new new-batch.json
+```
+
+See:
+- [docs/workspace.md](docs/workspace.md) — workspace configuration format
+- [docs/batch-scan.md](docs/batch-scan.md) — batch scanning guide
+- [docs/cache.md](docs/cache.md) — incremental cache
+- [docs/parallelism.md](docs/parallelism.md) — parallel execution
+- [docs/batch-diff.md](docs/batch-diff.md) — comparing batch reports
+- [docs/scale-gate.md](docs/scale-gate.md) — scale regression testing
+- [examples/workspaces/](examples/workspaces/) — example workspace files
+
 ## Score interpretation
 
 The score is 0-100. Status is determined by:

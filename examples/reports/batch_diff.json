@@ -1,0 +1,42 @@
+{
+  "old_workspace": "demo-workspace",
+  "new_workspace": "demo-workspace",
+  "old_project_count": 3,
+  "new_project_count": 3,
+  "project_added": [],
+  "project_removed": [],
+  "project_diffs": [
+    {
+      "id": "broken-paper",
+      "old_score": 75,
+      "new_score": 75,
+      "score_delta": 0,
+      "old_status": "fail",
+      "new_status": "fail",
+      "status_changed": false
+    },
+    {
+      "id": "demo-paper",
+      "old_score": 91,
+      "new_score": 91,
+      "score_delta": 0,
+      "old_status": "pass",
+      "new_status": "pass",
+      "status_changed": false
+    },
+    {
+      "id": "realistic-ml",
+      "old_score": 93,
+      "new_score": 93,
+      "score_delta": 0,
+      "old_status": "pass",
+      "new_status": "pass",
+      "status_changed": false
+    }
+  ],
+  "new_failures": [],
+  "resolved_failures": [],
+  "old_average_score": 86.3,
+  "new_average_score": 86.3,
+  "average_score_delta": 0.0
+}

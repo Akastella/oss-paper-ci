@@ -1,0 +1,11 @@
+version: 1
+name: strict-publication-workspace
+defaults:
+  profile: publication
+projects:
+  - id: realistic-ml
+    path: ../../tests/fixtures/realistic_ml_repo
+  - id: paper-ready
+    path: ../../tests/fixtures/paper_ready_repo
+  - id: demo-paper
+    path: ../demo-paper-repo

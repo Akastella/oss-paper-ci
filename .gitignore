@@ -39,3 +39,6 @@ release-artifacts/
 v1_*_truthfulness.*
 *.truthfulness.json
 *.truthfulness.md
+
+# Cache directory
+.oss-paper-ci-cache/
