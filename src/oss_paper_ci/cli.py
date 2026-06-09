@@ -118,6 +118,50 @@ def main(argv: list[str] | None = None) -> int:
     graph_parser.add_argument("--show-orphans", action="store_true")
     graph_parser.add_argument("--show-conflicts", action="store_true")
 
+    # workspace command group
+    workspace_parser = subparsers.add_parser("workspace", help="Workspace management.")
+    workspace_sub = workspace_parser.add_subparsers(dest="workspace_command")
+
+    # workspace validate
+    wv = workspace_sub.add_parser("validate", help="Validate a workspace file.")
+    wv.add_argument("--workspace", required=True, help="Path to workspace YAML file.")
+
+    # workspace list
+    wl = workspace_sub.add_parser("list", help="List projects in a workspace.")
+    wl.add_argument("--workspace", required=True, help="Path to workspace YAML file.")
+    wl.add_argument("--format", choices=["text", "json"], default="text", help="Output format.")
+
+    # batch command group
+    batch_parser = subparsers.add_parser("batch", help="Batch scanning.")
+    batch_sub = batch_parser.add_subparsers(dest="batch_command")
+
+    # batch scan
+    bs = batch_sub.add_parser("scan", help="Scan all projects in a workspace.")
+    bs.add_argument("--workspace", required=True, help="Path to workspace YAML file.")
+    bs.add_argument("--format", choices=["json", "markdown", "html"], default="markdown", help="Output format.")
+    bs.add_argument("--output", "-o", help="Write report to file.")
+    bs.add_argument("--jobs", type=int, default=1, help="Parallel workers (default: 1).")
+    bs.add_argument("--cache", action="store_true", help="Enable incremental cache.")
+
+    # batch diff
+    bd = batch_sub.add_parser("diff", help="Compare two batch reports.")
+    bd.add_argument("--old", required=True, help="Path to old batch JSON.")
+    bd.add_argument("--new", dest="new_report", required=True, help="Path to new batch JSON.")
+    bd.add_argument("--format", choices=["json", "markdown"], default="markdown", help="Output format.")
+    bd.add_argument("--output", "-o", help="Write output to file.")
+
+    # cache command group
+    cache_parser = subparsers.add_parser("cache", help="Cache management.")
+    cache_sub = cache_parser.add_subparsers(dest="cache_command")
+
+    # cache clean
+    cc = cache_sub.add_parser("clean", help="Remove all cached results.")
+    cc.add_argument("--workspace", required=True, help="Path to workspace YAML file.")
+
+    # cache info
+    ci_cache = cache_sub.add_parser("info", help="Show cache statistics.")
+    ci_cache.add_argument("--workspace", required=True, help="Path to workspace YAML file.")
+
     # version command
     subparsers.add_parser("version", help="Print version.")
 
@@ -177,6 +221,15 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "version":
         print(f"oss-paper-ci {__version__}")
         return 0
+
+    if args.command == "workspace":
+        return _cmd_workspace(args)
+
+    if args.command == "batch":
+        return _cmd_batch(args)
+
+    if args.command == "cache":
+        return _cmd_cache(args)
 
     if args.command == "init":
         return _cmd_init(
@@ -242,6 +295,277 @@ def main(argv: list[str] | None = None) -> int:
         return _cmd_comment(args.input, args.output, args.kind, args.max_findings)
 
     parser.print_help()
+    return 0
+
+
+# ── Workspace command ─────────────────────────────────────────────────────────
+
+def _cmd_workspace(args: argparse.Namespace) -> int:
+    """Handle workspace subcommand group."""
+    sub = getattr(args, "workspace_command", None)
+
+    if sub == "validate":
+        return _cmd_workspace_validate(getattr(args, "workspace", None))
+
+    if sub == "list":
+        return _cmd_workspace_list(
+            getattr(args, "workspace", None),
+            getattr(args, "format", "text"),
+        )
+
+    print("Usage: oss-paper-ci workspace {validate|list} --workspace PATH", file=sys.stderr)
+    return 1
+
+
+def _cmd_workspace_validate(workspace_path: str | None) -> int:
+    """Validate a workspace file."""
+    if not workspace_path:
+        print("Error: --workspace is required.", file=sys.stderr)
+        return 1
+
+    from oss_paper_ci.workspace import validate_workspace
+
+    result = validate_workspace(workspace_path)
+    print(result.format_text())
+    return 0 if result.valid else 1
+
+
+def _cmd_workspace_list(workspace_path: str | None, fmt: str) -> int:
+    """List projects in a workspace."""
+    import json as json_mod
+
+    if not workspace_path:
+        print("Error: --workspace is required.", file=sys.stderr)
+        return 1
+
+    from oss_paper_ci.workspace import load_workspace, list_workspace_projects
+
+    try:
+        workspace = load_workspace(workspace_path)
+    except (FileNotFoundError, ValueError) as exc:
+        print(f"Error: {exc}", file=sys.stderr)
+        return 1
+
+    projects = list_workspace_projects(workspace)
+
+    if fmt == "json":
+        print(json_mod.dumps(projects, indent=2))
+        return 0
+
+    if not projects:
+        print("No projects in workspace.")
+        return 0
+
+    # Text table
+    print(f"Workspace: {workspace.name or '(unnamed)'}")
+    print(f"Projects: {len(projects)}")
+    print()
+    print(f"{'ID':<20} {'Path':<40} {'Profile':<12} {'Allow Failure'}")
+    print("-" * 84)
+    for p in projects:
+        print(f"{p['id']:<20} {p['path']:<40} {p['profile']:<12} {p['allow_failure']}")
+
+    return 0
+
+
+# ── Batch command ─────────────────────────────────────────────────────────────
+
+def _cmd_batch(args: argparse.Namespace) -> int:
+    """Handle batch subcommand group."""
+    sub = getattr(args, "batch_command", None)
+
+    if sub == "scan":
+        return _cmd_batch_scan(
+            workspace_path=getattr(args, "workspace", None),
+            fmt=getattr(args, "format", "markdown"),
+            output=getattr(args, "output", None),
+            jobs=getattr(args, "jobs", 1),
+            use_cache=getattr(args, "cache", False),
+        )
+
+    if sub == "diff":
+        return _cmd_batch_diff(
+            old_path=getattr(args, "old", None),
+            new_path=getattr(args, "new_report", None),
+            fmt=getattr(args, "format", "markdown"),
+            output=getattr(args, "output", None),
+        )
+
+    print("Usage: oss-paper-ci batch {scan|diff} ...", file=sys.stderr)
+    return 1
+
+
+def _cmd_batch_scan(
+    *,
+    workspace_path: str | None,
+    fmt: str,
+    output: str | None,
+    jobs: int,
+    use_cache: bool,
+) -> int:
+    """Run batch scan over workspace projects."""
+    if not workspace_path:
+        print("Error: --workspace is required.", file=sys.stderr)
+        return 1
+
+    if jobs < 1:
+        print("Error: --jobs must be >= 1.", file=sys.stderr)
+        return 1
+
+    from pathlib import Path
+
+    from oss_paper_ci.batch import run_batch_scan
+    from oss_paper_ci.reporting.aggregate_report import (
+        generate_aggregate_html_report,
+        generate_aggregate_json_report,
+        generate_aggregate_markdown_report,
+    )
+    from oss_paper_ci.workspace import load_workspace
+
+    ws_path = Path(workspace_path)
+    if not ws_path.exists():
+        print(f"Error: workspace file not found: {workspace_path}", file=sys.stderr)
+        return 2
+
+    try:
+        workspace = load_workspace(workspace_path)
+    except (FileNotFoundError, ValueError) as exc:
+        print(f"Error: {exc}", file=sys.stderr)
+        return 2
+
+    batch_result = run_batch_scan(
+        workspace, ws_path, jobs=jobs, use_cache=use_cache
+    )
+    result_dict = batch_result.to_dict()
+
+    if fmt == "json":
+        text = generate_aggregate_json_report(result_dict, output_path=output)
+    elif fmt == "html":
+        text = generate_aggregate_html_report(result_dict)
+    else:
+        text = generate_aggregate_markdown_report(result_dict)
+
+    if output:
+        from pathlib import Path as P
+        P(output).write_text(text, encoding="utf-8")
+        print(f"Report written to {output}")
+    else:
+        print(text)
+
+    # Exit code based on batch status
+    summary = batch_result.summary
+    if summary.get("fail", 0) > 0 or summary.get("error", 0) > 0:
+        return 2
+    if summary.get("warn", 0) > 0:
+        return 1
+    return 0
+
+
+def _cmd_batch_diff(
+    *,
+    old_path: str | None,
+    new_path: str | None,
+    fmt: str,
+    output: str | None,
+) -> int:
+    """Compare two batch scan reports."""
+    import json as json_mod
+    from pathlib import Path
+
+    if not old_path or not new_path:
+        print("Error: --old and --new are required.", file=sys.stderr)
+        return 1
+
+    old_file = Path(old_path)
+    new_file = Path(new_path)
+
+    if not old_file.exists():
+        print(f"Error: old report not found: {old_path}", file=sys.stderr)
+        return 2
+    if not new_file.exists():
+        print(f"Error: new report not found: {new_path}", file=sys.stderr)
+        return 2
+
+    try:
+        old_data = json_mod.loads(old_file.read_text(encoding="utf-8"))
+        new_data = json_mod.loads(new_file.read_text(encoding="utf-8"))
+    except Exception as exc:
+        print(f"Error reading reports: {exc}", file=sys.stderr)
+        return 2
+
+    from oss_paper_ci.batch import compute_batch_diff, format_batch_diff_markdown
+
+    diff = compute_batch_diff(old_data, new_data)
+
+    if fmt == "json":
+        text = json_mod.dumps(diff, indent=2, ensure_ascii=False)
+    else:
+        text = format_batch_diff_markdown(diff)
+
+    if output:
+        Path(output).write_text(text, encoding="utf-8")
+        print(f"Diff written to {output}")
+    else:
+        print(text)
+
+    return 0
+
+
+# ── Cache command ─────────────────────────────────────────────────────────────
+
+def _cmd_cache(args: argparse.Namespace) -> int:
+    """Handle cache subcommand group."""
+    sub = getattr(args, "cache_command", None)
+
+    if sub == "clean":
+        return _cmd_cache_clean(getattr(args, "workspace", None))
+
+    if sub == "info":
+        return _cmd_cache_info(getattr(args, "workspace", None))
+
+    print("Usage: oss-paper-ci cache {clean|info} --workspace PATH", file=sys.stderr)
+    return 1
+
+
+def _cmd_cache_clean(workspace_path: str | None) -> int:
+    """Clean cache for a workspace."""
+    if not workspace_path:
+        print("Error: --workspace is required.", file=sys.stderr)
+        return 1
+
+    from pathlib import Path
+
+    from oss_paper_ci.cache import clean_cache
+
+    ws_path = Path(workspace_path)
+    if not ws_path.exists():
+        print(f"Error: workspace file not found: {workspace_path}", file=sys.stderr)
+        return 2
+
+    count = clean_cache(ws_path.parent.resolve())
+    print(f"Removed {count} cache entries.")
+    return 0
+
+
+def _cmd_cache_info(workspace_path: str | None) -> int:
+    """Show cache information."""
+    import json as json_mod
+
+    if not workspace_path:
+        print("Error: --workspace is required.", file=sys.stderr)
+        return 1
+
+    from pathlib import Path
+
+    from oss_paper_ci.cache import get_cache_info
+
+    ws_path = Path(workspace_path)
+    if not ws_path.exists():
+        print(f"Error: workspace file not found: {workspace_path}", file=sys.stderr)
+        return 2
+
+    info = get_cache_info(ws_path.parent.resolve())
+    print(json_mod.dumps(info, indent=2))
     return 0
 
 

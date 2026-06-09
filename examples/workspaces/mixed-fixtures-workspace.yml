@@ -1,0 +1,25 @@
+version: 1
+name: mixed-fixtures-workspace
+defaults:
+  profile: default
+projects:
+  - id: realistic-ml
+    path: ../../tests/fixtures/realistic_ml_repo
+    profile: publication
+  - id: paper-ready
+    path: ../../tests/fixtures/paper_ready_repo
+    profile: strict
+  - id: broken-paper
+    path: ../../tests/fixtures/broken_paper_repo
+    allow_failure: true
+  - id: minimal-bad
+    path: ../../tests/fixtures/minimal_bad_repo
+    allow_failure: true
+  - id: julia-ready
+    path: ../../tests/fixtures/julia_ready_repo
+  - id: r-ready
+    path: ../../tests/fixtures/r_ready_repo
+  - id: matlab-minimal
+    path: ../../tests/fixtures/matlab_minimal_repo
+  - id: snakemake
+    path: ../../tests/fixtures/make_snakemake_repo

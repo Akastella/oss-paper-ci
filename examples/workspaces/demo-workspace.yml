@@ -1,0 +1,17 @@
+version: 1
+name: demo-workspace
+defaults:
+  profile: default
+projects:
+  - id: realistic-ml
+    path: ../../tests/fixtures/realistic_ml_repo
+    profile: publication
+    rules:
+      - ../rule-packs/lab-reproducibility-rules.yml
+  - id: demo-paper
+    path: ../demo-paper-repo
+    profile: strict
+  - id: broken-paper
+    path: ../../tests/fixtures/broken_paper_repo
+    profile: default
+    allow_failure: true
