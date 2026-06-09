@@ -66,6 +66,18 @@ inputs:
     description: 'Run optional performance gate (true/false)'
     required: false
     default: 'false'
+  workspace:
+    description: 'Optional path to oss-paper-ci-workspace.yml for batch scanning'
+    required: false
+    default: ''
+  jobs:
+    description: 'Parallel workers for batch scanning'
+    required: false
+    default: '1'
+  cache:
+    description: 'Enable local OSS-Paper-CI cache'
+    required: false
+    default: 'false'
 
 runs:
   using: 'composite'
@@ -82,6 +94,7 @@ runs:
         python -m pip install "${{ github.action_path }}"
 
     - name: Run oss-paper-ci scan
+      if: inputs.workspace == ''
       shell: bash
       run: |
         ARGS="scan ${{ inputs.path }} --format ${{ inputs.format }} --output ${{ inputs.output }}"
@@ -102,6 +115,19 @@ runs:
         fi
         if [ "${{ inputs.step-summary }}" = "true" ]; then
           ARGS="$ARGS --github-step-summary $GITHUB_STEP_SUMMARY"
+        fi
+        python -m oss_paper_ci $ARGS
+
+    - name: Run oss-paper-ci batch scan
+      if: inputs.workspace != ''
+      shell: bash
+      run: |
+        ARGS="batch scan --workspace ${{ inputs.workspace }} --format ${{ inputs.format }} --output ${{ inputs.output }}"
+        if [ "${{ inputs.jobs }}" != "1" ]; then
+          ARGS="$ARGS --jobs ${{ inputs.jobs }}"
+        fi
+        if [ "${{ inputs.cache }}" = "true" ]; then
+          ARGS="$ARGS --cache"
         fi
         python -m oss_paper_ci $ARGS
 

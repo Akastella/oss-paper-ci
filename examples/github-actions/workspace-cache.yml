@@ -1,0 +1,37 @@
+name: Workspace Batch Scan with Cache
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  batch-scan-cached:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Restore cache
+        uses: actions/cache@v4
+        with:
+          path: .oss-paper-ci-cache
+          key: oss-paper-ci-cache-${{ hashFiles('**/*.py', '**/*.yml') }}
+          restore-keys: |
+            oss-paper-ci-cache-
+
+      - name: Batch scan with cache
+        uses: Akastella/oss-paper-ci@main
+        with:
+          workspace: examples/workspaces/demo-workspace.yml
+          format: json
+          output: batch-report.json
+          jobs: '2'
+          cache: 'true'
+
+      - name: Upload batch report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: batch-report
+          path: batch-report.json
