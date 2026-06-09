@@ -1,0 +1,37 @@
+{
+  "schema_version": "0.3",
+  "tool": "oss-paper-ci",
+  "version": "1.5.0rc1",
+  "metadata": {
+    "generated_at": "2026-06-09T10:00:00+00:00"
+  },
+  "repository": {
+    "path": "/repo",
+    "detected_languages": ["Python"],
+    "detected_project_types": ["Python package"]
+  },
+  "summary": {
+    "score": 82,
+    "status": "warn",
+    "counts": {"info": 2, "warning": 3, "error": 0}
+  },
+  "checks": [
+    {"id": "META001", "title": "README", "severity": "error", "status": "pass", "message": "README found", "evidence": [], "recommendation": ""},
+    {"id": "META002", "title": "License", "severity": "error", "status": "pass", "message": "MIT LICENSE found", "evidence": ["LICENSE"], "recommendation": ""},
+    {"id": "ENV001", "title": "Environment", "severity": "error", "status": "pass", "message": "requirements.txt found", "evidence": [], "recommendation": ""},
+    {"id": "DATA001", "title": "Data description", "severity": "warning", "status": "warn", "message": "data/ exists but no README", "evidence": ["data/"], "recommendation": "Add data/README.md"},
+    {"id": "EXP001", "title": "Experiment script", "severity": "warning", "status": "pass", "message": "2 scripts found", "evidence": [], "recommendation": ""},
+    {"id": "CI001", "title": "CI workflow", "severity": "warning", "status": "pass", "message": "GitHub Actions workflow found", "evidence": [".github/workflows/ci.yml"], "recommendation": ""},
+    {"id": "META005", "title": "Contributing", "severity": "info", "status": "warn", "message": "No CONTRIBUTING.md", "evidence": [], "recommendation": "Add contributing guidelines"},
+    {"id": "RES001", "title": "Results directory", "severity": "info", "status": "pass", "message": "results/ found", "evidence": [], "recommendation": ""},
+    {"id": "META003", "title": "Citation", "severity": "info", "status": "pass", "message": "CITATION.cff found", "evidence": ["CITATION.cff"], "recommendation": ""}
+  ],
+  "recommendations": ["Add data/README.md"],
+  "blocking_issues": [],
+  "policy": {
+    "profile": "default",
+    "pass_score": 85,
+    "warn_score": 60,
+    "fail_under": 50
+  }
+}

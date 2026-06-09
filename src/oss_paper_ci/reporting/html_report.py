@@ -47,6 +47,7 @@ def generate_html_report(report: Report) -> str:
     score = summary.score if summary else 0
     status = summary.status if summary else "unknown"
     tool_version = report.version or "unknown"
+    profile_name = report.policy.profile if report.policy else "default"
     timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
 
     # Build findings table rows
@@ -101,6 +102,7 @@ code {{ background: #f3f4f6; padding: 2px 4px; border-radius: 3px; font-size: 0.
 
 <div class="metadata">
 <p><strong>Tool:</strong> oss-paper-ci {html.escape(tool_version)}</p>
+<p><strong>Profile:</strong> {html.escape(profile_name)}</p>
 <p><strong>Generated:</strong> {html.escape(timestamp)}</p>
 </div>
 

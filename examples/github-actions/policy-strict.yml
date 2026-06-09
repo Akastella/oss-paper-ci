@@ -1,0 +1,18 @@
+# Example: Use the strict policy profile
+name: Strict Reproducibility Check
+on: [push, pull_request]
+
+permissions:
+  contents: read
+
+jobs:
+  reproducibility:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: Akastella/oss-paper-ci@v1
+        with:
+          profile: strict
+          format: markdown
+          output: oss-paper-ci-report.md
+          fail-under: '90'

@@ -5,15 +5,22 @@ Deduction model with finding classification:
 - important: warning-severity fail, error-severity warn → affects status
 - advisory: info-severity warn, maintenance items → only affects score, not status
 
-Status rules:
+Status rules (default profile):
 - fail: score < 50, or any blocking finding
 - warn: score 50-84, or any important finding
 - pass: score >= 85, no blocking, no important findings
+
+Profiles override thresholds and check severity.
 """
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from oss_paper_ci.models import CheckResult, Severity, Status
+
+if TYPE_CHECKING:
+    from oss_paper_ci.policy import PolicyProfile
 
 # Per-check deduction by (severity, status)
 _UNIT_DEDUCTION: dict[tuple[str, str], int] = {
@@ -57,14 +64,23 @@ _ADVISORY_CHECKS: set[str] = {
 }
 
 
-def classify_finding(check: CheckResult) -> str:
+def classify_finding(check: CheckResult, profile: PolicyProfile | None = None) -> str:
     """Classify a check result as blocking, important, or advisory.
+
+    Args:
+        check: The check result to classify.
+        profile: Optional policy profile that overrides classification.
 
     Returns:
         "blocking", "important", or "advisory"
     """
     sev = check.severity.value if hasattr(check.severity, 'value') else check.severity
     stat = check.status.value if hasattr(check.status, 'value') else check.status
+
+    # Profile: treat_as_blocking overrides everything
+    if profile and check.id in profile.treat_as_blocking:
+        if stat in ("fail", "warn"):
+            return "blocking"
 
     # Advisory: maintenance items that don't affect reproducibility
     if check.id in _ADVISORY_CHECKS:
@@ -89,8 +105,15 @@ def classify_finding(check: CheckResult) -> str:
     return "advisory"
 
 
-def compute_score(checks: list[CheckResult]) -> tuple[int, str, dict[str, int]]:
+def compute_score(
+    checks: list[CheckResult],
+    profile: PolicyProfile | None = None,
+) -> tuple[int, str, dict[str, int]]:
     """Compute the reproducibility score from check results.
+
+    Args:
+        checks: List of check results.
+        profile: Optional policy profile for threshold/classification overrides.
 
     Returns:
         Tuple of (score 0-100, overall status, severity counts).
@@ -131,12 +154,16 @@ def compute_score(checks: list[CheckResult]) -> tuple[int, str, dict[str, int]]:
     score = max(0, 100 - total_deduction)
 
     # Status determination using finding classification
-    has_blocking = any(classify_finding(c) == "blocking" for c in checks)
-    has_important = any(classify_finding(c) == "important" for c in checks)
+    has_blocking = any(classify_finding(c, profile) == "blocking" for c in checks)
+    has_important = any(classify_finding(c, profile) == "important" for c in checks)
 
-    if score < 50 or has_blocking:
+    # Use profile thresholds if available, otherwise hardcoded defaults
+    pass_threshold = profile.pass_score if profile else 85
+    fail_threshold = profile.fail_under if profile else 50
+
+    if score < fail_threshold or has_blocking:
         status = "fail"
-    elif score < 85 or has_important:
+    elif score < pass_threshold or has_important:
         status = "warn"
     else:
         status = "pass"
@@ -144,8 +171,16 @@ def compute_score(checks: list[CheckResult]) -> tuple[int, str, dict[str, int]]:
     return score, status, counts
 
 
-def get_score_breakdown(checks: list[CheckResult]) -> list[dict[str, object]]:
-    """Get a breakdown of deductions for each non-passing check."""
+def get_score_breakdown(
+    checks: list[CheckResult],
+    profile: PolicyProfile | None = None,
+) -> list[dict[str, object]]:
+    """Get a breakdown of deductions for each non-passing check.
+
+    Args:
+        checks: List of check results.
+        profile: Optional policy profile for classification overrides.
+    """
     breakdown = []
     for c in checks:
         sev = c.severity.value if hasattr(c.severity, 'value') else c.severity
@@ -153,7 +188,7 @@ def get_score_breakdown(checks: list[CheckResult]) -> list[dict[str, object]]:
         unit = _UNIT_DEDUCTION.get((sev, stat), 0)
         critical = _CRITICAL_CHECKS.get(c.id, 0) if c.status == Status.FAIL else 0
         total = unit + critical
-        classification = classify_finding(c)
+        classification = classify_finding(c, profile)
         if total > 0:
             breakdown.append({
                 "id": c.id,

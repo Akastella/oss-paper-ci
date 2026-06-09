@@ -165,7 +165,7 @@ class TestJsonSchemaV2:
     def test_schema_version_02(self):
         report = _sample_report()
         data = json.loads(generate_json_report(report))
-        assert data["schema_version"] == "0.2"
+        assert data["schema_version"] == "0.3"
 
     def test_has_metadata(self):
         report = _sample_report()
