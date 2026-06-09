@@ -29,6 +29,23 @@ See example reports:
 
 See [docs/demo.md](docs/demo.md) for full reproduction instructions.
 
+## Quick path
+
+1. **Diagnose** your repository: `oss-paper-ci doctor .`
+2. **Initialize** missing assets: `oss-paper-ci init --all --dry-run`
+3. **Scan** your repository: `oss-paper-ci scan . --format html --output report.html`
+4. **Generate PR comment**: `oss-paper-ci comment --input report.json --output pr-comment.md`
+5. **Add GitHub Actions**: see [examples/github-actions/](examples/github-actions/)
+
+See also:
+- [docs/doctor.md](docs/doctor.md) — diagnose your repo
+- [docs/init.md](docs/init.md) — scaffold reproducibility assets
+- [docs/html-report.md](docs/html-report.md) — HTML report format
+- [docs/pr-comment.md](docs/pr-comment.md) — PR comment generation
+- [examples/demo-paper-repo/](examples/demo-paper-repo/) — example paper repository
+- [examples/reports/demo_paper_report.html](examples/reports/demo_paper_report.html) — example HTML report
+- [examples/reports/demo_paper_pr_comment.md](examples/reports/demo_paper_pr_comment.md) — example PR comment
+
 ## What it checks
 
 Scans a repository for engineering basics needed for reproducibility: environment
