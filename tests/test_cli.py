@@ -44,7 +44,7 @@ class TestInitCommand:
             os.chdir(tmp_path)
             result = run_cli("init")
             assert result.returncode == 0
-            assert (tmp_path / "oss-paper-ci.yml").exists()
+            assert (tmp_path / ".oss-paper-ci.yml").exists()
         finally:
             os.chdir(cwd)
 
@@ -53,7 +53,7 @@ class TestInitCommand:
         cwd = os.getcwd()
         try:
             os.chdir(tmp_path)
-            (tmp_path / "oss-paper-ci.yml").write_text("existing")
+            (tmp_path / ".oss-paper-ci.yml").write_text("existing")
             result = run_cli("init")
             assert result.returncode == 1
         finally:

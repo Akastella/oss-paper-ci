@@ -1,0 +1,36 @@
+{
+  "schema_version": "0.3",
+  "tool": "oss-paper-ci",
+  "version": "1.5.0rc1",
+  "metadata": {
+    "generated_at": "2026-06-08T10:00:00+00:00"
+  },
+  "repository": {
+    "path": "/repo",
+    "detected_languages": ["Python"],
+    "detected_project_types": ["Python package"]
+  },
+  "summary": {
+    "score": 65,
+    "status": "warn",
+    "counts": {"info": 3, "warning": 5, "error": 2}
+  },
+  "checks": [
+    {"id": "META001", "title": "README", "severity": "error", "status": "pass", "message": "README found", "evidence": [], "recommendation": ""},
+    {"id": "META002", "title": "License", "severity": "error", "status": "fail", "message": "No LICENSE file found", "evidence": [], "recommendation": "Add a LICENSE file"},
+    {"id": "ENV001", "title": "Environment", "severity": "error", "status": "pass", "message": "requirements.txt found", "evidence": [], "recommendation": ""},
+    {"id": "DATA001", "title": "Data description", "severity": "warning", "status": "fail", "message": "No data directory found", "evidence": [], "recommendation": "Add a data/ directory with README"},
+    {"id": "EXP001", "title": "Experiment script", "severity": "warning", "status": "warn", "message": "Only 1 script found", "evidence": [], "recommendation": "Add evaluation script"},
+    {"id": "CI001", "title": "CI workflow", "severity": "warning", "status": "fail", "message": "No CI workflow found", "evidence": [], "recommendation": "Add .github/workflows/"},
+    {"id": "META005", "title": "Contributing", "severity": "info", "status": "warn", "message": "No CONTRIBUTING.md", "evidence": [], "recommendation": "Add contributing guidelines"},
+    {"id": "RES001", "title": "Results directory", "severity": "info", "status": "pass", "message": "results/ found", "evidence": [], "recommendation": ""}
+  ],
+  "recommendations": ["Add a LICENSE file", "Add a data/ directory with README"],
+  "blocking_issues": ["META002: No LICENSE file found"],
+  "policy": {
+    "profile": "default",
+    "pass_score": 85,
+    "warn_score": 60,
+    "fail_under": 50
+  }
+}

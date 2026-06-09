@@ -1,4 +1,11 @@
-"""Configuration loading and defaults for oss-paper-ci."""
+"""Configuration loading and defaults for oss-paper-ci.
+
+Supports two config versions:
+  - v0.1 (legacy): flat checks/project/ignore/output sections
+  - v1   (current): adds profile, thresholds, severity, paths, reports, ci
+
+Both are accepted; v0.1 fields are silently mapped to v1 equivalents.
+"""
 
 from __future__ import annotations
 
@@ -50,14 +57,66 @@ class OutputConfig:
 
 
 @dataclass
+class ThresholdsConfig:
+    """Scoring thresholds."""
+
+    pass_score: int = 85
+    warn_score: int = 60
+    fail_under: int = 50
+
+
+@dataclass
+class PathsConfig:
+    """Path include/exclude configuration."""
+
+    include: list[str] = field(default_factory=lambda: ["."])
+    exclude: list[str] = field(default_factory=lambda: [
+        ".git/", "dist/", "build/", "__pycache__/", ".pytest_cache/",
+    ])
+
+
+@dataclass
+class SeverityPolicy:
+    """Severity classification policy."""
+
+    fail_on: list[str] = field(default_factory=lambda: ["blocking"])
+    treat_as_blocking: list[str] = field(default_factory=list)
+
+
+@dataclass
+class ReportsConfig:
+    """Report output configuration."""
+
+    default_format: str = "markdown"
+    include_recommendations: bool = True
+    max_findings: int = 50
+
+
+@dataclass
+class CIConfig:
+    """CI integration configuration."""
+
+    github_annotations: bool = True
+    step_summary: bool = True
+
+
+@dataclass
 class Config:
     """Top-level configuration."""
 
     version: str = "0.1"
+    profile: str = "default"
     project: ProjectConfig = field(default_factory=ProjectConfig)
     checks: ChecksConfig = field(default_factory=ChecksConfig)
     ignore: IgnoreConfig = field(default_factory=IgnoreConfig)
     output: OutputConfig = field(default_factory=OutputConfig)
+    thresholds: ThresholdsConfig = field(default_factory=ThresholdsConfig)
+    paths: PathsConfig = field(default_factory=PathsConfig)
+    severity: SeverityPolicy = field(default_factory=SeverityPolicy)
+    reports: ReportsConfig = field(default_factory=ReportsConfig)
+    ci: CIConfig = field(default_factory=CIConfig)
+    # Path to the config file that was loaded (empty = defaults)
+    config_path: str = ""
 
 
 DEFAULT_CONFIG = Config()
@@ -101,10 +160,16 @@ def _parse_config_file(path: Path) -> Config:
         return Config()
 
     config = Config()
+    config.config_path = str(path)
 
     if "version" in data:
         config.version = str(data["version"])
 
+    # ── Profile ───────────────────────────────────────────────────────────
+    if "profile" in data:
+        config.profile = str(data["profile"])
+
+    # ── Project ───────────────────────────────────────────────────────────
     if "project" in data and isinstance(data["project"], dict):
         p = data["project"]
         config.project = ProjectConfig(
@@ -115,6 +180,7 @@ def _parse_config_file(path: Path) -> Config:
             results_dirs=p.get("results_dirs", ["results", "figures"]),
         )
 
+    # ── Checks (v0.1 compat) ──────────────────────────────────────────────
     if "checks" in data and isinstance(data["checks"], dict):
         c = data["checks"]
         config.checks = ChecksConfig(
@@ -128,25 +194,113 @@ def _parse_config_file(path: Path) -> Config:
             severity_overrides=c.get("severity_overrides", {}),
         )
 
+    # ── Ignore (v0.1 compat) ──────────────────────────────────────────────
     if "ignore" in data and isinstance(data["ignore"], dict):
         i = data["ignore"]
         config.ignore = IgnoreConfig(
             paths=i.get("paths", [".git", ".venv", "node_modules"]),
         )
 
+    # ── Output (v0.1 compat) ──────────────────────────────────────────────
     if "output" in data and isinstance(data["output"], dict):
         o = data["output"]
         config.output = OutputConfig(
             default_format=o.get("default_format", "markdown"),
         )
 
+    # ── Thresholds (v1) ───────────────────────────────────────────────────
+    if "thresholds" in data and isinstance(data["thresholds"], dict):
+        t = data["thresholds"]
+        config.thresholds = ThresholdsConfig(
+            pass_score=t.get("pass_score", 85),
+            warn_score=t.get("warn_score", 60),
+            fail_under=t.get("fail_under", 50),
+        )
+
+    # ── Paths (v1) ────────────────────────────────────────────────────────
+    if "paths" in data and isinstance(data["paths"], dict):
+        p = data["paths"]
+        config.paths = PathsConfig(
+            include=p.get("include", ["."]),
+            exclude=p.get("exclude", [
+                ".git/", "dist/", "build/", "__pycache__/", ".pytest_cache/",
+            ]),
+        )
+
+    # ── Severity (v1) ─────────────────────────────────────────────────────
+    if "severity" in data and isinstance(data["severity"], dict):
+        s = data["severity"]
+        config.severity = SeverityPolicy(
+            fail_on=s.get("fail_on", ["blocking"]),
+            treat_as_blocking=s.get("treat_as_blocking", []),
+        )
+
+    # ── Reports (v1) ──────────────────────────────────────────────────────
+    if "reports" in data and isinstance(data["reports"], dict):
+        r = data["reports"]
+        config.reports = ReportsConfig(
+            default_format=r.get("default_format", "markdown"),
+            include_recommendations=r.get("include_recommendations", True),
+            max_findings=r.get("max_findings", 50),
+        )
+
+    # ── CI (v1) ───────────────────────────────────────────────────────────
+    if "ci" in data and isinstance(data["ci"], dict):
+        ci = data["ci"]
+        config.ci = CIConfig(
+            github_annotations=ci.get("github_annotations", True),
+            step_summary=ci.get("step_summary", True),
+        )
+
     return config
 
 
-def generate_default_config() -> str:
-    """Generate the default oss-paper-ci.yml content."""
-    return """\
-version: 0.1
+def generate_default_config(*, profile: str = "default") -> str:
+    """Generate a default .oss-paper-ci.yml content.
+
+    Args:
+        profile: Profile name to embed in the generated config.
+
+    Returns:
+        YAML string.
+    """
+    return f"""\
+version: 1
+profile: {profile}
+
+paths:
+  include:
+    - "."
+  exclude:
+    - ".git/"
+    - "dist/"
+    - "build/"
+    - "__pycache__/"
+    - ".pytest_cache/"
+
+thresholds:
+  pass_score: 85
+  warn_score: 60
+  fail_under: 50
+
+severity:
+  fail_on:
+    - blocking
+  treat_as_blocking: []
+
+checks:
+  disabled: []
+  severity_overrides: {{}}
+
+reports:
+  default_format: markdown
+  include_recommendations: true
+  max_findings: 50
+
+ci:
+  github_annotations: true
+  step_summary: true
+
 project:
   name: ""
   paper_dir: "paper"
@@ -158,18 +312,11 @@ project:
   results_dirs:
     - "results"
     - "figures"
-checks:
-  min_score: 70
-  require_license: true
-  require_citation: true
-  require_environment: true
-  require_quickstart: true
+
 ignore:
   paths:
     - ".git"
     - ".venv"
     - "node_modules"
     - "__pycache__"
-output:
-  default_format: "markdown"
 """

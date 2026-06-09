@@ -1,5 +1,31 @@
 # Changelog
 
+## 1.5.0rc1 (2026-06-09)
+
+### Added
+- Policy profiles: `lenient`, `default`, `strict`, `publication` with per-profile thresholds and severity overrides
+- `.oss-paper-ci.yml` config schema v1 with `profile`, `thresholds`, `severity`, `paths`, `reports`, `ci` sections
+- `--profile` CLI flag for `scan` command to override config file profile
+- `oss-paper-ci config validate` — validate config file with schema checking
+- `oss-paper-ci config init` — generate config with `--profile`, `--force`, `--dry-run`
+- `oss-paper-ci config explain` — show resolved configuration
+- `oss-paper-ci explain policy <name>` — explain a policy profile's parameters
+- `oss-paper-ci diff` — compare two scan report JSON files without live scan
+- Report JSON includes `policy` field with active profile and thresholds
+- Markdown and HTML reports show active profile
+- GitHub Action `profile`, `github-annotations`, `step-summary` inputs
+- Example config files in `examples/configs/` (lenient, strict, publication)
+- Example GitHub Actions workflows for policy profiles and diff regression
+- Benchmark fixture matrix generation
+- Schema validation module with clear error messages
+
+### Changed
+- Version bumped to 1.5.0rc1
+- Report schema updated to version 0.3 (adds `policy` field)
+- Scoring engine accepts optional `PolicyProfile` for threshold overrides
+- Config system supports both v0.1 (legacy) and v1 format
+- `init` command defaults to `.oss-paper-ci.yml` with `--force` support
+
 ## 1.4.0rc1 (2026-06-09)
 
 ### Added

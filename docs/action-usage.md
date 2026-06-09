@@ -21,6 +21,7 @@ steps:
 | Input | Description | Default |
 |-------|-------------|---------|
 | `path` | Path to repository root | `.` |
+| `profile` | Policy profile: lenient, default, strict, publication | `default` |
 | `config` | Path to config file | (auto-detect) |
 | `contract` | Path to reproducibility.yml | (none) |
 | `format` | Output format: json, markdown, sarif | `markdown` |
@@ -30,6 +31,8 @@ steps:
 | `baseline` | Path to baseline file | (none) |
 | `fail-on-regression` | Fail if regression detected | `false` |
 | `upload-sarif` | Upload SARIF to Code Scanning | `false` |
+| `github-annotations` | Emit GitHub workflow annotations | `true` |
+| `step-summary` | Write GitHub step summary | `true` |
 
 ## 2. Source checkout (before stable release)
 
