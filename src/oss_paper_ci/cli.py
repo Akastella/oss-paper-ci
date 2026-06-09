@@ -36,7 +36,7 @@ def main(argv: list[str] | None = None) -> int:
     scan_parser = subparsers.add_parser("scan", help="Scan a repository for reproducibility checks.")
     scan_parser.add_argument("path", nargs="?", default=".", help="Path to repository root (default: .)")
     scan_parser.add_argument("--config", dest="config_path", help="Path to oss-paper-ci.yml config file.")
-    scan_parser.add_argument("--format", choices=["json", "markdown", "sarif"], default="markdown", help="Output format.")
+    scan_parser.add_argument("--format", choices=["json", "markdown", "sarif", "html"], default="markdown", help="Output format.")
     scan_parser.add_argument("--output", "-o", help="Write report to file instead of stdout.")
     scan_parser.add_argument("--fail-under", type=int, dest="fail_under", help="Exit with code 1 if score is below this threshold.")
     scan_parser.add_argument("--strict", action="store_true", help="Exit with code 1 if any warnings exist.")
@@ -108,6 +108,18 @@ def main(argv: list[str] | None = None) -> int:
     smoke_parser.add_argument("--format", choices=["json", "text"], default="text",
                               help="Output format (default: text)")
 
+    # doctor command
+    doctor_parser = subparsers.add_parser("doctor", help="Diagnose repository and environment.")
+    doctor_parser.add_argument("path", nargs="?", default=".", help="Path to repository root (default: .)")
+    doctor_parser.add_argument("--format", choices=["json", "markdown"], default="markdown", help="Output format.")
+
+    # comment command
+    comment_parser = subparsers.add_parser("comment", help="Generate PR comment from scan results.")
+    comment_parser.add_argument("--input", required=True, help="Path to scan JSON report.")
+    comment_parser.add_argument("--output", "-o", help="Write comment to file instead of stdout.")
+    comment_parser.add_argument("--kind", choices=["scan", "baseline"], default="scan", help="Comment type.")
+    comment_parser.add_argument("--max-findings", type=int, default=10, help="Max findings to show.")
+
     args = parser.parse_args(argv)
 
     if args.command is None:
@@ -154,6 +166,12 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.command == "smoke":
         return _cmd_smoke(args)
+
+    if args.command == "doctor":
+        return _cmd_doctor(args.path, args.format)
+
+    if args.command == "comment":
+        return _cmd_comment(args.input, args.output, args.kind, args.max_findings)
 
     parser.print_help()
     return 0
@@ -375,6 +393,9 @@ def _cmd_scan(
         text = generate_json_report(report, output_path=output)
     elif fmt == "sarif":
         text = generate_sarif_report(report, output_path=output)
+    elif fmt == "html":
+        from oss_paper_ci.reporting.html_report import generate_html_report
+        text = generate_html_report(report)
     else:
         text = generate_markdown_report(report, output_path=output, verbose=verbose)
 
@@ -666,3 +687,134 @@ def _print_smoke_text(result: "SmokeResult") -> None:
         for o in result.expected_outputs:
             status = "OK" if o["exists"] else "MISSING"
             print(f"  [{status}] {o['path']}")
+
+
+def _cmd_doctor(repo_path: str, fmt: str) -> int:
+    """Diagnose repository and environment."""
+    import json as json_mod
+
+    path = Path(repo_path).resolve()
+    checks = []
+
+    # Python version
+    py_ver = f"{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}"
+    checks.append({"name": "Python version", "status": "ok", "detail": py_ver})
+
+    # oss-paper-ci version
+    checks.append({"name": "oss-paper-ci version", "status": "ok", "detail": __version__})
+
+    # README
+    readme = path / "README.md"
+    checks.append({"name": "README.md", "status": "ok" if readme.exists() else "missing", "detail": str(readme)})
+
+    # LICENSE
+    license_file = path / "LICENSE"
+    checks.append({"name": "LICENSE", "status": "ok" if license_file.exists() else "missing", "detail": str(license_file)})
+
+    # Environment files
+    env_files = ["requirements.txt", "pyproject.toml", "environment.yml", "Pipfile", "renv.lock", "Project.toml"]
+    env_found = [f for f in env_files if (path / f).exists()]
+    checks.append({"name": "Environment file", "status": "ok" if env_found else "missing", "detail": ", ".join(env_found) if env_found else "none found"})
+
+    # Reproducibility contract
+    contract = path / "reproducibility.yml"
+    checks.append({"name": "reproducibility.yml", "status": "ok" if contract.exists() else "missing", "detail": str(contract)})
+
+    # GitHub workflows
+    workflows = path / ".github" / "workflows"
+    wf_exists = workflows.exists() and any(workflows.glob("*.yml"))
+    checks.append({"name": "GitHub workflows", "status": "ok" if wf_exists else "missing", "detail": str(workflows)})
+
+    # Common directories
+    for dirname in ["results", "figures", "data", "scripts"]:
+        d = path / dirname
+        checks.append({"name": f"{dirname}/", "status": "ok" if d.exists() else "missing", "detail": str(d)})
+
+    # Suggestions
+    suggestions = []
+    if not readme.exists():
+        suggestions.append("Add a README.md")
+    if not license_file.exists():
+        suggestions.append("Add a LICENSE file")
+    if not env_found:
+        suggestions.append("Add an environment file (requirements.txt, pyproject.toml, etc.)")
+    if not contract.exists():
+        suggestions.append("Run `oss-paper-ci init --contract` to create reproducibility.yml")
+    if not wf_exists:
+        suggestions.append("Run `oss-paper-ci init --workflow` to create a GitHub Actions workflow")
+
+    if fmt == "json":
+        result = {"checks": checks, "suggestions": suggestions}
+        print(json_mod.dumps(result, indent=2))
+    else:
+        for c in checks:
+            status_icon = {"ok": "ok", "missing": "MISSING", "warn": "warn"}.get(c["status"], "?")
+            print(f"  [{status_icon}] {c['name']}: {c['detail']}")
+        if suggestions:
+            print("\nSuggested next steps:")
+            for s in suggestions:
+                print(f"  - {s}")
+
+    # Return 0 if all ok, 1 if any missing
+    if any(c["status"] != "ok" for c in checks):
+        return 1
+    return 0
+
+
+def _cmd_comment(input_path: str, output: str | None, kind: str, max_findings: int) -> int:
+    """Generate PR comment from scan results."""
+    import json as json_mod
+
+    inp = Path(input_path)
+    if not inp.exists():
+        print(f"Error: input file not found: {input_path}", file=sys.stderr)
+        return 1
+
+    try:
+        data = json_mod.loads(inp.read_text(encoding="utf-8"))
+    except Exception as e:
+        print(f"Error: invalid JSON: {e}", file=sys.stderr)
+        return 1
+
+    lines = ["## Reproducibility Report", ""]
+
+    summary = data.get("summary", {})
+    score = summary.get("score", 0)
+    status = summary.get("status", "unknown")
+    counts = summary.get("counts", {})
+
+    lines.append(f"**Score:** {score}/100")
+    lines.append(f"**Status:** {status}")
+    lines.append(f"**Checks:** {counts.get('pass', 0)} pass, {counts.get('warning', 0)} warn, {counts.get('error', 0)} fail")
+    lines.append("")
+
+    checks = data.get("checks", [])
+    failing = [c for c in checks if c.get("status") in ("fail", "warn")]
+
+    if failing:
+        lines.append(f"### Findings (showing {min(len(failing), max_findings)} of {len(failing)})")
+        lines.append("")
+        for c in failing[:max_findings]:
+            sev = c.get("severity", "?")
+            cid = c.get("id", "?")
+            msg = c.get("message", "")
+            rec = c.get("recommendation", "")
+            icon = "!!" if sev == "error" else "!"
+            lines.append(f"- **{icon} {cid}**: {msg}")
+            if rec:
+                lines.append(f"  - Recommendation: {rec}")
+        lines.append("")
+
+    if kind == "baseline":
+        lines.append("> Baseline comparison mode")
+        lines.append("")
+
+    text = "\n".join(lines)
+
+    if output:
+        Path(output).write_text(text, encoding="utf-8")
+        print(f"Comment written to {output}")
+    else:
+        print(text)
+
+    return 0

@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.3.0rc1 (2026-06-08)
+
+### Added
+- `oss-paper-ci doctor` command to diagnose repository and environment
+- `oss-paper-ci comment` command to generate PR comments from scan results
+- `--format html` for scan command to generate static HTML reports
+- `examples/demo-paper-repo/` as a toy-but-realistic example paper repository
+- `docs/doctor.md`, `docs/init.md`, `docs/html-report.md`, `docs/pr-comment.md`, `docs/demo-paper-repo.md`
+
+### Changed
+- Version bumped to 1.3.0rc1
+
 ## 1.2.0rc1 (2026-06-08)
 
 ### Added
