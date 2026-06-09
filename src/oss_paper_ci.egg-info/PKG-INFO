@@ -1,6 +1,6 @@
 Metadata-Version: 2.4
 Name: oss-paper-ci
-Version: 1.0.0rc1
+Version: 1.3.0rc1
 Summary: CI tool for checking reproducibility readiness of scientific paper repositories
 Author: oss-paper-ci contributors
 License: MIT
@@ -29,7 +29,51 @@ Dynamic: license-file
 
 # oss-paper-ci
 
+[![CI](https://github.com/Akastella/oss-paper-ci/actions/workflows/ci.yml/badge.svg)](https://github.com/Akastella/oss-paper-ci/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
+[![Release](https://img.shields.io/github/v/release/Akastella/oss-paper-ci)](https://github.com/Akastella/oss-paper-ci/releases)
+
 CI tool for checking reproducibility readiness of scientific paper repositories.
+
+OSS-Paper-CI checks whether a scientific repository is ready for
+reproducibility-oriented CI: metadata, environment files, experiment scripts,
+result artifacts, evidence graph links, baseline regressions, safe smoke runs,
+and GitHub/SARIF reporting.
+
+## Quick demo
+
+```bash
+python -m pip install -e ".[dev]"
+oss-paper-ci scan tests/fixtures/realistic_ml_repo --format markdown
+oss-paper-ci graph tests/fixtures/realistic_ml_repo --format markdown
+```
+
+See example reports:
+- [Markdown scan report](examples/reports/realistic_ml_report.md)
+- [Evidence graph](examples/reports/realistic_ml_graph.md)
+- [Baseline comparison](examples/reports/realistic_ml_baseline_compare.md)
+- [Smoke run report](examples/reports/realistic_ml_smoke.md)
+- [SARIF output](examples/reports/realistic_ml.sarif)
+
+See [docs/demo.md](docs/demo.md) for full reproduction instructions.
+
+## Quick path
+
+1. **Diagnose** your repository: `oss-paper-ci doctor .`
+2. **Initialize** missing assets: `oss-paper-ci init --all --dry-run`
+3. **Scan** your repository: `oss-paper-ci scan . --format html --output report.html`
+4. **Generate PR comment**: `oss-paper-ci comment --input report.json --output pr-comment.md`
+5. **Add GitHub Actions**: see [examples/github-actions/](examples/github-actions/)
+
+See also:
+- [docs/doctor.md](docs/doctor.md) — diagnose your repo
+- [docs/init.md](docs/init.md) — scaffold reproducibility assets
+- [docs/html-report.md](docs/html-report.md) — HTML report format
+- [docs/pr-comment.md](docs/pr-comment.md) — PR comment generation
+- [examples/demo-paper-repo/](examples/demo-paper-repo/) — example paper repository
+- [examples/reports/demo_paper_report.html](examples/reports/demo_paper_report.html) — example HTML report
+- [examples/reports/demo_paper_pr_comment.md](examples/reports/demo_paper_pr_comment.md) — example PR comment
 
 ## What it checks
 
