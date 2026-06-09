@@ -8,7 +8,9 @@ from pathlib import Path
 from oss_paper_ci import __version__
 from oss_paper_ci.checks import run_all_checks
 from oss_paper_ci.config import Config, load_config
-from oss_paper_ci.models import Report, ReportMetadata, RepoInfo, Status, Summary
+from oss_paper_ci.models import (
+    PolicyInfo, Report, ReportMetadata, RepoInfo, Severity, Status, Summary,
+)
 from oss_paper_ci.scoring import compute_score, get_score_breakdown
 from oss_paper_ci.utils.fs import find_files_by_extension, list_files
 
@@ -28,6 +30,17 @@ def scan(repo_path: str, config: Config | None = None) -> Report:
     if config is None:
         config = load_config(repo_root=repo_path)
 
+    # Resolve policy profile
+    from oss_paper_ci.policy import get_profile
+    try:
+        profile = get_profile(config.profile)
+    except ValueError:
+        profile = get_profile("default")
+
+    # Apply profile check overrides to config severity_overrides
+    merged_overrides = dict(profile.check_overrides)
+    merged_overrides.update(config.checks.severity_overrides)
+
     # Detect languages
     detected_languages = _detect_languages(repo_path, config)
     detected_project_types = _detect_project_types(repo_path, config)
@@ -41,9 +54,18 @@ def scan(repo_path: str, config: Config | None = None) -> Report:
     # Run all checks
     checks = run_all_checks(repo_path, config)
 
-    # Compute score
-    score, status, counts = compute_score(checks)
-    breakdown = get_score_breakdown(checks)
+    # Apply severity overrides from profile + config
+    for check in checks:
+        if check.id in merged_overrides:
+            new_sev = merged_overrides[check.id]
+            try:
+                check.severity = Severity(new_sev)
+            except ValueError:
+                pass  # ignore invalid severity values
+
+    # Compute score with profile thresholds
+    score, status, counts = compute_score(checks, profile)
+    breakdown = get_score_breakdown(checks, profile)
 
     summary = Summary(score=score, status=status, counts=counts, score_breakdown=breakdown)
 
@@ -64,8 +86,17 @@ def scan(repo_path: str, config: Config | None = None) -> Report:
         if check.status == Status.FAIL:
             blocking_issues.append(f"{check.id}: {check.message}")
 
+    # Policy info
+    policy_info = PolicyInfo(
+        profile=profile.name,
+        pass_score=profile.pass_score,
+        warn_score=profile.warn_score,
+        fail_under=profile.fail_under,
+        config_path=config.config_path,
+    )
+
     return Report(
-        schema_version="0.2",
+        schema_version="0.3",
         tool="oss-paper-ci",
         version=__version__,
         repository=repo_info,
@@ -74,6 +105,7 @@ def scan(repo_path: str, config: Config | None = None) -> Report:
         metadata=metadata,
         recommendations=recommendations,
         blocking_issues=blocking_issues,
+        policy=policy_info,
     )
 
 

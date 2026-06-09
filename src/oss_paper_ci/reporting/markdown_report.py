@@ -46,6 +46,12 @@ def generate_markdown_report(
     lines.append("# 🔬 oss-paper-ci Report")
     lines.append("")
 
+    # Policy profile
+    policy = report.policy
+    if policy.profile and policy.profile != "default":
+        lines.append(f"**Profile:** {policy.profile}")
+        lines.append("")
+
     # Summary
     s = report.summary
     status_emoji = _STATUS_EMOJI.get(s.status, "")

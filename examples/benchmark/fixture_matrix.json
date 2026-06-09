@@ -1,0 +1,101 @@
+[
+  {
+    "fixture": "minimal_bad_repo",
+    "language": "Python",
+    "description": "Minimal repo with almost nothing",
+    "expected_status": "fail",
+    "score": 29,
+    "blocking_count": 4,
+    "important_count": 0,
+    "advisory_count": 39,
+    "total_checks": 43
+  },
+  {
+    "fixture": "broken_paper_repo",
+    "language": "Python",
+    "description": "Paper repo with broken structure",
+    "expected_status": "fail",
+    "score": 75,
+    "blocking_count": 1,
+    "important_count": 0,
+    "advisory_count": 42,
+    "total_checks": 43
+  },
+  {
+    "fixture": "paper_ready_repo",
+    "language": "Python",
+    "description": "Well-structured paper repo",
+    "expected_status": "pass",
+    "score": 97,
+    "blocking_count": 0,
+    "important_count": 0,
+    "advisory_count": 43,
+    "total_checks": 43
+  },
+  {
+    "fixture": "realistic_ml_repo",
+    "language": "Python",
+    "description": "Realistic ML project",
+    "expected_status": "pass",
+    "score": 93,
+    "blocking_count": 0,
+    "important_count": 0,
+    "advisory_count": 47,
+    "total_checks": 47
+  },
+  {
+    "fixture": "r_ready_repo",
+    "language": "R",
+    "description": "R-based paper repo",
+    "expected_status": "fail",
+    "score": 73,
+    "blocking_count": 2,
+    "important_count": 0,
+    "advisory_count": 41,
+    "total_checks": 43
+  },
+  {
+    "fixture": "julia_ready_repo",
+    "language": "Julia",
+    "description": "Julia-based paper repo",
+    "expected_status": "fail",
+    "score": 51,
+    "blocking_count": 3,
+    "important_count": 0,
+    "advisory_count": 40,
+    "total_checks": 43
+  },
+  {
+    "fixture": "matlab_minimal_repo",
+    "language": "MATLAB",
+    "description": "MATLAB-based paper repo",
+    "expected_status": "fail",
+    "score": 48,
+    "blocking_count": 3,
+    "important_count": 0,
+    "advisory_count": 40,
+    "total_checks": 43
+  },
+  {
+    "fixture": "make_snakemake_repo",
+    "language": "Python/Snakemake",
+    "description": "Snakemake workflow repo",
+    "expected_status": "fail",
+    "score": 58,
+    "blocking_count": 2,
+    "important_count": 0,
+    "advisory_count": 41,
+    "total_checks": 43
+  },
+  {
+    "fixture": "demo-paper-repo",
+    "language": "Python",
+    "description": "Example paper repo",
+    "expected_status": "pass",
+    "score": 91,
+    "blocking_count": 0,
+    "important_count": 0,
+    "advisory_count": 43,
+    "total_checks": 43
+  }
+]

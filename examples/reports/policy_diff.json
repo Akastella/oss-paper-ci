@@ -1,0 +1,16 @@
+{
+  "old_report": "1.5.0rc1",
+  "new_report": "1.5.0rc1",
+  "score_delta": 0,
+  "old_score": 93,
+  "new_score": 93,
+  "old_status": "pass",
+  "new_status": "pass",
+  "status_changed": false,
+  "new_findings": [],
+  "resolved_findings": [],
+  "severity_worsened": [],
+  "severity_improved": [],
+  "changed_categories": [],
+  "recommendation": "No significant changes detected."
+}

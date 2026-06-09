@@ -36,6 +36,7 @@ def main(argv: list[str] | None = None) -> int:
     scan_parser = subparsers.add_parser("scan", help="Scan a repository for reproducibility checks.")
     scan_parser.add_argument("path", nargs="?", default=".", help="Path to repository root (default: .)")
     scan_parser.add_argument("--config", dest="config_path", help="Path to oss-paper-ci.yml config file.")
+    scan_parser.add_argument("--profile", dest="profile", help="Policy profile: lenient, default, strict, publication.")
     scan_parser.add_argument("--format", choices=["json", "markdown", "sarif", "html", "github"], default="markdown", help="Output format.")
     scan_parser.add_argument("--output", "-o", help="Write report to file instead of stdout.")
     scan_parser.add_argument("--fail-under", type=int, dest="fail_under", help="Exit with code 1 if score is below this threshold.")
@@ -48,17 +49,47 @@ def main(argv: list[str] | None = None) -> int:
     # init command
     init_parser = subparsers.add_parser("init", help="Generate a default config or contract file.")
     init_parser.add_argument("--contract", action="store_true", help="Generate reproducibility.yml template")
+    init_parser.add_argument("--profile", dest="profile", help="Policy profile for generated config.")
     init_parser.add_argument("--template", choices=["ml", "simulation", "data-science", "default"], default="default")
     init_parser.add_argument("--output", "-o", help="Output file path")
+    init_parser.add_argument("--force", action="store_true", help="Overwrite existing file.")
+    init_parser.add_argument("--dry-run", action="store_true", help="Print config to stdout instead of writing.")
 
-    # explain command
-    explain_parser = subparsers.add_parser("explain", help="Explain a check ID.")
-    explain_parser.add_argument("check_id", help="The check ID to explain (e.g., ENV001).")
+    # explain command — now supports "policy <name>" or a check ID
+    explain_parser = subparsers.add_parser("explain", help="Explain a check ID or policy profile.")
+    explain_parser.add_argument("target", help="Check ID (e.g., ENV001) or 'policy <name>'.")
+    explain_parser.add_argument("extra", nargs="?", default=None, help="Profile name when target is 'policy'.")
 
     # list-checks command
     list_checks_parser = subparsers.add_parser("list-checks", help="List all available checks.")
     list_checks_parser.add_argument("--category", help="Filter by category (e.g., metadata, environment).")
     list_checks_parser.add_argument("--format", choices=["text", "json"], default="text", help="Output format.")
+
+    # config command group
+    config_parser = subparsers.add_parser("config", help="Configuration management.")
+    config_sub = config_parser.add_subparsers(dest="config_command")
+
+    # config validate
+    cv = config_sub.add_parser("validate", help="Validate a config file.")
+    cv.add_argument("--config", dest="config_path", help="Path to config file.")
+
+    # config init
+    ci = config_sub.add_parser("init", help="Generate a default config file.")
+    ci.add_argument("--profile", dest="profile", default="default", help="Policy profile.")
+    ci.add_argument("--output", "-o", help="Output file path.")
+    ci.add_argument("--force", action="store_true", help="Overwrite existing file.")
+    ci.add_argument("--dry-run", action="store_true", help="Print to stdout.")
+
+    # config explain
+    ce = config_sub.add_parser("explain", help="Show the resolved configuration.")
+    ce.add_argument("--config", dest="config_path", help="Path to config file.")
+
+    # diff command
+    diff_parser = subparsers.add_parser("diff", help="Compare two scan reports.")
+    diff_parser.add_argument("--old", required=True, help="Path to old report JSON.")
+    diff_parser.add_argument("--new", dest="new_report", required=True, help="Path to new report JSON.")
+    diff_parser.add_argument("--format", choices=["json", "markdown"], default="markdown", help="Output format.")
+    diff_parser.add_argument("--output", "-o", help="Write output to file.")
 
     # validate-contract command
     validate_parser = subparsers.add_parser("validate-contract", help="Validate a reproducibility contract.")
@@ -136,22 +167,35 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "init":
         return _cmd_init(
             contract=getattr(args, "contract", False),
+            profile=getattr(args, "profile", "default"),
             template=getattr(args, "template", "default"),
             output=getattr(args, "output", None),
+            force=getattr(args, "force", False),
+            dry_run=getattr(args, "dry_run", False),
         )
 
     if args.command == "validate-contract":
         return _cmd_validate_contract(args.path, getattr(args, "contract", None))
 
     if args.command == "explain":
-        return _cmd_explain(args.check_id)
+        return _cmd_explain(args.target, getattr(args, "extra", None))
 
     if args.command == "list-checks":
         return _cmd_list_checks(args.category, args.format)
 
+    if args.command == "config":
+        return _cmd_config(args)
+
+    if args.command == "diff":
+        return _cmd_diff(
+            args.old, args.new_report, args.format,
+            output=getattr(args, "output", None),
+        )
+
     if args.command == "scan":
         return _cmd_scan(
             args.path, args.config_path, args.format, args.output,
+            profile=getattr(args, "profile", None),
             fail_under=getattr(args, "fail_under", None),
             strict=getattr(args, "strict", False),
             verbose=getattr(args, "verbose", False),
@@ -183,19 +227,29 @@ def main(argv: list[str] | None = None) -> int:
     return 0
 
 
+# ── Init command ──────────────────────────────────────────────────────────────
+
 def _cmd_init(
     *,
     contract: bool = False,
+    profile: str = "default",
     template: str = "default",
     output: str | None = None,
+    force: bool = False,
+    dry_run: bool = False,
 ) -> int:
     """Generate default config file or contract template."""
     if contract:
         from oss_paper_ci.contract import generate_contract_template
 
         target = Path(output or "reproducibility.yml")
-        if target.exists():
+        if dry_run:
+            print(generate_contract_template(template))
+            return 0
+
+        if target.exists() and not force:
             print(f"Contract file already exists: {target}", file=sys.stderr)
+            print("Use --force to overwrite.", file=sys.stderr)
             return 1
 
         target.write_text(generate_contract_template(template), encoding="utf-8")
@@ -204,15 +258,22 @@ def _cmd_init(
 
     from oss_paper_ci.config import generate_default_config
 
-    target = Path("oss-paper-ci.yml")
-    if target.exists():
+    target = Path(output or ".oss-paper-ci.yml")
+    if dry_run:
+        print(generate_default_config(profile=profile))
+        return 0
+
+    if target.exists() and not force:
         print(f"Config file already exists: {target}", file=sys.stderr)
+        print("Use --force to overwrite.", file=sys.stderr)
         return 1
 
-    target.write_text(generate_default_config(), encoding="utf-8")
+    target.write_text(generate_default_config(profile=profile), encoding="utf-8")
     print(f"Created {target}")
     return 0
 
+
+# ── Validate contract ────────────────────────────────────────────────────────
 
 def _cmd_validate_contract(repo_path: str, contract_path: str | None) -> int:
     """Validate a reproducibility contract."""
@@ -276,11 +337,28 @@ def _cmd_validate_contract(repo_path: str, contract_path: str | None) -> int:
     return 0
 
 
-def _cmd_explain(check_id: str) -> int:
-    """Explain a check ID."""
+# ── Explain command ──────────────────────────────────────────────────────────
+
+def _cmd_explain(target: str, extra: str | None) -> int:
+    """Explain a check ID or policy profile."""
+    # Handle "explain policy <name>"
+    if target.lower() == "policy":
+        if extra is None:
+            print("Usage: oss-paper-ci explain policy <name>", file=sys.stderr)
+            print("Available profiles: lenient, default, strict, publication", file=sys.stderr)
+            return 1
+        from oss_paper_ci.policy import explain_profile
+        try:
+            print(explain_profile(extra))
+            return 0
+        except ValueError as exc:
+            print(f"Error: {exc}", file=sys.stderr)
+            return 1
+
+    # Handle check ID
     from oss_paper_ci.checks.registry import get_checker_by_id, get_all_checkers
 
-    check_id_upper = check_id.upper()
+    check_id_upper = target.upper()
     cls = get_checker_by_id(check_id_upper)
     if cls is not None:
         checker = cls()
@@ -298,10 +376,12 @@ def _cmd_explain(check_id: str) -> int:
         c.check_id for c in (cls() for cls in get_all_checkers())
         if c.check_id
     )
-    print(f"Unknown check ID: {check_id}", file=sys.stderr)
+    print(f"Unknown check ID: {target}", file=sys.stderr)
     print(f"Available check IDs: {', '.join(all_ids)}", file=sys.stderr)
     return 1
 
+
+# ── List checks ──────────────────────────────────────────────────────────────
 
 def _cmd_list_checks(category: str | None, fmt: str) -> int:
     """List all available checks."""
@@ -372,12 +452,374 @@ def _cmd_list_checks(category: str | None, fmt: str) -> int:
     return 0
 
 
+# ── Config command group ─────────────────────────────────────────────────────
+
+def _cmd_config(args: argparse.Namespace) -> int:
+    """Handle config subcommand group."""
+    sub = getattr(args, "config_command", None)
+
+    if sub == "validate":
+        return _cmd_config_validate(getattr(args, "config_path", None))
+
+    if sub == "init":
+        return _cmd_config_init(
+            profile=getattr(args, "profile", "default"),
+            output=getattr(args, "output", None),
+            force=getattr(args, "force", False),
+            dry_run=getattr(args, "dry_run", False),
+        )
+
+    if sub == "explain":
+        return _cmd_config_explain(getattr(args, "config_path", None))
+
+    print("Usage: oss-paper-ci config {validate|init|explain}", file=sys.stderr)
+    return 1
+
+
+def _cmd_config_validate(config_path: str | None) -> int:
+    """Validate a config file."""
+    from oss_paper_ci.schema import validate_config_file
+
+    # Find the config file
+    if config_path:
+        path = Path(config_path)
+    else:
+        # Search default locations
+        path = None
+        for name in ("oss-paper-ci.yml", "oss-paper-ci.yaml", ".oss-paper-ci.yml"):
+            candidate = Path(name)
+            if candidate.exists():
+                path = candidate
+                break
+
+    if path is None:
+        print("No config file found.", file=sys.stderr)
+        print("Run `oss-paper-ci config init` to create one.", file=sys.stderr)
+        return 1
+
+    result = validate_config_file(path)
+    print(result.format_text())
+    return 0 if result.valid else 1
+
+
+def _cmd_config_init(
+    *,
+    profile: str = "default",
+    output: str | None = None,
+    force: bool = False,
+    dry_run: bool = False,
+) -> int:
+    """Generate a default config file."""
+    from oss_paper_ci.config import generate_default_config
+
+    content = generate_default_config(profile=profile)
+
+    if dry_run:
+        print(content)
+        return 0
+
+    target = Path(output or ".oss-paper-ci.yml")
+    if target.exists() and not force:
+        print(f"Config file already exists: {target}", file=sys.stderr)
+        print("Use --force to overwrite.", file=sys.stderr)
+        return 1
+
+    target.write_text(content, encoding="utf-8")
+    print(f"Created {target}")
+    return 0
+
+
+def _cmd_config_explain(config_path: str | None) -> int:
+    """Show the resolved configuration."""
+    import json as json_mod
+
+    from oss_paper_ci.config import load_config
+    from oss_paper_ci.policy import get_profile
+
+    config = load_config(config_path=config_path)
+
+    try:
+        profile = get_profile(config.profile)
+    except ValueError:
+        profile = get_profile("default")
+
+    # Build resolved config summary
+    resolved = {
+        "config_path": config.config_path or "(defaults)",
+        "profile": profile.name,
+        "profile_description": profile.description,
+        "thresholds": {
+            "pass_score": profile.pass_score,
+            "warn_score": profile.warn_score,
+            "fail_under": profile.fail_under,
+        },
+        "checks": {
+            "disabled": config.checks.disabled,
+            "severity_overrides": config.checks.severity_overrides,
+        },
+        "ignore_paths": config.ignore.paths,
+        "output_format": config.output.default_format,
+    }
+
+    print(json_mod.dumps(resolved, indent=2))
+    return 0
+
+
+# ── Diff command ─────────────────────────────────────────────────────────────
+
+def _cmd_diff(
+    old_path: str,
+    new_path: str,
+    fmt: str,
+    output: str | None = None,
+) -> int:
+    """Compare two scan report JSON files."""
+    import json as json_mod
+
+    old_file = Path(old_path)
+    new_file = Path(new_path)
+
+    if not old_file.exists():
+        print(f"Error: old report not found: {old_path}", file=sys.stderr)
+        return 2
+    if not new_file.exists():
+        print(f"Error: new report not found: {new_path}", file=sys.stderr)
+        return 2
+
+    try:
+        old_data = json_mod.loads(old_file.read_text(encoding="utf-8"))
+        new_data = json_mod.loads(new_file.read_text(encoding="utf-8"))
+    except Exception as exc:
+        print(f"Error reading reports: {exc}", file=sys.stderr)
+        return 2
+
+    diff = _compute_diff(old_data, new_data)
+
+    if fmt == "json":
+        text = json_mod.dumps(diff, indent=2)
+    else:
+        text = _format_diff_markdown(diff, old_data, new_data)
+
+    if output:
+        Path(output).write_text(text, encoding="utf-8")
+        print(f"Diff written to {output}")
+    else:
+        print(text)
+
+    return 0
+
+
+def _compute_diff(old_data: dict, new_data: dict) -> dict:
+    """Compute diff between two report dicts."""
+    old_summary = old_data.get("summary", {})
+    new_summary = new_data.get("summary", {})
+
+    old_score = old_summary.get("score", 0)
+    new_score = new_summary.get("score", 0)
+    old_status = old_summary.get("status", "unknown")
+    new_status = new_summary.get("status", "unknown")
+
+    # Index checks by ID
+    old_checks = {c["id"]: c for c in old_data.get("checks", [])}
+    new_checks = {c["id"]: c for c in new_data.get("checks", [])}
+
+    all_ids = sorted(set(old_checks) | set(new_checks))
+
+    new_findings = []
+    resolved_findings = []
+    severity_worsened = []
+    severity_improved = []
+    changed_categories = []
+
+    for cid in all_ids:
+        old_c = old_checks.get(cid)
+        new_c = new_checks.get(cid)
+
+        if old_c is None and new_c is not None:
+            if new_c.get("status") in ("fail", "warn"):
+                new_findings.append({
+                    "id": cid,
+                    "title": new_c.get("title", ""),
+                    "severity": new_c.get("severity", ""),
+                    "status": new_c.get("status", ""),
+                    "message": new_c.get("message", ""),
+                })
+        elif old_c is not None and new_c is None:
+            resolved_findings.append({
+                "id": cid,
+                "title": old_c.get("title", ""),
+                "from_status": old_c.get("status", ""),
+            })
+        elif old_c is not None and new_c is not None:
+            old_stat = old_c.get("status", "")
+            new_stat = new_c.get("status", "")
+            old_sev = old_c.get("severity", "")
+            new_sev = new_c.get("severity", "")
+
+            # Status changes
+            _FAIL_ORDER = {"pass": 0, "warn": 1, "fail": 2, "unknown": 0}
+            if _FAIL_ORDER.get(new_stat, 0) > _FAIL_ORDER.get(old_stat, 0):
+                severity_worsened.append({
+                    "id": cid,
+                    "title": new_c.get("title", ""),
+                    "from_status": old_stat,
+                    "to_status": new_stat,
+                })
+            elif _FAIL_ORDER.get(new_stat, 0) < _FAIL_ORDER.get(old_stat, 0):
+                severity_improved.append({
+                    "id": cid,
+                    "title": new_c.get("title", ""),
+                    "from_status": old_stat,
+                    "to_status": new_stat,
+                })
+
+    # Category-level changes
+    old_cats: dict[str, dict] = {}
+    new_cats: dict[str, dict] = {}
+    for cid, c in old_checks.items():
+        cat = cid[:3] if len(cid) >= 3 else cid
+        if cat not in old_cats:
+            old_cats[cat] = {"pass": 0, "warn": 0, "fail": 0}
+        old_cats[cat][c.get("status", "unknown")] = old_cats[cat].get(c.get("status", "unknown"), 0) + 1
+    for cid, c in new_checks.items():
+        cat = cid[:3] if len(cid) >= 3 else cid
+        if cat not in new_cats:
+            new_cats[cat] = {"pass": 0, "warn": 0, "fail": 0}
+        new_cats[cat][c.get("status", "unknown")] = new_cats[cat].get(c.get("status", "unknown"), 0) + 1
+
+    for cat in sorted(set(old_cats) | set(new_cats)):
+        if old_cats.get(cat) != new_cats.get(cat):
+            changed_categories.append({
+                "category": cat,
+                "old": old_cats.get(cat, {}),
+                "new": new_cats.get(cat, {}),
+            })
+
+    # Recommendation summary
+    rec_parts = []
+    if new_findings:
+        rec_parts.append(f"{len(new_findings)} new finding(s)")
+    if resolved_findings:
+        rec_parts.append(f"{len(resolved_findings)} resolved")
+    if severity_worsened:
+        rec_parts.append(f"{len(severity_worsened)} worsened")
+    if severity_improved:
+        rec_parts.append(f"{len(severity_improved)} improved")
+    if not rec_parts:
+        recommendation = "No significant changes detected."
+    else:
+        recommendation = "Changes: " + ", ".join(rec_parts) + "."
+
+    return {
+        "old_report": old_data.get("version", "unknown"),
+        "new_report": new_data.get("version", "unknown"),
+        "score_delta": new_score - old_score,
+        "old_score": old_score,
+        "new_score": new_score,
+        "old_status": old_status,
+        "new_status": new_status,
+        "status_changed": old_status != new_status,
+        "new_findings": new_findings,
+        "resolved_findings": resolved_findings,
+        "severity_worsened": severity_worsened,
+        "severity_improved": severity_improved,
+        "changed_categories": changed_categories,
+        "recommendation": recommendation,
+    }
+
+
+def _format_diff_markdown(diff: dict, old_data: dict, new_data: dict) -> str:
+    """Format diff as markdown."""
+    lines = ["# Report Diff\n"]
+
+    # Score comparison
+    lines.append("## Score Comparison\n")
+    lines.append("| Metric | Old | New | Delta |")
+    lines.append("|--------|-----|-----|-------|")
+    lines.append(
+        f"| Score | {diff['old_score']} | {diff['new_score']} | "
+        f"{diff['score_delta']:+d} |"
+    )
+    lines.append(
+        f"| Status | {diff['old_status']} | {diff['new_status']} | "
+        f"{'changed' if diff['status_changed'] else 'same'} |"
+    )
+    lines.append("")
+
+    # Policy info
+    old_policy = old_data.get("policy", {})
+    new_policy = new_data.get("policy", {})
+    if old_policy or new_policy:
+        lines.append("## Policy\n")
+        lines.append(f"- Old profile: {old_policy.get('profile', 'n/a')}")
+        lines.append(f"- New profile: {new_policy.get('profile', 'n/a')}")
+        lines.append("")
+
+    # New findings
+    if diff["new_findings"]:
+        lines.append(f"## New Findings ({len(diff['new_findings'])})\n")
+        for f in diff["new_findings"]:
+            lines.append(
+                f"- **{f['id']}** ({f.get('title', '')}): "
+                f"{f.get('severity', '?')} / {f.get('status', '?')} — "
+                f"{f.get('message', '')}"
+            )
+        lines.append("")
+
+    # Resolved findings
+    if diff["resolved_findings"]:
+        lines.append(f"## Resolved Findings ({len(diff['resolved_findings'])})\n")
+        for f in diff["resolved_findings"]:
+            lines.append(
+                f"- **{f['id']}** ({f.get('title', '')}): "
+                f"was {f.get('from_status', '?')}"
+            )
+        lines.append("")
+
+    # Worsened
+    if diff["severity_worsened"]:
+        lines.append(f"## Worsened ({len(diff['severity_worsened'])})\n")
+        for f in diff["severity_worsened"]:
+            lines.append(
+                f"- **{f['id']}** ({f.get('title', '')}): "
+                f"{f['from_status']} → {f['to_status']}"
+            )
+        lines.append("")
+
+    # Improved
+    if diff["severity_improved"]:
+        lines.append(f"## Improved ({len(diff['severity_improved'])})\n")
+        for f in diff["severity_improved"]:
+            lines.append(
+                f"- **{f['id']}** ({f.get('title', '')}): "
+                f"{f['from_status']} → {f['to_status']}"
+            )
+        lines.append("")
+
+    # Changed categories
+    if diff["changed_categories"]:
+        lines.append(f"## Changed Categories ({len(diff['changed_categories'])})\n")
+        for cat in diff["changed_categories"]:
+            lines.append(f"- **{cat['category']}**: {cat['old']} → {cat['new']}")
+        lines.append("")
+
+    # Recommendation
+    lines.append("## Summary\n")
+    lines.append(diff["recommendation"])
+    lines.append("")
+
+    return "\n".join(lines)
+
+
+# ── Scan command ─────────────────────────────────────────────────────────────
+
 def _cmd_scan(
     repo_path: str,
     config_path: str | None,
     fmt: str,
     output: str | None,
     *,
+    profile: str | None = None,
     fail_under: int | None = None,
     strict: bool = False,
     verbose: bool = False,
@@ -396,6 +838,11 @@ def _cmd_scan(
         return 2
 
     config = load_config(config_path=config_path, repo_root=str(path))
+
+    # CLI --profile overrides config file profile
+    if profile is not None:
+        config.profile = profile
+
     report = run_scan(str(path), config)
 
     if fmt == "json":
@@ -435,6 +882,8 @@ def _cmd_scan(
         return 1
     return 0
 
+
+# ── Graph command ────────────────────────────────────────────────────────────
 
 def _cmd_graph(
     repo_path: str,
@@ -503,6 +952,8 @@ def _cmd_graph(
 
     return 0
 
+
+# ── Baseline command ─────────────────────────────────────────────────────────
 
 def _cmd_baseline(args: argparse.Namespace) -> int:
     """Handle the ``baseline`` subcommand."""
@@ -637,6 +1088,8 @@ def _format_baseline_markdown(
     return "\n".join(lines)
 
 
+# ── Smoke command ────────────────────────────────────────────────────────────
+
 def _cmd_smoke(args: argparse.Namespace) -> int:
     """Handle the ``smoke`` subcommand."""
     from oss_paper_ci.runner import load_smoke_command, run_smoke
@@ -704,6 +1157,8 @@ def _print_smoke_text(result: "SmokeResult") -> None:
             status = "OK" if o["exists"] else "MISSING"
             print(f"  [{status}] {o['path']}")
 
+
+# ── Doctor command ───────────────────────────────────────────────────────────
 
 def _cmd_doctor(repo_path: str, fmt: str) -> int:
     """Diagnose repository and environment."""
@@ -777,6 +1232,8 @@ def _cmd_doctor(repo_path: str, fmt: str) -> int:
     return 0
 
 
+# ── Comment command ──────────────────────────────────────────────────────────
+
 def _cmd_comment(input_path: str, output: str | None, kind: str, max_findings: int) -> int:
     """Generate PR comment from scan results."""
     import json as json_mod
@@ -810,6 +1267,12 @@ def _cmd_comment(input_path: str, output: str | None, kind: str, max_findings: i
         f"**Checks:** {counts.get('pass', 0)} pass, {counts.get('warning', 0)} warn, {counts.get('error', 0)} fail",
         "",
     ]
+
+    # Policy info
+    policy = data.get("policy", {})
+    if policy:
+        lines.append(f"**Profile:** {policy.get('profile', 'default')}")
+        lines.append("")
 
     checks = data.get("checks", [])
     failing = [c for c in checks if c.get("status") in ("fail", "warn")]

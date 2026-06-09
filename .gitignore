@@ -32,3 +32,10 @@ release_quarantine_*
 public_usage_*
 final_truthfulness.*
 release-artifacts/
+
+# Local audit and truthfulness files
+.local_*.md
+.local_*.json
+v1_*_truthfulness.*
+*.truthfulness.json
+*.truthfulness.md
