@@ -1,6 +1,6 @@
 Metadata-Version: 2.4
 Name: oss-paper-ci
-Version: 1.3.0rc1
+Version: 1.4.0rc1
 Summary: CI tool for checking reproducibility readiness of scientific paper repositories
 Author: oss-paper-ci contributors
 License: MIT
@@ -60,17 +60,33 @@ See [docs/demo.md](docs/demo.md) for full reproduction instructions.
 
 ## Quick path
 
-1. **Diagnose** your repository: `oss-paper-ci doctor .`
-2. **Initialize** missing assets: `oss-paper-ci init --all --dry-run`
-3. **Scan** your repository: `oss-paper-ci scan . --format html --output report.html`
-4. **Generate PR comment**: `oss-paper-ci comment --input report.json --output pr-comment.md`
-5. **Add GitHub Actions**: see [examples/github-actions/](examples/github-actions/)
+1. **Install**: `python -m pip install -e ".[dev]"`
+2. **Diagnose**: `oss-paper-ci doctor .`
+3. **Initialize**: `oss-paper-ci init --all --dry-run`
+4. **Scan locally**: `oss-paper-ci scan . --format html --output report.html`
+5. **Generate PR comment**: `oss-paper-ci comment --input report.json --output pr-comment.md`
+6. **Use in GitHub Actions**: see [examples/github-actions/](examples/github-actions/)
+7. **Upload SARIF**: `oss-paper-ci scan . --format sarif --output report.sarif`
+
+### GitHub Actions integration
+
+```yaml
+- name: Run oss-paper-ci
+  run: |
+    oss-paper-ci scan . --format json --output report.json
+    oss-paper-ci scan . --format html --output report.html
+    oss-paper-ci scan . --format sarif --output report.sarif
+    oss-paper-ci scan . --format github --github-step-summary "$GITHUB_STEP_SUMMARY"
+```
+
+See [docs/github-actions.md](docs/github-actions.md) for full workflow templates.
 
 See also:
 - [docs/doctor.md](docs/doctor.md) — diagnose your repo
 - [docs/init.md](docs/init.md) — scaffold reproducibility assets
 - [docs/html-report.md](docs/html-report.md) — HTML report format
 - [docs/pr-comment.md](docs/pr-comment.md) — PR comment generation
+- [docs/sarif.md](docs/sarif.md) — SARIF export for GitHub Code Scanning
 - [examples/demo-paper-repo/](examples/demo-paper-repo/) — example paper repository
 - [examples/reports/demo_paper_report.html](examples/reports/demo_paper_report.html) — example HTML report
 - [examples/reports/demo_paper_pr_comment.md](examples/reports/demo_paper_pr_comment.md) — example PR comment
