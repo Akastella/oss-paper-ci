@@ -36,11 +36,14 @@ def main(argv: list[str] | None = None) -> int:
     scan_parser = subparsers.add_parser("scan", help="Scan a repository for reproducibility checks.")
     scan_parser.add_argument("path", nargs="?", default=".", help="Path to repository root (default: .)")
     scan_parser.add_argument("--config", dest="config_path", help="Path to oss-paper-ci.yml config file.")
-    scan_parser.add_argument("--format", choices=["json", "markdown", "sarif", "html"], default="markdown", help="Output format.")
+    scan_parser.add_argument("--format", choices=["json", "markdown", "sarif", "html", "github"], default="markdown", help="Output format.")
     scan_parser.add_argument("--output", "-o", help="Write report to file instead of stdout.")
     scan_parser.add_argument("--fail-under", type=int, dest="fail_under", help="Exit with code 1 if score is below this threshold.")
     scan_parser.add_argument("--strict", action="store_true", help="Exit with code 1 if any warnings exist.")
     scan_parser.add_argument("--verbose", action="store_true", help="Show all check details with evidence in markdown report.")
+    scan_parser.add_argument("--github-step-summary", dest="github_step_summary", help="Write Markdown summary to file (for $GITHUB_STEP_SUMMARY).")
+    scan_parser.add_argument("--max-annotations", type=int, dest="max_annotations", default=50, help="Max annotations for github format (default: 50).")
+    scan_parser.add_argument("--fail-on", dest="fail_on", help="Fail on severity level (e.g., major, error).")
 
     # init command
     init_parser = subparsers.add_parser("init", help="Generate a default config or contract file.")
@@ -152,6 +155,9 @@ def main(argv: list[str] | None = None) -> int:
             fail_under=getattr(args, "fail_under", None),
             strict=getattr(args, "strict", False),
             verbose=getattr(args, "verbose", False),
+            github_step_summary=getattr(args, "github_step_summary", None),
+            max_annotations=getattr(args, "max_annotations", 50),
+            fail_on=getattr(args, "fail_on", None),
         )
 
     if args.command == "graph":
@@ -375,6 +381,9 @@ def _cmd_scan(
     fail_under: int | None = None,
     strict: bool = False,
     verbose: bool = False,
+    github_step_summary: str | None = None,
+    max_annotations: int = 50,
+    fail_on: str | None = None,
 ) -> int:
     """Run the scan command."""
     from oss_paper_ci.config import load_config
@@ -396,6 +405,13 @@ def _cmd_scan(
     elif fmt == "html":
         from oss_paper_ci.reporting.html_report import generate_html_report
         text = generate_html_report(report)
+    elif fmt == "github":
+        from oss_paper_ci.reporting.github_annotations import generate_github_annotations, generate_step_summary
+        text = generate_github_annotations(report, max_annotations=max_annotations, fail_on=fail_on)
+        # Also generate step summary if requested
+        if github_step_summary:
+            summary_text = generate_step_summary(report)
+            Path(github_step_summary).write_text(summary_text, encoding="utf-8")
     else:
         text = generate_markdown_report(report, output_path=output, verbose=verbose)
 
@@ -776,38 +792,68 @@ def _cmd_comment(input_path: str, output: str | None, kind: str, max_findings: i
         print(f"Error: invalid JSON: {e}", file=sys.stderr)
         return 1
 
-    lines = ["## Reproducibility Report", ""]
-
     summary = data.get("summary", {})
     score = summary.get("score", 0)
     status = summary.get("status", "unknown")
     counts = summary.get("counts", {})
 
-    lines.append(f"**Score:** {score}/100")
-    lines.append(f"**Status:** {status}")
-    lines.append(f"**Checks:** {counts.get('pass', 0)} pass, {counts.get('warning', 0)} warn, {counts.get('error', 0)} fail")
-    lines.append("")
+    # Status badge
+    badge_colors = {"pass": "green", "warn": "yellow", "fail": "red"}
+    badge = badge_colors.get(status, "lightgrey")
+
+    lines = [
+        "## Reproducibility Report",
+        "",
+        f"![Score](https://img.shields.io/badge/Score-{score}%2F100-{badge})",
+        f"![Status](https://img.shields.io/badge/Status-{status}-{badge})",
+        "",
+        f"**Checks:** {counts.get('pass', 0)} pass, {counts.get('warning', 0)} warn, {counts.get('error', 0)} fail",
+        "",
+    ]
 
     checks = data.get("checks", [])
     failing = [c for c in checks if c.get("status") in ("fail", "warn")]
 
     if failing:
-        lines.append(f"### Findings (showing {min(len(failing), max_findings)} of {len(failing)})")
+        shown = min(len(failing), max_findings)
+        lines.append(f"### Findings ({shown} of {len(failing)})")
         lines.append("")
+        lines.append("| ID | Severity | Message |")
+        lines.append("|----|----------|---------|")
         for c in failing[:max_findings]:
             sev = c.get("severity", "?")
             cid = c.get("id", "?")
             msg = c.get("message", "")
-            rec = c.get("recommendation", "")
+            # Truncate and escape for table
+            if len(msg) > 80:
+                msg = msg[:77] + "..."
+            msg = msg.replace("|", "\\|").replace("\n", " ")
             icon = "!!" if sev == "error" else "!"
-            lines.append(f"- **{icon} {cid}**: {msg}")
-            if rec:
-                lines.append(f"  - Recommendation: {rec}")
+            lines.append(f"| `{cid}` | {icon} {sev} | {msg} |")
+        if len(failing) > max_findings:
+            lines.append(f"| ... | ... | *{len(failing) - max_findings} more* |")
+        lines.append("")
+
+    # Recommendations in collapsible section
+    recs = [c for c in checks if c.get("recommendation") and c.get("status") in ("fail", "warn")]
+    if recs:
+        lines.append("<details>")
+        lines.append("<summary>Recommendations</summary>")
+        lines.append("")
+        for c in recs[:max_findings]:
+            cid = c.get("id", "?")
+            rec = c.get("recommendation", "")
+            lines.append(f"- **{cid}**: {rec}")
+        lines.append("")
+        lines.append("</details>")
         lines.append("")
 
     if kind == "baseline":
         lines.append("> Baseline comparison mode")
         lines.append("")
+
+    lines.append("---")
+    lines.append("*Generated by [oss-paper-ci](https://github.com/Akastella/oss-paper-ci)*")
 
     text = "\n".join(lines)
 

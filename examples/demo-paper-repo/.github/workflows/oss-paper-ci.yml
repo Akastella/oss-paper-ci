@@ -1,0 +1,54 @@
+# OSS Paper CI - Reproducibility Check
+#
+# This workflow runs reproducibility checks on every push and pull request.
+# Copy this file to your paper repository's .github/workflows/ directory.
+
+name: Reproducibility Check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  reproducibility:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install oss-paper-ci
+        run: pip install oss-paper-ci  # after PyPI publication
+
+      - name: Run scan (JSON)
+        run: oss-paper-ci scan . --format json --output oss-paper-ci.json
+
+      - name: Run scan (HTML)
+        run: oss-paper-ci scan . --format html --output oss-paper-ci.html
+
+      - name: Run scan (SARIF)
+        run: oss-paper-ci scan . --format sarif --output oss-paper-ci.sarif
+
+      - name: Run scan (GitHub annotations)
+        run: oss-paper-ci scan . --format github --github-step-summary "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload HTML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: oss-paper-ci-html-report
+          path: oss-paper-ci.html
+
+      - name: Upload SARIF
+        if: always()
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: oss-paper-ci.sarif
