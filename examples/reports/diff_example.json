@@ -1,0 +1,94 @@
+{
+  "old_report": "1.5.0rc1",
+  "new_report": "1.5.0rc1",
+  "score_delta": 17,
+  "old_score": 65,
+  "new_score": 82,
+  "old_status": "warn",
+  "new_status": "warn",
+  "status_changed": false,
+  "new_findings": [],
+  "resolved_findings": [],
+  "severity_worsened": [],
+  "severity_improved": [
+    {
+      "id": "CI001",
+      "title": "CI workflow",
+      "from_status": "fail",
+      "to_status": "pass"
+    },
+    {
+      "id": "DATA001",
+      "title": "Data description",
+      "from_status": "fail",
+      "to_status": "warn"
+    },
+    {
+      "id": "EXP001",
+      "title": "Experiment script",
+      "from_status": "warn",
+      "to_status": "pass"
+    },
+    {
+      "id": "META002",
+      "title": "License",
+      "from_status": "fail",
+      "to_status": "pass"
+    }
+  ],
+  "changed_categories": [
+    {
+      "category": "CI0",
+      "old": {
+        "pass": 0,
+        "warn": 0,
+        "fail": 1
+      },
+      "new": {
+        "pass": 1,
+        "warn": 0,
+        "fail": 0
+      }
+    },
+    {
+      "category": "DAT",
+      "old": {
+        "pass": 0,
+        "warn": 0,
+        "fail": 1
+      },
+      "new": {
+        "pass": 0,
+        "warn": 1,
+        "fail": 0
+      }
+    },
+    {
+      "category": "EXP",
+      "old": {
+        "pass": 0,
+        "warn": 1,
+        "fail": 0
+      },
+      "new": {
+        "pass": 1,
+        "warn": 0,
+        "fail": 0
+      }
+    },
+    {
+      "category": "MET",
+      "old": {
+        "pass": 1,
+        "warn": 1,
+        "fail": 1
+      },
+      "new": {
+        "pass": 3,
+        "warn": 1,
+        "fail": 0
+      }
+    }
+  ],
+  "recommendation": "Changes: 4 improved."
+}

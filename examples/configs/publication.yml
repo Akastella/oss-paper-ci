@@ -1,0 +1,34 @@
+version: 1
+profile: publication
+
+# Publication profile: repos preparing for public release or appendix.
+# Requires LICENSE, environment, data, results, experiment description.
+# Does NOT judge paper quality or correctness.
+
+paths:
+  include:
+    - "."
+  exclude:
+    - ".git/"
+    - "dist/"
+    - "build/"
+    - "__pycache__/"
+    - ".pytest_cache/"
+
+thresholds:
+  pass_score: 90
+  warn_score: 75
+  fail_under: 50
+
+checks:
+  disabled: []
+  severity_overrides: {}
+
+reports:
+  default_format: markdown
+  include_recommendations: true
+  max_findings: 50
+
+ci:
+  github_annotations: true
+  step_summary: true

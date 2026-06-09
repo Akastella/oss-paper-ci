@@ -1,0 +1,33 @@
+version: 1
+profile: lenient
+
+# Lenient profile: early-stage projects, fewer blocking findings.
+# Use when you want feedback without hard failures.
+
+paths:
+  include:
+    - "."
+  exclude:
+    - ".git/"
+    - "dist/"
+    - "build/"
+    - "__pycache__/"
+    - ".pytest_cache/"
+
+thresholds:
+  pass_score: 70
+  warn_score: 50
+  fail_under: 30
+
+checks:
+  disabled: []
+  severity_overrides: {}
+
+reports:
+  default_format: markdown
+  include_recommendations: true
+  max_findings: 50
+
+ci:
+  github_annotations: true
+  step_summary: true

@@ -64,6 +64,6 @@ class TestGenerateConfig:
         import yaml
         content = generate_default_config()
         data = yaml.safe_load(content)
-        assert data["version"] == 0.1
+        assert data["version"] == 1
         assert "checks" in data
         assert "project" in data

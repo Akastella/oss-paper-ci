@@ -33,11 +33,24 @@ See [docs/demo.md](docs/demo.md) for full reproduction instructions.
 
 1. **Install**: `python -m pip install -e ".[dev]"`
 2. **Diagnose**: `oss-paper-ci doctor .`
-3. **Initialize**: `oss-paper-ci init --all --dry-run`
+3. **Initialize**: `oss-paper-ci config init --profile publication`
 4. **Scan locally**: `oss-paper-ci scan . --format html --output report.html`
 5. **Generate PR comment**: `oss-paper-ci comment --input report.json --output pr-comment.md`
 6. **Use in GitHub Actions**: see [examples/github-actions/](examples/github-actions/)
 7. **Upload SARIF**: `oss-paper-ci scan . --format sarif --output report.sarif`
+
+## Long-term governance path
+
+For repositories that want ongoing reproducibility tracking:
+
+1. **Init config**: `oss-paper-ci config init --profile publication`
+2. **Validate config**: `oss-paper-ci config validate`
+3. **Scan**: `oss-paper-ci scan . --format json --output report.json`
+4. **Compare against previous**: `oss-paper-ci diff --old previous.json --new report.json`
+5. **Enforce in CI**: use the GitHub Action with `profile` and `fail-under` inputs
+6. **Publish artifacts**: upload reports as CI artifacts
+
+See [docs/policy-profiles.md](docs/policy-profiles.md) and [docs/report-diff.md](docs/report-diff.md).
 
 ### GitHub Actions integration
 
@@ -135,6 +148,9 @@ For more options (SARIF upload, PR comments, baseline regression), see
 # Scan current directory (markdown output)
 oss-paper-ci scan
 
+# Scan with a specific policy profile
+oss-paper-ci scan . --profile strict
+
 # Scan specific path, output JSON
 oss-paper-ci scan /path/to/repo --format json
 
@@ -148,22 +164,39 @@ oss-paper-ci scan --format sarif -o results.sarif
 oss-paper-ci scan --config my-config.yml
 ```
 
-### Init
-
-Generate a default config file:
+### Config
 
 ```bash
-oss-paper-ci init
+# Generate a default config file
+oss-paper-ci config init
+
+# Generate config for a specific profile
+oss-paper-ci config init --profile strict
+
+# Validate a config file
+oss-paper-ci config validate
+
+# Show resolved configuration
+oss-paper-ci config explain
 ```
 
-Creates `oss-paper-ci.yml` in the current directory.
+### Diff
+
+Compare two scan reports:
+
+```bash
+oss-paper-ci diff --old old-report.json --new new-report.json
+oss-paper-ci diff --old old.json --new new.json --format json --output diff.json
+```
 
 ### Explain
 
-Get details about a specific check:
-
 ```bash
+# Explain a check
 oss-paper-ci explain ENV001
+
+# Explain a policy profile
+oss-paper-ci explain policy strict
 ```
 
 ### List checks
@@ -270,41 +303,34 @@ See [docs/pre-commit.md](docs/pre-commit.md) for configuration options.
 
 ## Configuration
 
-Create `oss-paper-ci.yml` in your repo root (or run `oss-paper-ci init`):
+Create `.oss-paper-ci.yml` in your repo root (or run `oss-paper-ci config init`):
 
 ```yaml
-version: "0.1"
-project:
-  name: "my-paper"
-  paper_dir: "paper"
-  code_dirs:
-    - "src"
-    - "scripts"
-  data_dirs:
-    - "data"
-  results_dirs:
-    - "results"
-    - "figures"
+version: 1
+profile: default
+
 checks:
-  min_score: 70
-  require_license: true
-  require_citation: true
-  require_environment: true
-  require_quickstart: true
-  disabled:
-    - "META005"
-  severity_overrides:
-    "CI001": "warning"
-ignore:
-  paths:
-    - ".git"
-    - ".venv"
-    - "node_modules"
-output:
-  default_format: "markdown"
+  disabled: []
+  severity_overrides: {}
+
+reports:
+  default_format: markdown
 ```
 
 See [docs/configuration.md](docs/configuration.md) for the full reference.
+
+## Policy profiles
+
+Pick a profile that matches your project's stage:
+
+| Profile | Use case |
+|---------|----------|
+| `lenient` | Early-stage projects, fewer blocking findings |
+| `default` | Balanced defaults for general use |
+| `strict` | Stricter governance for mature projects |
+| `publication` | Repos preparing for public release |
+
+See [docs/policy-profiles.md](docs/policy-profiles.md).
 
 ## Score interpretation
 

@@ -99,10 +99,29 @@ class ReportMetadata:
 
 
 @dataclass
+class PolicyInfo:
+    """Policy information included in the report."""
+
+    profile: str = "default"
+    pass_score: int = 85
+    warn_score: int = 60
+    fail_under: int = 50
+    config_path: str = ""
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "profile": self.profile,
+            "pass_score": self.pass_score,
+            "warn_score": self.warn_score,
+            "fail_under": self.fail_under,
+        }
+
+
+@dataclass
 class Report:
     """Complete report produced by a scan."""
 
-    schema_version: str = "0.2"
+    schema_version: str = "0.3"
     tool: str = "oss-paper-ci"
     version: str = "0.1.0"
     repository: RepoInfo = field(default_factory=lambda: RepoInfo(path="."))
@@ -111,6 +130,7 @@ class Report:
     metadata: ReportMetadata = field(default_factory=ReportMetadata)
     recommendations: list[str] = field(default_factory=list)
     blocking_issues: list[str] = field(default_factory=list)
+    policy: PolicyInfo = field(default_factory=PolicyInfo)
 
     def to_dict(self) -> dict[str, Any]:
         data: dict[str, Any] = {
@@ -127,5 +147,6 @@ class Report:
             "checks": [c.to_dict() for c in self.checks],
             "recommendations": self.recommendations,
             "blocking_issues": self.blocking_issues,
+            "policy": self.policy.to_dict(),
         }
         return data
