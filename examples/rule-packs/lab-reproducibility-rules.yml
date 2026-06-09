@@ -1,0 +1,62 @@
+version: 1
+name: lab-reproducibility
+description: >
+  Reproducibility rules for lab paper repositories.
+  Checks for CITATION.cff, results documentation, and no large data files.
+
+checks:
+  - id: LAB001
+    name: Require CITATION.cff
+    severity: important
+    category: metadata
+    type: file_exists
+    path: CITATION.cff
+    message: "CITATION.cff is missing. Add one for proper citation."
+    recommendation: "Create a CITATION.cff file with your paper metadata."
+
+  - id: LAB002
+    name: Require results README
+    severity: advisory
+    category: results
+    type: file_exists
+    path: results/README.md
+    message: "results/README.md is missing."
+    recommendation: "Add a README.md to your results/ directory describing the outputs."
+
+  - id: LAB003
+    name: Forbid large raw data in repository
+    severity: important
+    category: data
+    type: forbidden_glob
+    pattern: "data/**/*.zip"
+    message: "Large raw archives should not be committed directly."
+    recommendation: "Use a data download script or DVC instead of committing large files."
+
+  - id: LAB004
+    name: Require environment specification
+    severity: important
+    category: environment
+    type: any_file_exists
+    paths:
+      - requirements.txt
+      - environment.yml
+      - pyproject.toml
+      - Pipfile
+      - renv.lock
+      - Project.toml
+    message: "No environment specification file found."
+    recommendation: "Add requirements.txt, environment.yml, or pyproject.toml."
+
+  - id: LAB005
+    name: Require reproduction script
+    severity: warning
+    category: experiments
+    type: any_file_exists
+    paths:
+      - scripts/train.py
+      - scripts/run.py
+      - scripts/main.py
+      - Makefile
+      - Snakefile
+    message: "No reproduction script found."
+    recommendation: "Add a script that reproduces your main results."

@@ -101,6 +101,23 @@ class CIConfig:
 
 
 @dataclass
+class SuppressionEntry:
+    """A single finding suppression."""
+
+    id: str = ""
+    reason: str = ""
+    until: str = ""
+
+
+@dataclass
+class SuppressionsConfig:
+    """Suppression configuration."""
+
+    paths: list[str] = field(default_factory=list)
+    findings: list[SuppressionEntry] = field(default_factory=list)
+
+
+@dataclass
 class Config:
     """Top-level configuration."""
 
@@ -115,6 +132,8 @@ class Config:
     severity: SeverityPolicy = field(default_factory=SeverityPolicy)
     reports: ReportsConfig = field(default_factory=ReportsConfig)
     ci: CIConfig = field(default_factory=CIConfig)
+    rule_packs: list[str] = field(default_factory=list)
+    suppressions: SuppressionsConfig = field(default_factory=SuppressionsConfig)
     # Path to the config file that was loaded (empty = defaults)
     config_path: str = ""
 
@@ -252,6 +271,27 @@ def _parse_config_file(path: Path) -> Config:
             step_summary=ci.get("step_summary", True),
         )
 
+    # ── Rule Packs (v1) ─────────────────────────────────────────────────
+    if "rule_packs" in data and isinstance(data["rule_packs"], list):
+        config.rule_packs = [str(p) for p in data["rule_packs"]]
+
+    # ── Suppressions (v1) ───────────────────────────────────────────────
+    if "suppressions" in data and isinstance(data["suppressions"], dict):
+        supp = data["suppressions"]
+        paths = supp.get("paths", [])
+        findings = []
+        for f in supp.get("findings", []):
+            if isinstance(f, dict):
+                findings.append(SuppressionEntry(
+                    id=f.get("id", ""),
+                    reason=f.get("reason", ""),
+                    until=f.get("until", ""),
+                ))
+        config.suppressions = SuppressionsConfig(
+            paths=paths if isinstance(paths, list) else [],
+            findings=findings,
+        )
+
     return config
 
 
@@ -300,6 +340,12 @@ reports:
 ci:
   github_annotations: true
   step_summary: true
+
+rule_packs: []
+
+suppressions:
+  paths: []
+  findings: []
 
 project:
   name: ""
