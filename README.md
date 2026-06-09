@@ -332,6 +332,29 @@ Pick a profile that matches your project's stage:
 
 See [docs/policy-profiles.md](docs/policy-profiles.md).
 
+## Extending with custom rules
+
+Add custom checks without writing Python code:
+
+```yaml
+# oss-paper-ci-rules.yml
+version: 1
+name: my-rules
+checks:
+  - id: MY001
+    name: Require CITATION.cff
+    severity: error
+    type: file_exists
+    path: CITATION.cff
+    message: "CITATION.cff is required."
+```
+
+```bash
+oss-paper-ci scan . --rules oss-paper-ci-rules.yml
+```
+
+See [docs/rule-sdk.md](docs/rule-sdk.md) and [examples/rule-packs/](examples/rule-packs/).
+
 ## Score interpretation
 
 The score is 0-100. Status is determined by:

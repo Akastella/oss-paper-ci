@@ -1,0 +1,587 @@
+{
+  "schema_version": "0.4",
+  "tool": "oss-paper-ci",
+  "version": "1.6.0rc1",
+  "metadata": {
+    "generated_at": "2026-06-09T07:14:53.592141+00:00",
+    "scanned_files": 13,
+    "ignored_paths": [
+      ".git",
+      ".venv",
+      "node_modules",
+      "__pycache__"
+    ]
+  },
+  "repository": {
+    "path": "E:\\Projects\\OSS-Paper-CI\\examples\\demo-paper-repo",
+    "detected_languages": [
+      "Python"
+    ],
+    "detected_project_types": [
+      "Python (pip)",
+      "Conda"
+    ]
+  },
+  "summary": {
+    "score": 88,
+    "status": "pass",
+    "counts": {
+      "info": 23,
+      "warning": 16,
+      "error": 5
+    },
+    "score_breakdown": [
+      {
+        "id": "META003",
+        "title": "Citation information exists",
+        "severity": "warning",
+        "status": "warn",
+        "deduction": 1,
+        "classification": "advisory"
+      },
+      {
+        "id": "META004",
+        "title": "Reproduction instructions exist",
+        "severity": "warning",
+        "status": "warn",
+        "deduction": 1,
+        "classification": "advisory"
+      },
+      {
+        "id": "ENV002",
+        "title": "Lock file exists",
+        "severity": "warning",
+        "status": "warn",
+        "deduction": 1,
+        "classification": "advisory"
+      },
+      {
+        "id": "ENV003",
+        "title": "Python version specified",
+        "severity": "warning",
+        "status": "warn",
+        "deduction": 1,
+        "classification": "advisory"
+      },
+      {
+        "id": "ENV006",
+        "title": "Multiple environment files consistent",
+        "severity": "warning",
+        "status": "warn",
+        "deduction": 1,
+        "classification": "advisory"
+      },
+      {
+        "id": "EXP006",
+        "title": "Configuration files exist",
+        "severity": "warning",
+        "status": "warn",
+        "deduction": 1,
+        "classification": "advisory"
+      },
+      {
+        "id": "DATA002",
+        "title": "Data download instructions exist",
+        "severity": "warning",
+        "status": "warn",
+        "deduction": 1,
+        "classification": "advisory"
+      },
+      {
+        "id": "CI002",
+        "title": "Tests exist",
+        "severity": "warning",
+        "status": "warn",
+        "deduction": 1,
+        "classification": "advisory"
+      },
+      {
+        "id": "CI004",
+        "title": "Issue or PR templates exist",
+        "severity": "warning",
+        "status": "warn",
+        "deduction": 1,
+        "classification": "advisory"
+      },
+      {
+        "id": "RULE_PACK",
+        "title": "Rule Pack",
+        "severity": "error",
+        "status": "unknown",
+        "deduction": 3,
+        "classification": "advisory"
+      }
+    ]
+  },
+  "checks": [
+    {
+      "id": "META001",
+      "title": "README file exists",
+      "severity": "error",
+      "status": "pass",
+      "message": "Found README.md.",
+      "evidence": [
+        "README.md"
+      ],
+      "recommendation": ""
+    },
+    {
+      "id": "META002",
+      "title": "LICENSE file exists",
+      "severity": "error",
+      "status": "pass",
+      "message": "Found LICENSE.",
+      "evidence": [
+        "LICENSE"
+      ],
+      "recommendation": ""
+    },
+    {
+      "id": "META003",
+      "title": "Citation information exists",
+      "severity": "warning",
+      "status": "warn",
+      "message": "No citation information found.",
+      "evidence": [],
+      "recommendation": "Add a CITATION.cff file or a 'Citation' section to your README so that users know how to properly cite your work."
+    },
+    {
+      "id": "META004",
+      "title": "Reproduction instructions exist",
+      "severity": "warning",
+      "status": "warn",
+      "message": "No reproduction instructions found in README.",
+      "evidence": [],
+      "recommendation": "Add sections such as 'Getting Started', 'Installation', or 'Usage' to your README so that others can reproduce your results."
+    },
+    {
+      "id": "META005",
+      "title": "Contributing guidelines exist",
+      "severity": "info",
+      "status": "warn",
+      "message": "No contributing guidelines found.",
+      "evidence": [],
+      "recommendation": "Consider adding a CONTRIBUTING.md file or an issue template to encourage community contributions."
+    },
+    {
+      "id": "META006",
+      "title": "Version or release information",
+      "severity": "info",
+      "status": "warn",
+      "message": "No version or release information found.",
+      "evidence": [],
+      "recommendation": "Add a CHANGELOG, VERSION file, or a version field in pyproject.toml so users can track releases."
+    },
+    {
+      "id": "META007",
+      "title": "Artifact metadata file exists",
+      "severity": "info",
+      "status": "pass",
+      "message": "Found artifact metadata: reproducibility.yml.",
+      "evidence": [
+        "reproducibility.yml"
+      ],
+      "recommendation": ""
+    },
+    {
+      "id": "ENV001",
+      "title": "Environment specification file exists",
+      "severity": "error",
+      "status": "pass",
+      "message": "Found 2 environment specification file(s)",
+      "evidence": [
+        "requirements.txt",
+        "environment.yml"
+      ],
+      "recommendation": ""
+    },
+    {
+      "id": "ENV002",
+      "title": "Lock file exists",
+      "severity": "warning",
+      "status": "warn",
+      "message": "No lock file found",
+      "evidence": [],
+      "recommendation": "Add a lock file (e.g. poetry.lock, Pipfile.lock, uv.lock, or conda-lock.yml) to ensure reproducible dependency resolution."
+    },
+    {
+      "id": "ENV003",
+      "title": "Python version specified",
+      "severity": "warning",
+      "status": "warn",
+      "message": "No Python version specification found",
+      "evidence": [],
+      "recommendation": "Specify the required Python version in pyproject.toml (requires-python), setup.cfg (python_requires), .python-version, or Pipfile."
+    },
+    {
+      "id": "ENV004",
+      "title": "System dependencies documented",
+      "severity": "info",
+      "status": "pass",
+      "message": "System dependencies appear to be documented",
+      "evidence": [
+        "README mentions system dependency (\\binstall\\b)"
+      ],
+      "recommendation": ""
+    },
+    {
+      "id": "ENV005",
+      "title": "GPU/CPU requirements documented",
+      "severity": "info",
+      "status": "pass",
+      "message": "No GPU/CPU/hardware requirements documentation found",
+      "evidence": [],
+      "recommendation": "If the project requires specific hardware (GPU, CUDA, large memory), document these requirements in the README."
+    },
+    {
+      "id": "ENV006",
+      "title": "Multiple environment files consistent",
+      "severity": "warning",
+      "status": "warn",
+      "message": "Both requirements.txt and environment.yml exist but no clear guidance found in README",
+      "evidence": [
+        "requirements.txt",
+        "environment.yml"
+      ],
+      "recommendation": "Document in the README which file (requirements.txt or environment.yml) users should use and under what circumstances."
+    },
+    {
+      "id": "EXP001",
+      "title": "Experiment entry points exist",
+      "severity": "error",
+      "status": "pass",
+      "message": "Found experiment entry points. Warnings: train.py exists but has no 'if __name__' or 'def main'.",
+      "evidence": [
+        "directory: scripts/",
+        "train.py exists but has no 'if __name__' or 'def main'"
+      ],
+      "recommendation": ""
+    },
+    {
+      "id": "EXP002",
+      "title": "One-command reproduction script exists",
+      "severity": "warning",
+      "status": "pass",
+      "message": "A one-command reproduction path was found.",
+      "evidence": [
+        "README contains a run/reproduce/quickstart section",
+        "README contains executable code blocks"
+      ],
+      "recommendation": ""
+    },
+    {
+      "id": "EXP003",
+      "title": "Smoke test or quickstart exists",
+      "severity": "info",
+      "status": "pass",
+      "message": "Smoke test or quickstart reference found.",
+      "evidence": [
+        "README mentions quick/demo/example/test-run"
+      ],
+      "recommendation": ""
+    },
+    {
+      "id": "EXP004",
+      "title": "Long vs short experiment distinction",
+      "severity": "info",
+      "status": "pass",
+      "message": "Repository distinguishes between experiment modes.",
+      "evidence": [
+        "README mentions quick/fast/full/long/short/subset modes",
+        "environment.yml contains experiment mode settings"
+      ],
+      "recommendation": ""
+    },
+    {
+      "id": "EXP005",
+      "title": "Random seed setting detected",
+      "severity": "info",
+      "status": "warn",
+      "message": "No random seed setting detected in scripts/ or src/.",
+      "evidence": [],
+      "recommendation": "Set random seeds (e.g., random.seed(), np.random.seed(), torch.manual_seed()) so experiments are reproducible."
+    },
+    {
+      "id": "EXP006",
+      "title": "Configuration files exist",
+      "severity": "warning",
+      "status": "warn",
+      "message": "No configuration files or CLI argument parsing found.",
+      "evidence": [],
+      "recommendation": "Add a config file (e.g., config.yaml) or use argparse/click so experiment parameters are explicit and reproducible."
+    },
+    {
+      "id": "EXP007",
+      "title": "Notebook risk assessment",
+      "severity": "info",
+      "status": "warn",
+      "message": "No Jupyter notebooks found in the repository.",
+      "evidence": [],
+      "recommendation": ""
+    },
+    {
+      "id": "DATA001",
+      "title": "Data source documentation exists",
+      "severity": "warning",
+      "status": "pass",
+      "message": "Found data source documentation.",
+      "evidence": [
+        "data/",
+        "data/README.md"
+      ],
+      "recommendation": ""
+    },
+    {
+      "id": "DATA002",
+      "title": "Data download instructions exist",
+      "severity": "warning",
+      "status": "warn",
+      "message": "No data download instructions found.",
+      "evidence": [],
+      "recommendation": "Add download instructions to your README (e.g. wget/curl commands, links to Zenodo/Figshare/HuggingFace) or include a download_data.sh / get_data.py script."
+    },
+    {
+      "id": "DATA003",
+      "title": "Data categories distinguished",
+      "severity": "info",
+      "status": "warn",
+      "message": "No distinction between data categories found.",
+      "evidence": [],
+      "recommendation": "Consider organizing your data into subdirectories such as raw/, processed/, interim/, and external/ to clarify the data processing pipeline."
+    },
+    {
+      "id": "DATA004",
+      "title": "Large files not in repository",
+      "severity": "warning",
+      "status": "pass",
+      "message": "No large data files found in the repository.",
+      "evidence": [],
+      "recommendation": ""
+    },
+    {
+      "id": "DATA005",
+      "title": "Data paths in .gitignore",
+      "severity": "info",
+      "status": "warn",
+      "message": "No data-related patterns found in .gitignore.",
+      "evidence": [],
+      "recommendation": "Add data patterns to .gitignore (e.g. data/, *.csv, *.h5, *.parquet) to prevent accidental commits of large or sensitive data files."
+    },
+    {
+      "id": "DATA006",
+      "title": "Privacy and licensing for data",
+      "severity": "info",
+      "status": "pass",
+      "message": "Found data privacy or licensing information.",
+      "evidence": [
+        "README.md (license)",
+        "data/README.md"
+      ],
+      "recommendation": ""
+    },
+    {
+      "id": "RES001",
+      "title": "Results directory exists",
+      "severity": "warning",
+      "status": "pass",
+      "message": "Found results directories: results, figures.",
+      "evidence": [
+        "results",
+        "figures"
+      ],
+      "recommendation": ""
+    },
+    {
+      "id": "RES002",
+      "title": "Figures referenced in README exist",
+      "severity": "warning",
+      "status": "pass",
+      "message": "No figure references found in README.",
+      "evidence": [
+        "README.md"
+      ],
+      "recommendation": ""
+    },
+    {
+      "id": "RES003",
+      "title": "Results have generation scripts",
+      "severity": "info",
+      "status": "pass",
+      "message": "Found generation scripts: scripts\\make_figures.py.",
+      "evidence": [
+        "scripts\\make_figures.py"
+      ],
+      "recommendation": ""
+    },
+    {
+      "id": "RES004",
+      "title": "No orphan figures",
+      "severity": "info",
+      "status": "pass",
+      "message": "No image files found in the repository.",
+      "evidence": [],
+      "recommendation": ""
+    },
+    {
+      "id": "RES005",
+      "title": "Result regeneration instructions",
+      "severity": "info",
+      "status": "warn",
+      "message": "No result regeneration instructions found.",
+      "evidence": [],
+      "recommendation": "Add instructions to your README (e.g. 'To reproduce Figure 1, run ...') or a Makefile with result-related targets so others can regenerate your results."
+    },
+    {
+      "id": "PAP001",
+      "title": "Paper directory detected",
+      "severity": "info",
+      "status": "warn",
+      "message": "No paper or manuscript files detected.",
+      "evidence": [],
+      "recommendation": "If your project includes a paper, consider placing it in a paper/, manuscript/, or latex/ directory."
+    },
+    {
+      "id": "PAP002",
+      "title": "README commands match existing scripts",
+      "severity": "warning",
+      "status": "pass",
+      "message": "All 3 referenced script(s)/module(s)/config(s) exist.",
+      "evidence": [
+        "scripts/train.py",
+        "scripts/evaluate.py",
+        "scripts/make_figures.py"
+      ],
+      "recommendation": ""
+    },
+    {
+      "id": "PAP003",
+      "title": "README directory references exist",
+      "severity": "warning",
+      "status": "pass",
+      "message": "No directory references found in README.",
+      "evidence": [],
+      "recommendation": ""
+    },
+    {
+      "id": "PAP004",
+      "title": "Citation keys consistent",
+      "severity": "info",
+      "status": "warn",
+      "message": "No citation files found to verify.",
+      "evidence": [],
+      "recommendation": "Add a CITATION.cff or .bib file so that users can properly cite your work."
+    },
+    {
+      "id": "PAP005",
+      "title": "Figure paths in paper match files",
+      "severity": "info",
+      "status": "warn",
+      "message": "No .tex files found; skipping figure path check.",
+      "evidence": [],
+      "recommendation": ""
+    },
+    {
+      "id": "CI001",
+      "title": "GitHub Actions workflows exist",
+      "severity": "info",
+      "status": "pass",
+      "message": "Found 1 GitHub Actions workflow(s).",
+      "evidence": [
+        ".github\\workflows\\oss-paper-ci.yml"
+      ],
+      "recommendation": ""
+    },
+    {
+      "id": "CI002",
+      "title": "Tests exist",
+      "severity": "warning",
+      "status": "warn",
+      "message": "No test files or test configuration found.",
+      "evidence": [],
+      "recommendation": "Add a tests/ directory with unit tests and configure pytest so that others can verify the correctness of your code."
+    },
+    {
+      "id": "CI003",
+      "title": "Linting or formatting configured",
+      "severity": "info",
+      "status": "pass",
+      "message": "No linting or formatting configuration found (informational).",
+      "evidence": [],
+      "recommendation": ""
+    },
+    {
+      "id": "CI004",
+      "title": "Issue or PR templates exist",
+      "severity": "warning",
+      "status": "warn",
+      "message": "No issue or PR templates found.",
+      "evidence": [],
+      "recommendation": "Consider adding issue and pull request templates in .github/ to standardize contributions."
+    },
+    {
+      "id": "CI005",
+      "title": "Security policy exists",
+      "severity": "info",
+      "status": "pass",
+      "message": "No security policy found (informational).",
+      "evidence": [],
+      "recommendation": "Consider adding a SECURITY.md file to describe how users should report security vulnerabilities."
+    },
+    {
+      "id": "CI006",
+      "title": "Package metadata complete",
+      "severity": "info",
+      "status": "pass",
+      "message": "No package metadata files found (informational).",
+      "evidence": [],
+      "recommendation": "Add a pyproject.toml (or setup.py/setup.cfg) with name, version, description, license, and authors fields."
+    },
+    {
+      "id": "CONTRACT001",
+      "title": "Reproducibility contract",
+      "severity": "info",
+      "status": "pass",
+      "message": "Reproducibility contract is valid.",
+      "evidence": [
+        "E:\\Projects\\OSS-Paper-CI\\examples\\demo-paper-repo\\reproducibility.yml"
+      ],
+      "recommendation": ""
+    },
+    {
+      "id": "RULE_PACK",
+      "title": "Rule Pack",
+      "severity": "error",
+      "status": "unknown",
+      "message": "Rule pack not found: examples/rule-packs/lab-reproducibility-rules.yml",
+      "evidence": [],
+      "recommendation": "Check the rule_packs path in your config."
+    }
+  ],
+  "recommendations": [
+    "Add a CITATION.cff file or a 'Citation' section to your README so that users know how to properly cite your work.",
+    "Add sections such as 'Getting Started', 'Installation', or 'Usage' to your README so that others can reproduce your results.",
+    "Consider adding a CONTRIBUTING.md file or an issue template to encourage community contributions.",
+    "Add a CHANGELOG, VERSION file, or a version field in pyproject.toml so users can track releases.",
+    "Add a lock file (e.g. poetry.lock, Pipfile.lock, uv.lock, or conda-lock.yml) to ensure reproducible dependency resolution.",
+    "Specify the required Python version in pyproject.toml (requires-python), setup.cfg (python_requires), .python-version, or Pipfile.",
+    "Document in the README which file (requirements.txt or environment.yml) users should use and under what circumstances.",
+    "Set random seeds (e.g., random.seed(), np.random.seed(), torch.manual_seed()) so experiments are reproducible.",
+    "Add a config file (e.g., config.yaml) or use argparse/click so experiment parameters are explicit and reproducible.",
+    "Add download instructions to your README (e.g. wget/curl commands, links to Zenodo/Figshare/HuggingFace) or include a download_data.sh / get_data.py script.",
+    "Consider organizing your data into subdirectories such as raw/, processed/, interim/, and external/ to clarify the data processing pipeline.",
+    "Add data patterns to .gitignore (e.g. data/, *.csv, *.h5, *.parquet) to prevent accidental commits of large or sensitive data files.",
+    "Add instructions to your README (e.g. 'To reproduce Figure 1, run ...') or a Makefile with result-related targets so others can regenerate your results.",
+    "If your project includes a paper, consider placing it in a paper/, manuscript/, or latex/ directory.",
+    "Add a CITATION.cff or .bib file so that users can properly cite your work.",
+    "Add a tests/ directory with unit tests and configure pytest so that others can verify the correctness of your code.",
+    "Consider adding issue and pull request templates in .github/ to standardize contributions.",
+    "Check the rule_packs path in your config."
+  ],
+  "blocking_issues": [],
+  "policy": {
+    "profile": "default",
+    "pass_score": 85,
+    "warn_score": 60,
+    "fail_under": 50
+  }
+}

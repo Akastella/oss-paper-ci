@@ -1,0 +1,47 @@
+version: 1
+name: no-large-data
+description: >
+  Checks that large data files are not committed to the repository.
+
+checks:
+  - id: DATA001
+    name: No ZIP archives in data/
+    severity: important
+    category: data
+    type: forbidden_glob
+    pattern: "data/**/*.zip"
+    message: "ZIP archives should not be in the data/ directory."
+    recommendation: "Use a download script or DVC for large data files."
+
+  - id: DATA002
+    name: No tar archives in data/
+    severity: important
+    category: data
+    type: forbidden_glob
+    pattern: "data/**/*.tar*"
+    message: "TAR archives should not be in the data/ directory."
+
+  - id: DATA003
+    name: No HDF5 files in data/
+    severity: warning
+    category: data
+    type: forbidden_glob
+    pattern: "data/**/*.h5"
+    message: "HDF5 files should not be committed directly."
+
+  - id: DATA004
+    name: No parquet files in data/
+    severity: warning
+    category: data
+    type: forbidden_glob
+    pattern: "data/**/*.parquet"
+    message: "Parquet files should not be committed directly."
+
+  - id: DATA005
+    name: Data directory has README
+    severity: advisory
+    category: data
+    type: file_exists
+    path: data/README.md
+    message: "data/README.md should describe the data sources."
+    recommendation: "Add a README.md to data/ describing each dataset."
