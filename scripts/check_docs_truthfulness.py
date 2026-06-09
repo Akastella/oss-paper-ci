@@ -53,7 +53,8 @@ OLD_ROUND_REFERENCE = re.compile(
 # CLI commands that oss-paper-ci supports
 VALID_CLI_COMMANDS = {
     "scan", "init", "explain", "version", "list-checks",
-    "graph", "baseline", "smoke",
+    "graph", "baseline", "smoke", "doctor", "comment",
+    "config", "diff", "rules", "validate-contract",
 }
 
 # Files that exist in the project

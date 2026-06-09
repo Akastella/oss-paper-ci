@@ -45,6 +45,7 @@ def main(argv: list[str] | None = None) -> int:
     scan_parser.add_argument("--github-step-summary", dest="github_step_summary", help="Write Markdown summary to file (for $GITHUB_STEP_SUMMARY).")
     scan_parser.add_argument("--max-annotations", type=int, dest="max_annotations", default=50, help="Max annotations for github format (default: 50).")
     scan_parser.add_argument("--fail-on", dest="fail_on", help="Fail on severity level (e.g., major, error).")
+    scan_parser.add_argument("--rules", dest="rules_path", help="Path to rule pack manifest YAML.")
 
     # init command
     init_parser = subparsers.add_parser("init", help="Generate a default config or contract file.")
@@ -90,6 +91,19 @@ def main(argv: list[str] | None = None) -> int:
     diff_parser.add_argument("--new", dest="new_report", required=True, help="Path to new report JSON.")
     diff_parser.add_argument("--format", choices=["json", "markdown"], default="markdown", help="Output format.")
     diff_parser.add_argument("--output", "-o", help="Write output to file.")
+
+    # rules command group
+    rules_parser = subparsers.add_parser("rules", help="Rule pack management.")
+    rules_sub = rules_parser.add_subparsers(dest="rules_command")
+
+    # rules validate
+    rv = rules_sub.add_parser("validate", help="Validate a rule pack manifest.")
+    rv.add_argument("--rules", required=True, help="Path to rule pack YAML.")
+
+    # rules list
+    rl = rules_sub.add_parser("list", help="List rules in a rule pack.")
+    rl.add_argument("--rules", required=True, help="Path to rule pack YAML.")
+    rl.add_argument("--format", choices=["text", "json"], default="text", help="Output format.")
 
     # validate-contract command
     validate_parser = subparsers.add_parser("validate-contract", help="Validate a reproducibility contract.")
@@ -192,10 +206,14 @@ def main(argv: list[str] | None = None) -> int:
             output=getattr(args, "output", None),
         )
 
+    if args.command == "rules":
+        return _cmd_rules(args)
+
     if args.command == "scan":
         return _cmd_scan(
             args.path, args.config_path, args.format, args.output,
             profile=getattr(args, "profile", None),
+            rules_path=getattr(args, "rules_path", None),
             fail_under=getattr(args, "fail_under", None),
             strict=getattr(args, "strict", False),
             verbose=getattr(args, "verbose", False),
@@ -811,6 +829,67 @@ def _format_diff_markdown(diff: dict, old_data: dict, new_data: dict) -> str:
     return "\n".join(lines)
 
 
+# ── Rules command group ──────────────────────────────────────────────────────
+
+def _cmd_rules(args: argparse.Namespace) -> int:
+    """Handle rules subcommand group."""
+    sub = getattr(args, "rules_command", None)
+
+    if sub == "validate":
+        return _cmd_rules_validate(args.rules)
+
+    if sub == "list":
+        return _cmd_rules_list(args.rules, getattr(args, "format", "text"))
+
+    print("Usage: oss-paper-ci rules {validate|list} --rules PATH", file=sys.stderr)
+    return 1
+
+
+def _cmd_rules_validate(rules_path: str) -> int:
+    """Validate a rule pack manifest."""
+    from oss_paper_ci.checks.manifest import validate_manifest
+
+    result = validate_manifest(rules_path)
+    print(result.format_text())
+    return 0 if result.valid else 1
+
+
+def _cmd_rules_list(rules_path: str, fmt: str) -> int:
+    """List rules in a rule pack."""
+    import json as json_mod
+
+    from oss_paper_ci.checks.manifest import parse_manifest
+
+    try:
+        manifest = parse_manifest(rules_path)
+    except (FileNotFoundError, ValueError) as exc:
+        print(f"Error: {exc}", file=sys.stderr)
+        return 1
+
+    if fmt == "json":
+        print(json_mod.dumps(manifest.to_dict(), indent=2))
+        return 0
+
+    # Text format
+    print(f"Rule Pack: {manifest.name}")
+    if manifest.description:
+        print(f"Description: {manifest.description}")
+    print(f"Rules: {len(manifest.rules)}")
+    print()
+
+    if not manifest.rules:
+        print("No rules defined.")
+        return 0
+
+    # Table
+    print(f"{'ID':<15} {'Name':<30} {'Severity':<12} {'Type':<20}")
+    print("-" * 77)
+    for rule in manifest.rules:
+        print(f"{rule.id:<15} {rule.name:<30} {rule.severity:<12} {rule.rule_type:<20}")
+
+    return 0
+
+
 # ── Scan command ─────────────────────────────────────────────────────────────
 
 def _cmd_scan(
@@ -820,6 +899,7 @@ def _cmd_scan(
     output: str | None,
     *,
     profile: str | None = None,
+    rules_path: str | None = None,
     fail_under: int | None = None,
     strict: bool = False,
     verbose: bool = False,
@@ -842,6 +922,10 @@ def _cmd_scan(
     # CLI --profile overrides config file profile
     if profile is not None:
         config.profile = profile
+
+    # CLI --rules adds rule pack to config
+    if rules_path is not None:
+        config.rule_packs.append(rules_path)
 
     report = run_scan(str(path), config)
 

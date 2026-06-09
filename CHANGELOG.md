@@ -1,5 +1,26 @@
 # Changelog
 
+## 1.6.0rc1 (2026-06-09)
+
+### Added
+- Manifest-based rule packs: define custom checks in YAML without Python code
+- `oss-paper-ci rules validate` and `rules list` commands
+- `--rules` flag for scan command to load rule packs
+- Config `rule_packs` field for persistent rule pack loading
+- Config `suppressions` field for finding-level suppression with reason
+- Suppressed findings tracked in report JSON (`suppressed_findings` field)
+- Report JSON schema v0.4 with `suppressed_findings` and `rule_packs` fields
+- Rule types: file_exists, any_file_exists, forbidden_path, forbidden_glob, text_contains, regex_contains, yaml_key_exists
+- Performance gate script (`scripts/performance_gate.py`) for runtime benchmarking
+- Golden report compatibility tests (`scripts/update_golden_reports.py`)
+- Example rule packs: lab-reproducibility, citation-required, no-large-data
+- GitHub Action `rules` and `performance-gate` inputs
+- Documentation: rule-sdk.md, rule-pack-manifest.md, suppressions.md, performance-gate.md, golden-reports.md, compatibility-policy.md
+
+### Changed
+- Version bumped to 1.6.0rc1
+- Report schema updated to version 0.4
+
 ## 1.5.0rc1 (2026-06-09)
 
 ### Added

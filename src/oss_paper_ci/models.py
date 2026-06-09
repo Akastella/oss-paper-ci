@@ -121,7 +121,7 @@ class PolicyInfo:
 class Report:
     """Complete report produced by a scan."""
 
-    schema_version: str = "0.3"
+    schema_version: str = "0.4"
     tool: str = "oss-paper-ci"
     version: str = "0.1.0"
     repository: RepoInfo = field(default_factory=lambda: RepoInfo(path="."))
@@ -131,6 +131,8 @@ class Report:
     recommendations: list[str] = field(default_factory=list)
     blocking_issues: list[str] = field(default_factory=list)
     policy: PolicyInfo = field(default_factory=PolicyInfo)
+    suppressed_findings: list[dict[str, Any]] = field(default_factory=list)
+    rule_packs: list[str] = field(default_factory=list)
 
     def to_dict(self) -> dict[str, Any]:
         data: dict[str, Any] = {
@@ -149,4 +151,8 @@ class Report:
             "blocking_issues": self.blocking_issues,
             "policy": self.policy.to_dict(),
         }
+        if self.suppressed_findings:
+            data["suppressed_findings"] = self.suppressed_findings
+        if self.rule_packs:
+            data["rule_packs"] = self.rule_packs
         return data

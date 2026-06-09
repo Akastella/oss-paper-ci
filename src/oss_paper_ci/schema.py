@@ -70,7 +70,8 @@ class ValidationResult:
 # ── Known field definitions ──────────────────────────────────────────────────
 
 _KNOWN_TOP_LEVEL = {"version", "profile", "project", "checks", "ignore", "output",
-                    "paths", "thresholds", "severity", "reports", "ci"}
+                    "paths", "thresholds", "severity", "reports", "ci",
+                    "rule_packs", "suppressions"}
 
 _KNOWN_PROJECT = {"name", "paper_dir", "code_dirs", "data_dirs", "results_dirs"}
 
@@ -212,6 +213,14 @@ def _validate_top_level(data: dict[str, Any], result: ValidationResult) -> None:
     # ci
     if "ci" in data:
         _validate_ci(data["ci"], result)
+
+    # rule_packs
+    if "rule_packs" in data:
+        _validate_rule_packs(data["rule_packs"], result)
+
+    # suppressions
+    if "suppressions" in data:
+        _validate_suppressions(data["suppressions"], result)
 
 
 def _validate_section(
@@ -394,3 +403,42 @@ def _validate_ci(data: Any, result: ValidationResult) -> None:
                     f"ci.{field_name}",
                     "Must be a boolean (true/false)"
                 )
+
+
+def _validate_rule_packs(data: Any, result: ValidationResult) -> None:
+    """Validate rule_packs field."""
+    if not isinstance(data, list):
+        result.add_error("rule_packs", "Must be a list of file paths")
+        return
+    for i, item in enumerate(data):
+        if not isinstance(item, str):
+            result.add_error(f"rule_packs[{i}]", "Must be a string (file path)")
+
+
+def _validate_suppressions(data: Any, result: ValidationResult) -> None:
+    """Validate suppressions field."""
+    if not isinstance(data, dict):
+        result.add_error("suppressions", "Must be a mapping")
+        return
+
+    if "paths" in data:
+        paths = data["paths"]
+        if not isinstance(paths, list):
+            result.add_error("suppressions.paths", "Must be a list of path patterns")
+
+    if "findings" in data:
+        findings = data["findings"]
+        if not isinstance(findings, list):
+            result.add_error("suppressions.findings", "Must be a list")
+        else:
+            for i, f in enumerate(findings):
+                if not isinstance(f, dict):
+                    result.add_error(f"suppressions.findings[{i}]", "Must be a mapping")
+                    continue
+                if "id" not in f:
+                    result.add_error(f"suppressions.findings[{i}]", "Missing required 'id' field")
+                if "reason" not in f:
+                    result.add_warning(
+                        f"suppressions.findings[{i}]",
+                        "Suppressions should include a 'reason' for traceability"
+                    )

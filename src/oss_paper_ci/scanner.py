@@ -7,7 +7,7 @@ from pathlib import Path
 
 from oss_paper_ci import __version__
 from oss_paper_ci.checks import run_all_checks
-from oss_paper_ci.config import Config, load_config
+from oss_paper_ci.config import Config, SuppressionEntry, load_config
 from oss_paper_ci.models import (
     PolicyInfo, Report, ReportMetadata, RepoInfo, Severity, Status, Summary,
 )
@@ -51,8 +51,12 @@ def scan(repo_path: str, config: Config | None = None) -> Report:
         detected_project_types=detected_project_types,
     )
 
-    # Run all checks
+    # Run all built-in checks
     checks = run_all_checks(repo_path, config)
+
+    # Load and evaluate rule packs
+    custom_checks, rule_pack_names = _load_rule_packs(config, repo_path)
+    checks.extend(custom_checks)
 
     # Apply severity overrides from profile + config
     for check in checks:
@@ -62,6 +66,9 @@ def scan(repo_path: str, config: Config | None = None) -> Report:
                 check.severity = Severity(new_sev)
             except ValueError:
                 pass  # ignore invalid severity values
+
+    # Apply suppressions
+    checks, suppressed_findings = _apply_suppressions(checks, config)
 
     # Compute score with profile thresholds
     score, status, counts = compute_score(checks, profile)
@@ -96,7 +103,7 @@ def scan(repo_path: str, config: Config | None = None) -> Report:
     )
 
     return Report(
-        schema_version="0.3",
+        schema_version="0.4",
         tool="oss-paper-ci",
         version=__version__,
         repository=repo_info,
@@ -106,7 +113,129 @@ def scan(repo_path: str, config: Config | None = None) -> Report:
         recommendations=recommendations,
         blocking_issues=blocking_issues,
         policy=policy_info,
+        suppressed_findings=suppressed_findings,
+        rule_packs=rule_pack_names,
     )
+
+
+def _load_rule_packs(
+    config: Config, repo_path: str
+) -> tuple[list, list[str]]:
+    """Load and evaluate rule packs from config.
+
+    Returns:
+        Tuple of (list of CheckResult, list of rule pack names).
+    """
+    from oss_paper_ci.checks.loader import evaluate_rules, load_rule_pack
+
+    all_results = []
+    pack_names = []
+
+    for pack_path in config.rule_packs:
+        # Resolve relative to config file directory or repo root
+        resolved = Path(pack_path)
+        if not resolved.is_absolute():
+            if config.config_path:
+                resolved = Path(config.config_path).parent / pack_path
+            else:
+                resolved = Path(repo_path) / pack_path
+
+        if not resolved.exists():
+            # Add an error finding for missing rule pack
+            from oss_paper_ci.models import CheckResult
+            all_results.append(CheckResult(
+                id="RULE_PACK",
+                title="Rule Pack",
+                severity=Severity.ERROR,
+                status=Status.UNKNOWN,
+                message=f"Rule pack not found: {pack_path}",
+                recommendation="Check the rule_packs path in your config.",
+            ))
+            continue
+
+        try:
+            manifest = load_rule_pack(resolved)
+            pack_names.append(manifest.name or str(resolved))
+            results = evaluate_rules(manifest, repo_path)
+            all_results.extend(results)
+        except Exception as exc:
+            from oss_paper_ci.models import CheckResult
+            all_results.append(CheckResult(
+                id="RULE_PACK",
+                title="Rule Pack",
+                severity=Severity.ERROR,
+                status=Status.UNKNOWN,
+                message=f"Failed to load rule pack {pack_path}: {exc}",
+                recommendation="Check the rule pack YAML syntax.",
+            ))
+
+    return all_results, pack_names
+
+
+def _apply_suppressions(
+    checks: list, config: Config
+) -> tuple[list, list[dict]]:
+    """Apply suppressions to check results.
+
+    Returns:
+        Tuple of (remaining checks, suppressed findings list).
+    """
+    supp = config.suppressions
+
+    # Build sets for quick lookup
+    suppressed_ids = {f.id for f in supp.findings if f.id}
+    suppressed_paths = set(supp.paths)
+
+    remaining = []
+    suppressed = []
+
+    for check in checks:
+        # Check if this finding is suppressed by ID
+        if check.id in suppressed_ids:
+            entry = next(f for f in supp.findings if f.id == check.id)
+            suppressed.append({
+                "id": check.id,
+                "title": check.title,
+                "severity": check.severity.value,
+                "status": check.status.value,
+                "message": check.message,
+                "reason": entry.reason,
+                "until": entry.until,
+            })
+            continue
+
+        # Check if finding relates to a suppressed path
+        # (check if any evidence path matches suppressed paths)
+        is_path_suppressed = False
+        for evidence in check.evidence:
+            for pattern in suppressed_paths:
+                if _path_matches(evidence, pattern):
+                    is_path_suppressed = True
+                    break
+            if is_path_suppressed:
+                break
+
+        if is_path_suppressed:
+            suppressed.append({
+                "id": check.id,
+                "title": check.title,
+                "severity": check.severity.value,
+                "status": check.status.value,
+                "message": check.message,
+                "reason": "Path suppression",
+                "until": "",
+            })
+            continue
+
+        remaining.append(check)
+
+    return remaining, suppressed
+
+
+def _path_matches(path: str, pattern: str) -> bool:
+    """Check if a path matches a glob-like pattern."""
+    import fnmatch
+    return fnmatch.fnmatch(path, pattern) or fnmatch.fnmatch(path, pattern + "/*")
 
 
 def _detect_languages(repo_path: str, config: Config) -> list[str]:

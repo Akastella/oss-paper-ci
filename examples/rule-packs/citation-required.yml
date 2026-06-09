@@ -1,0 +1,33 @@
+version: 1
+name: citation-required
+description: >
+  Checks that CITATION.cff exists and contains required fields.
+
+checks:
+  - id: CITE001
+    name: CITATION.cff exists
+    severity: error
+    category: metadata
+    type: file_exists
+    path: CITATION.cff
+    message: "CITATION.cff is required for proper citation."
+    recommendation: "Create a CITATION.cff file."
+
+  - id: CITE002
+    name: CITATION.cff has title
+    severity: warning
+    category: metadata
+    type: text_contains
+    path: CITATION.cff
+    text: "title:"
+    message: "CITATION.cff should contain a title field."
+
+  - id: CITE003
+    name: README references citation
+    severity: advisory
+    category: metadata
+    type: regex_contains
+    path: README.md
+    pattern: "(?i)(cite|citation|CITATION\\.cff)"
+    message: "README should reference how to cite this work."
+    recommendation: "Add a citation section to your README."
