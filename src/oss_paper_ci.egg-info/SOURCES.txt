@@ -20,6 +20,9 @@ docs/batch-diff.md
 docs/batch-scan.md
 docs/benchmark.md
 docs/cache.md
+docs/capsule-format.md
+docs/capsule-security.md
+docs/capsule-verify.md
 docs/check-authoring.md
 docs/checks.md
 docs/clean-room-verification.md
@@ -53,6 +56,7 @@ docs/report-schema.md
 docs/reproduce-security.md
 docs/reproduce.md
 docs/reproducibility-contract.md
+docs/reproduction-capsules.md
 docs/reproduction-report.md
 docs/rule-pack-manifest.md
 docs/rule-sdk.md
@@ -70,6 +74,7 @@ examples/benchmark/fixture_matrix.json
 examples/benchmark/fixture_matrix.md
 examples/benchmark/scale.json
 examples/benchmark/scale.md
+examples/capsules/README.md
 examples/configs/lenient.yml
 examples/configs/publication.yml
 examples/configs/strict.yml
@@ -108,6 +113,7 @@ examples/github-actions/pr-comment.yml
 examples/github-actions/publication-profile.yml
 examples/github-actions/publication-with-rules.yml
 examples/github-actions/pypi-after-publication.yml
+examples/github-actions/reproduce-capsule.yml
 examples/github-actions/reproduce-dry-run.yml
 examples/github-actions/reproduce-repo.yml
 examples/github-actions/sarif-upload.yml
@@ -148,6 +154,10 @@ examples/reports/realistic_ml_pr_comment.md
 examples/reports/realistic_ml_report.json
 examples/reports/realistic_ml_report.md
 examples/reports/realistic_ml_smoke.md
+examples/reports/reproduce_capsule_diff.md
+examples/reports/reproduce_capsule_inspect.md
+examples/reports/reproduce_capsule_manifest.json
+examples/reports/reproduce_capsule_verify.md
 examples/reports/reproduce_demo_dry_run.md
 examples/reports/reproduce_demo_report.html
 examples/reports/reproduce_demo_report.json
@@ -258,16 +268,21 @@ tests/test_capsule_security.py
 tests/test_capsule_verify.py
 tests/test_clean_room_verify.py
 tests/test_cli.py
+tests/test_cli_reference.py
 tests/test_config.py
 tests/test_config_system.py
 tests/test_cross_language.py
 tests/test_docs_commands.py
+tests/test_docs_site.py
 tests/test_environment_detection.py
 tests/test_graph_deep.py
 tests/test_graph_v05.py
 tests/test_new_features.py
 tests/test_parallel_batch.py
+tests/test_public_readme.py
+tests/test_pypi_metadata.py
 tests/test_release_gate.py
+tests/test_release_gate_v2.py
 tests/test_release_package.py
 tests/test_reporting.py
 tests/test_reproduce_capsule_cli.py

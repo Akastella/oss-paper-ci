@@ -4,7 +4,8 @@
 
 | Version | Supported          |
 |---------|--------------------|
-| 0.1.x   | :white_check_mark: |
+| 2.0.x   | :white_check_mark: |
+| 1.x     | :white_check_mark: |
 
 ## Reporting a vulnerability
 
@@ -23,9 +24,10 @@ We will acknowledge receipt within 48 hours and aim to provide a fix within 14 d
 
 ## Scope
 
-oss-paper-ci is a read-only static analysis tool. It does not execute code in the
-scanned repository, make network requests, or modify files outside its own report
-output. The attack surface is limited to:
+oss-paper-ci is primarily a read-only static analysis tool. In scan mode, it does
+not execute code or make network requests. The `reproduce --execute` command can
+run code from repositories, but only when explicitly enabled. The attack surface
+is limited to:
 
 - Malicious YAML config files (mitigated by using `yaml.safe_load`)
 - Path traversal in scanned repositories (mitigated by `pathlib` and resolved paths)
