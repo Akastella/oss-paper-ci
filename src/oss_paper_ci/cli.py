@@ -176,6 +176,32 @@ def main(argv: list[str] | None = None) -> int:
     reproduce_parser.add_argument("--timeout", type=int, default=300, help="Per-command timeout in seconds (default: 300).")
     reproduce_parser.add_argument("--format", choices=["markdown", "json", "html"], default="markdown", help="Output format (default: markdown).")
     reproduce_parser.add_argument("--output", "-o", help="Write report to file instead of stdout.")
+    reproduce_parser.add_argument("--capsule", dest="capsule_path", help="Generate a reproduction capsule zip at this path.")
+    reproduce_parser.add_argument("--capsule-include-artifacts", action="store_true", help="Include generated artifacts in capsule.")
+    reproduce_parser.add_argument("--capsule-max-artifact-mb", type=float, default=10.0, help="Max artifact size in MB (default: 10).")
+
+    # capsule command group
+    capsule_parser = subparsers.add_parser("capsule", help="Capsule management.")
+    capsule_sub = capsule_parser.add_subparsers(dest="capsule_command")
+
+    # capsule verify
+    cv = capsule_sub.add_parser("verify", help="Verify capsule integrity.")
+    cv.add_argument("capsule", help="Path to capsule zip file.")
+    cv.add_argument("--format", choices=["text", "json", "markdown"], default="text", help="Output format.")
+    cv.add_argument("--output", "-o", help="Write output to file.")
+
+    # capsule inspect
+    ci = capsule_sub.add_parser("inspect", help="Inspect capsule contents.")
+    ci.add_argument("capsule", help="Path to capsule zip file.")
+    ci.add_argument("--format", choices=["json", "markdown"], default="markdown", help="Output format.")
+    ci.add_argument("--output", "-o", help="Write output to file.")
+
+    # capsule diff
+    cd = capsule_sub.add_parser("diff", help="Compare two capsules.")
+    cd.add_argument("old_capsule", help="Path to old capsule zip.")
+    cd.add_argument("new_capsule", help="Path to new capsule zip.")
+    cd.add_argument("--format", choices=["json", "markdown"], default="markdown", help="Output format.")
+    cd.add_argument("--output", "-o", help="Write output to file.")
 
     # version command
     subparsers.add_parser("version", help="Print version.")
@@ -239,6 +265,9 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.command == "reproduce":
         return _cmd_reproduce(args)
+
+    if args.command == "capsule":
+        return _cmd_capsule(args)
 
     if args.command == "workspace":
         return _cmd_workspace(args)
@@ -1683,6 +1712,10 @@ def _cmd_reproduce(args: argparse.Namespace) -> int:
     if getattr(args, "no_install", False):
         install = False
 
+    # For capsule generation, keep workdir so artifacts can be collected
+    capsule_path = getattr(args, "capsule_path", None)
+    keep_workdir = getattr(args, "keep_workdir", False) or bool(capsule_path)
+
     result = run_reproduce(
         url=url,
         repo_override=getattr(args, "repo_override", None),
@@ -1692,7 +1725,7 @@ def _cmd_reproduce(args: argparse.Namespace) -> int:
         command=getattr(args, "reproduce_command", None),
         workdir=getattr(args, "workdir", None),
         timeout=getattr(args, "timeout", 300),
-        keep_workdir=getattr(args, "keep_workdir", False),
+        keep_workdir=keep_workdir,
     )
 
     # Generate report
@@ -1711,11 +1744,214 @@ def _cmd_reproduce(args: argparse.Namespace) -> int:
     else:
         print(text)
 
+    # Generate capsule if requested
+    if capsule_path:
+        from oss_paper_ci.capsule import build_capsule
+        try:
+            include_artifacts = getattr(args, "capsule_include_artifacts", False) or True
+            max_mb = getattr(args, "capsule_max_artifact_mb", 10.0)
+            build_capsule(
+                result, capsule_path,
+                include_artifacts=include_artifacts,
+                max_artifact_mb=max_mb,
+            )
+            print(f"Capsule written to {capsule_path}")
+        except Exception as exc:
+            print(f"Error building capsule: {exc}", file=sys.stderr)
+            return 2
+
     # Exit code
     if result.error:
         return 2
     if not result.ok:
         return 1
+    return 0
+
+
+# ── Capsule command ──────────────────────────────────────────────────────────
+
+def _cmd_capsule(args: argparse.Namespace) -> int:
+    """Handle the capsule subcommand group."""
+    sub = getattr(args, "capsule_command", None)
+
+    if sub == "verify":
+        return _cmd_capsule_verify(
+            capsule_path=getattr(args, "capsule", None),
+            fmt=getattr(args, "format", "text"),
+            output=getattr(args, "output", None),
+        )
+
+    if sub == "inspect":
+        return _cmd_capsule_inspect(
+            capsule_path=getattr(args, "capsule", None),
+            fmt=getattr(args, "format", "markdown"),
+            output=getattr(args, "output", None),
+        )
+
+    if sub == "diff":
+        return _cmd_capsule_diff(
+            old_path=getattr(args, "old_capsule", None),
+            new_path=getattr(args, "new_capsule", None),
+            fmt=getattr(args, "format", "markdown"),
+            output=getattr(args, "output", None),
+        )
+
+    print("Usage: oss-paper-ci capsule {verify|inspect|diff} ...", file=sys.stderr)
+    return 1
+
+
+def _cmd_capsule_verify(
+    capsule_path: str | None,
+    fmt: str,
+    output: str | None,
+) -> int:
+    """Verify a capsule's integrity."""
+    import json as json_mod
+
+    if not capsule_path:
+        print("Error: capsule path is required.", file=sys.stderr)
+        return 1
+
+    from oss_paper_ci.capsule import verify_capsule
+
+    result = verify_capsule(capsule_path)
+
+    if fmt == "json":
+        text = json_mod.dumps(result.to_dict(), indent=2)
+    elif fmt == "markdown":
+        text = result.format_text()
+        # Add header for markdown
+        text = "# Capsule Verification\n\n" + text + "\n"
+    else:
+        text = result.format_text()
+
+    if output:
+        from pathlib import Path
+        Path(output).write_text(text, encoding="utf-8")
+        print(f"Verification written to {output}")
+    else:
+        print(text)
+
+    return 0 if result.ok else 1
+
+
+def _cmd_capsule_inspect(
+    capsule_path: str | None,
+    fmt: str,
+    output: str | None,
+) -> int:
+    """Inspect a capsule's contents."""
+    import json as json_mod
+
+    if not capsule_path:
+        print("Error: capsule path is required.", file=sys.stderr)
+        return 1
+
+    from oss_paper_ci.capsule import inspect_capsule
+
+    info = inspect_capsule(capsule_path)
+
+    if "error" in info:
+        print(f"Error: {info['error']}", file=sys.stderr)
+        return 2
+
+    if fmt == "json":
+        text = json_mod.dumps(info, indent=2, ensure_ascii=False)
+    else:
+        text = _format_capsule_inspect_markdown(info)
+
+    if output:
+        from pathlib import Path
+        Path(output).write_text(text, encoding="utf-8")
+        print(f"Inspection written to {output}")
+    else:
+        print(text)
+
+    return 0
+
+
+def _format_capsule_inspect_markdown(info: dict) -> str:
+    """Format capsule inspection as markdown."""
+    lines = ["# Capsule Inspection\n"]
+
+    lines.append("## Metadata\n")
+    lines.append(f"- Schema version: {info.get('schema_version', '?')}")
+    lines.append(f"- Capsule type: {info.get('capsule_type', '?')}")
+    lines.append(f"- Created by: oss-paper-ci {info.get('oss_paper_ci_version', '?')}")
+    lines.append("")
+
+    source = info.get("source", {})
+    lines.append("## Source\n")
+    lines.append(f"- Input URL: `{source.get('input_url', '?')}`")
+    if source.get("repo_url"):
+        lines.append(f"- Repository: `{source.get('repo_url')}`")
+    if source.get("paper_url"):
+        lines.append(f"- Paper URL: `{source.get('paper_url')}`")
+    if source.get("commit_sha"):
+        lines.append(f"- Commit: `{source.get('commit_sha', '')[:12]}`")
+    lines.append(f"- Source type: {source.get('source_type', '?')}")
+    lines.append("")
+
+    exec_info = info.get("execution", {})
+    lines.append("## Execution\n")
+    lines.append(f"- Mode: {exec_info.get('mode', '?')}")
+    lines.append(f"- Install: {'yes' if exec_info.get('install') else 'no'}")
+    lines.append(f"- Commands attempted: {exec_info.get('commands_attempted', 0)}")
+    lines.append(f"- Commands succeeded: {exec_info.get('commands_succeeded', 0)}")
+    lines.append(f"- Commands failed: {exec_info.get('commands_failed', 0)}")
+    lines.append("")
+
+    scan_score = info.get("scan_score")
+    if scan_score is not None:
+        lines.append("## Scan\n")
+        lines.append(f"- Score: {scan_score}/100")
+        lines.append(f"- Status: {info.get('scan_status', '?')}")
+        lines.append("")
+
+    lines.append("## Artifacts\n")
+    lines.append(f"- Artifact count: {info.get('artifact_count', 0)}")
+    lines.append(f"- Total files in capsule: {info.get('file_count', 0)}")
+    lines.append("")
+
+    limitations = info.get("limitations", [])
+    if limitations:
+        lines.append("## Limitations\n")
+        for lim in limitations:
+            lines.append(f"- {lim}")
+        lines.append("")
+
+    return "\n".join(lines)
+
+
+def _cmd_capsule_diff(
+    old_path: str | None,
+    new_path: str | None,
+    fmt: str,
+    output: str | None,
+) -> int:
+    """Compare two capsules."""
+    import json as json_mod
+
+    if not old_path or not new_path:
+        print("Error: both old and new capsule paths are required.", file=sys.stderr)
+        return 1
+
+    from oss_paper_ci.capsule import diff_capsules, format_diff_markdown
+
+    diff = diff_capsules(old_path, new_path)
+
+    if fmt == "json":
+        text = json_mod.dumps(diff, indent=2, ensure_ascii=False)
+    else:
+        text = format_diff_markdown(diff)
+
+    if output:
+        from pathlib import Path
+        Path(output).write_text(text, encoding="utf-8")
+        print(f"Diff written to {output}")
+    else:
+        print(text)
+
     return 0
 
 

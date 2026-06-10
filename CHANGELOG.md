@@ -1,5 +1,24 @@
 # Changelog
 
+## 1.9.0rc1 (2026-06-10)
+
+### Added
+- `oss-paper-ci reproduce ... --capsule repro.zip` — generate a verifiable reproduction capsule
+- `oss-paper-ci capsule verify CAPSULE.zip` — verify capsule integrity (SHA256 hashes, structure, required files)
+- `oss-paper-ci capsule inspect CAPSULE.zip` — display capsule metadata and execution summary
+- `oss-paper-ci capsule diff OLD.zip NEW.zip` — compare two capsules (score delta, command status, artifacts)
+- Capsule format: `oss-paper-ci-capsule/` root with `capsule.json` manifest, `SHA256SUMS`, reports, logs, artifacts, metadata
+- Capsule manifest schema v0.1 with source, execution, reports, integrity sections
+- SHA256 integrity verification for all capsule files
+- Path traversal and zip slip detection in capsule verification
+- Capsule artifact size limits and exclusion of venv/.git/cache
+- GitHub Action example: `reproduce-capsule.yml` with verify and artifact upload
+- Documentation: reproduction-capsules.md, capsule-format.md, capsule-verify.md, capsule-security.md
+- Tests: capsule format, builder, verify, inspect, diff, security, CLI, docs truthfulness
+
+### Changed
+- Version bumped to 1.9.0rc1
+
 ## 1.8.0rc1 (2026-06-10)
 
 ### Added

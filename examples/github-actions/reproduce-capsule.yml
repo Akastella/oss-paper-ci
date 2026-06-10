@@ -1,0 +1,74 @@
+name: Reproduce and Capsule
+
+on:
+  workflow_dispatch:
+    inputs:
+      repo_url:
+        description: "GitHub repository URL to reproduce"
+        required: true
+        type: string
+      execute:
+        description: "Execute reproduction commands (true/false)"
+        required: false
+        default: "false"
+        type: string
+
+jobs:
+  reproduce-capsule:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout oss-paper-ci
+        uses: actions/checkout@v4
+        with:
+          repository: Akastella/oss-paper-ci
+          path: tool
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install oss-paper-ci
+        run: pip install ./tool
+
+      - name: Generate capsule (dry-run)
+        if: inputs.execute != 'true'
+        run: |
+          oss-paper-ci reproduce "${{ inputs.repo_url }}" \
+            --dry-run \
+            --capsule reproduction-capsule.zip
+
+      - name: Generate capsule (execute)
+        if: inputs.execute == 'true'
+        run: |
+          oss-paper-ci reproduce "${{ inputs.repo_url }}" \
+            --execute --install \
+            --capsule reproduction-capsule.zip
+
+      - name: Verify capsule
+        run: |
+          oss-paper-ci capsule verify reproduction-capsule.zip \
+            --format markdown --output verification.md
+          cat verification.md
+
+      - name: Inspect capsule
+        run: |
+          oss-paper-ci capsule inspect reproduction-capsule.zip \
+            --format markdown --output inspection.md
+
+      - name: Upload capsule
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: reproduction-capsule
+          path: reproduction-capsule.zip
+
+      - name: Upload verification
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: capsule-verification
+          path: |
+            verification.md
+            inspection.md
