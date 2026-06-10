@@ -1,5 +1,29 @@
 # Changelog
 
+## 1.8.0rc1 (2026-06-10)
+
+### Added
+- `oss-paper-ci reproduce` — one-command reproduction runner for scientific paper repositories
+- `reproduce URL --dry-run` — show what would happen without executing (default behavior)
+- `reproduce URL --execute` — clone, install, run, and scan a paper repository
+- `reproduce URL --install` — install dependencies into isolated venv
+- `reproduce URL --command "..."` — override the reproduction command
+- `reproduce URL --workdir PATH` — use a specific working directory
+- `reproduce URL --output FILE --format markdown|json|html` — generate reproduction report
+- `reproduce URL --timeout N` — per-command timeout in seconds
+- `reproduce URL --keep-workdir` — preserve working directory after run
+- URL resolver: GitHub repo URLs, local paths, paper URLs with --repo fallback
+- Environment detection: requirements.txt, pyproject.toml, setup.py, environment.yml, conda.yml, Pipfile, poetry.lock
+- Reproduction entry detection from reproducibility.yml, .oss-paper-ci.yml, and common script paths
+- Reproduction report: Markdown, JSON, HTML formats with full audit trail
+- Demo reproduce repository (`examples/demo-reproduce-repo/`) with runnable scripts
+- GitHub Action examples: `reproduce-repo.yml`, `reproduce-dry-run.yml`
+- Documentation: reproduce.md, reproduce-security.md, environment-detection.md, reproduction-report.md
+- Tests: reproduce CLI, resolver, environment detection, runner, reports, security, docs truthfulness
+
+### Changed
+- Version bumped to 1.8.0rc1
+
 ## 1.7.0rc1 (2026-06-09)
 
 ### Added
