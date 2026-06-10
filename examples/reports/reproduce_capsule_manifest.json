@@ -1,0 +1,55 @@
+{
+  "schema_version": "0.1",
+  "capsule_type": "oss-paper-ci-reproduction-capsule",
+  "oss_paper_ci_version": "1.9.0rc1",
+  "source": {
+    "input_url": "examples/demo-reproduce-repo",
+    "repo_url": "<redacted>/demo-reproduce-repo",
+    "paper_url": null,
+    "commit_sha": "bb71b114c53bbac8f8e9ba73b26c332b01a0f9d1",
+    "source_type": "local"
+  },
+  "execution": {
+    "mode": "execute",
+    "install": true,
+    "commands_attempted": 1,
+    "commands_succeeded": 1,
+    "commands_failed": 0,
+    "timeout_seconds": 300
+  },
+  "scan_score": 78,
+  "scan_status": "fail",
+  "artifact_count": 1,
+  "reports": {
+    "reproduce_json": "reports/reproduce_report.json",
+    "reproduce_html": "reports/reproduce_report.html",
+    "scan_json": "reports/scan_report.json"
+  },
+  "limitations": [
+    "This report documents an attempted reproduction, not a successful one.",
+    "Reproduction success does not guarantee correctness of results.",
+    "Numerical results may differ due to hardware, software, or randomness.",
+    "This tool does not verify scientific claims or paper quality."
+  ],
+  "files": [
+    "capsule.json",
+    "SHA256SUMS",
+    "artifacts/artifact_index.json",
+    "artifacts/generated/results/metrics.json",
+    "logs/command_000.stderr.txt",
+    "logs/command_000.stdout.txt",
+    "logs/install_000.stderr.txt",
+    "logs/install_000.stdout.txt",
+    "metadata/commands.json",
+    "metadata/environment.json",
+    "metadata/limitations.md",
+    "metadata/oss_paper_ci.json",
+    "metadata/source.json",
+    "reports/reproduce_report.html",
+    "reports/reproduce_report.json",
+    "reports/reproduce_report.md",
+    "reports/scan_report.json",
+    "reports/scan_report.md"
+  ],
+  "file_count": 18
+}

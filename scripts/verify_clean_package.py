@@ -38,6 +38,11 @@ FORBIDDEN = [
     "oss-paper-ci-v*.zip",
     "release_truth_*", "release_quarantine_*",
     "dogfooding/results/dogfooding_summary.md",
+    "*.capsule.zip",
+    ".oss-paper-ci-capsule-staging",
+    ".oss-paper-ci-repro",
+    ".local_*_audit*.md",
+    ".local_*_taskboard*.md",
 ]
 
 # Files that must be in the clean package
