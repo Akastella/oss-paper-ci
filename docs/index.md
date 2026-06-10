@@ -1,0 +1,57 @@
+# Documentation Index
+
+## Getting Started
+
+- [Getting Started](getting-started.md) — first steps with oss-paper-ci
+- [Installation](installation.md) — pip, pipx, source install
+- [Quickstart](demo.md) — run your first scan
+
+## Core Concepts
+
+- [CLI Reference](cli-reference.md) — all commands and options
+- [Configuration](configuration.md) — `.oss-paper-ci.yml` reference
+- [Policy Profiles](policy-profiles.md) — lenient, default, strict, publication
+- [Report Formats](report-formats.md) — Markdown, JSON, SARIF, HTML
+- [Security Model](security-model.md) — dry-run, execute, capsule safety
+
+## Features
+
+- [Reproduction](reproduce.md) — one-command reproduction attempt
+- [Reproduction Capsules](reproduction-capsules.md) — verifiable evidence packages
+- [Capsule Format](capsule-format.md) — capsule structure specification
+- [Capsule Verification](capsule-verify.md) — integrity checking
+- [Batch Scanning](batch-scan.md) — scan multiple projects
+- [Workspace](workspace.md) — workspace configuration
+- [Cache](cache.md) — incremental scanning
+- [Batch Diff](batch-diff.md) — compare batch reports
+- [Evidence Graph](evidence-graph.md) — file dependency visualization
+- [Baselines](baselines.md) — regression detection
+- [Smoke Runs](smoke-runs.md) — safe experiment execution
+- [Custom Rules](rule-sdk.md) — extend without Python code
+
+## Reference
+
+- [Check Categories](checks.md) — what gets checked
+- [Check Authoring](check-authoring.md) — write custom checks
+- [Rule Pack Manifest](rule-pack-manifest.md) — YAML rule format
+- [Report Schema](report-schema.md) — JSON report structure
+- [Cross-Language](cross-language.md) — R, Julia, MATLAB support
+- [Limitations](limitations.md) — what this tool does NOT do
+
+## GitHub Actions
+
+- [GitHub Actions Guide](github-actions.md) — CI integration
+- [GitHub Annotations](github-upload.md) — SARIF and annotations
+
+## Examples
+
+- [Demo Gallery](demo-gallery.md) — example reports and outputs
+- [Demo Paper Repo](demo-paper-repo.md) — example repository
+- [Rule Packs](../examples/rule-packs/) — example custom rules
+- [Workspaces](../examples/workspaces/) — example workspace configs
+
+## Release
+
+- [Release Process](release-process.md) — how to release
+- [Release Checklist](../RELEASE_CHECKLIST.md) — pre-release checks
+- [Packaging](packaging.md) — package structure

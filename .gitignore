@@ -49,3 +49,10 @@ v1_*_truthfulness.*
 # Capsule staging and artifacts
 .oss-paper-ci-capsule-staging/
 *.capsule.zip
+
+# Generated docs site
+site/
+
+# Release gate and truthfulness reports
+v2_*_truthfulness.*
+v2_*_release_gate.*
