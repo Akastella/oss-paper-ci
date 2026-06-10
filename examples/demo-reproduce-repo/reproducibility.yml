@@ -1,0 +1,30 @@
+version: "0.3"
+project_name: "demo-reproduce"
+project_type: "ml"
+
+environment:
+  type: "python"
+  file: "requirements.txt"
+
+experiments:
+  - id: train
+    command: "python scripts/train.py"
+    timeout_seconds: 60
+    safe_to_run: true
+    expected_outputs:
+      - "results/metrics.json"
+  - id: evaluate
+    command: "python scripts/evaluate.py"
+    timeout_seconds: 60
+    safe_to_run: true
+    expected_outputs:
+      - "results/eval_metrics.json"
+  - id: figures
+    command: "python scripts/make_figures.py"
+    timeout_seconds: 60
+    safe_to_run: true
+    expected_outputs:
+      - "figures/accuracy_curve.txt"
+
+ci:
+  smoke_experiment: "train"

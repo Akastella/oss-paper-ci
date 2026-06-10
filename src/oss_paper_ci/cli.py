@@ -162,6 +162,21 @@ def main(argv: list[str] | None = None) -> int:
     ci_cache = cache_sub.add_parser("info", help="Show cache statistics.")
     ci_cache.add_argument("--workspace", required=True, help="Path to workspace YAML file.")
 
+    # reproduce command
+    reproduce_parser = subparsers.add_parser("reproduce", help="Attempt to reproduce a paper repository.")
+    reproduce_parser.add_argument("url", help="GitHub URL, local path, or paper URL.")
+    reproduce_parser.add_argument("--repo", dest="repo_override", help="Explicit repository URL (for paper URLs).")
+    reproduce_parser.add_argument("--dry-run", action="store_true", default=True, help="Show what would happen without executing (default).")
+    reproduce_parser.add_argument("--execute", action="store_true", help="Actually run commands (required for execution).")
+    reproduce_parser.add_argument("--install", action="store_true", help="Install dependencies into isolated venv.")
+    reproduce_parser.add_argument("--no-install", action="store_true", help="Skip dependency installation.")
+    reproduce_parser.add_argument("--command", dest="reproduce_command", help="Override the reproduction command.")
+    reproduce_parser.add_argument("--workdir", help="Use a specific working directory.")
+    reproduce_parser.add_argument("--keep-workdir", action="store_true", help="Preserve working directory after run.")
+    reproduce_parser.add_argument("--timeout", type=int, default=300, help="Per-command timeout in seconds (default: 300).")
+    reproduce_parser.add_argument("--format", choices=["markdown", "json", "html"], default="markdown", help="Output format (default: markdown).")
+    reproduce_parser.add_argument("--output", "-o", help="Write report to file instead of stdout.")
+
     # version command
     subparsers.add_parser("version", help="Print version.")
 
@@ -221,6 +236,9 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "version":
         print(f"oss-paper-ci {__version__}")
         return 0
+
+    if args.command == "reproduce":
+        return _cmd_reproduce(args)
 
     if args.command == "workspace":
         return _cmd_workspace(args)
@@ -1636,6 +1654,67 @@ def _cmd_doctor(repo_path: str, fmt: str) -> int:
 
     # Return 0 if all ok, 1 if any missing
     if any(c["status"] != "ok" for c in checks):
+        return 1
+    return 0
+
+
+# ── Reproduce command ────────────────────────────────────────────────────────
+
+def _cmd_reproduce(args: argparse.Namespace) -> int:
+    """Handle the reproduce subcommand."""
+    from oss_paper_ci.reproduce import run_reproduce
+    from oss_paper_ci.reporting.reproduce_report import (
+        generate_reproduce_html_report,
+        generate_reproduce_json_report,
+        generate_reproduce_markdown_report,
+    )
+
+    url = args.url
+    if not url:
+        print("Error: URL or path is required.", file=sys.stderr)
+        return 1
+
+    # --execute enables execution; without it, dry-run is forced
+    execute = getattr(args, "execute", False)
+    dry_run = not execute
+
+    # --no-install overrides --install
+    install = getattr(args, "install", False)
+    if getattr(args, "no_install", False):
+        install = False
+
+    result = run_reproduce(
+        url=url,
+        repo_override=getattr(args, "repo_override", None),
+        dry_run=dry_run,
+        execute=execute,
+        install=install,
+        command=getattr(args, "reproduce_command", None),
+        workdir=getattr(args, "workdir", None),
+        timeout=getattr(args, "timeout", 300),
+        keep_workdir=getattr(args, "keep_workdir", False),
+    )
+
+    # Generate report
+    fmt = getattr(args, "format", "markdown")
+    output = getattr(args, "output", None)
+
+    if fmt == "json":
+        text = generate_reproduce_json_report(result, output_path=output)
+    elif fmt == "html":
+        text = generate_reproduce_html_report(result, output_path=output)
+    else:
+        text = generate_reproduce_markdown_report(result, output_path=output)
+
+    if output:
+        print(f"Report written to {output}")
+    else:
+        print(text)
+
+    # Exit code
+    if result.error:
+        return 2
+    if not result.ok:
         return 1
     return 0
 
