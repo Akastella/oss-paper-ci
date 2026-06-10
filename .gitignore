@@ -42,3 +42,6 @@ v1_*_truthfulness.*
 
 # Cache directory
 .oss-paper-ci-cache/
+
+# Reproduce workdir
+.oss-paper-ci-repro/

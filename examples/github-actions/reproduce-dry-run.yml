@@ -1,0 +1,40 @@
+name: Reproduce Paper (Dry Run)
+
+on:
+  workflow_dispatch:
+    inputs:
+      repo_url:
+        description: "GitHub repository URL to check"
+        required: true
+        type: string
+
+jobs:
+  reproduce-dry-run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout oss-paper-ci
+        uses: actions/checkout@v4
+        with:
+          repository: Akastella/oss-paper-ci
+          path: tool
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install oss-paper-ci
+        run: pip install ./tool
+
+      - name: Run reproduce dry-run
+        run: |
+          oss-paper-ci reproduce "${{ inputs.repo_url }}" \
+            --dry-run \
+            --format markdown \
+            --output reproduce-report.md
+
+      - name: Upload reproduction report
+        uses: actions/upload-artifact@v4
+        with:
+          name: reproduce-report
+          path: reproduce-report.md
