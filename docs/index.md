@@ -29,6 +29,14 @@
 - [Smoke Runs](smoke-runs.md) — safe experiment execution
 - [Custom Rules](rule-sdk.md) — extend without Python code
 
+## Human-Centered
+
+- [Human-Centered Reproducibility](human-centered-reproducibility.md) — design principles
+- [Failure Taxonomy](failure-taxonomy.md) — structured failure guidance
+- [Roles](roles.md) — guidance for authors, reviewers, maintainers
+- [Glossary](glossary.md) — terminology definitions
+- [Internationalization](i18n.md) — multilingual READMEs
+
 ## Reference
 
 - [Check Categories](checks.md) — what gets checked

@@ -1,5 +1,7 @@
 # oss-paper-ci
 
+**English** | [简体中文](README.zh-CN.md) | [日本語](README.ja.md)
+
 [![CI](https://github.com/Akastella/oss-paper-ci/actions/workflows/ci.yml/badge.svg)](https://github.com/Akastella/oss-paper-ci/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
@@ -92,6 +94,29 @@ A capsule is a self-contained evidence package with manifest, reports,
 logs, artifacts, metadata, and SHA256 integrity checksums. It is NOT
 proof that a paper is correct.
 
+## Guided mode
+
+Not sure where to start? Use the guided mode:
+
+```bash
+oss-paper-ci guide
+oss-paper-ci guide --role author
+oss-paper-ci guide --role reviewer
+oss-paper-ci guide --topic reproduce
+```
+
+See [docs/roles.md](docs/roles.md) for role-based guidance.
+
+## Failure is information
+
+When a reproduction attempt fails, the failure report is valuable evidence.
+It records what was attempted, where it failed, and what the environment
+looked like. Failure does not mean the paper is wrong — it may be an
+environment or dependency issue.
+
+See [docs/failure-taxonomy.md](docs/failure-taxonomy.md) for structured
+failure guidance.
+
 ## GitHub Actions
 
 ```yaml
@@ -118,6 +143,9 @@ See [examples/github-actions/](examples/github-actions/) for full workflow templ
 | GitHub Actions | [docs/github-actions.md](docs/github-actions.md) |
 | Configuration | [docs/configuration.md](docs/configuration.md) |
 | Policy profiles | [docs/policy-profiles.md](docs/policy-profiles.md) |
+| Failure taxonomy | [docs/failure-taxonomy.md](docs/failure-taxonomy.md) |
+| Roles | [docs/roles.md](docs/roles.md) |
+| Glossary | [docs/glossary.md](docs/glossary.md) |
 | Limitations | [docs/limitations.md](docs/limitations.md) |
 | Full index | [docs/index.md](docs/index.md) |
 

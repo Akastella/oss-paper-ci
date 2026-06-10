@@ -203,6 +203,13 @@ def main(argv: list[str] | None = None) -> int:
     cd.add_argument("--format", choices=["json", "markdown"], default="markdown", help="Output format.")
     cd.add_argument("--output", "-o", help="Write output to file.")
 
+    # guide command
+    guide_parser = subparsers.add_parser("guide", help="Get guided help for using oss-paper-ci.")
+    guide_parser.add_argument("--role", choices=["author", "reviewer", "maintainer"], help="Your role.")
+    guide_parser.add_argument("--topic", choices=["scan", "reproduce", "capsule"], help="Topic to learn about.")
+    guide_parser.add_argument("--format", choices=["markdown", "json"], default="markdown", help="Output format.")
+    guide_parser.add_argument("--output", "-o", help="Write output to file.")
+
     # version command
     subparsers.add_parser("version", help="Print version.")
 
@@ -262,6 +269,9 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "version":
         print(f"oss-paper-ci {__version__}")
         return 0
+
+    if args.command == "guide":
+        return _cmd_guide(args)
 
     if args.command == "reproduce":
         return _cmd_reproduce(args)
@@ -1921,6 +1931,40 @@ def _format_capsule_inspect_markdown(info: dict) -> str:
         lines.append("")
 
     return "\n".join(lines)
+
+
+# ── Guide command ────────────────────────────────────────────────────────────
+
+def _cmd_guide(args: argparse.Namespace) -> int:
+    """Handle the guide subcommand."""
+    import json as json_mod
+
+    from oss_paper_ci.guidance import format_guide_markdown, get_guide
+
+    role = getattr(args, "role", None)
+    topic = getattr(args, "topic", None)
+    fmt = getattr(args, "format", "markdown")
+    output = getattr(args, "output", None)
+
+    guide = get_guide(role=role, topic=topic)
+
+    if "error" in guide:
+        print(f"Error: {guide['error']}", file=sys.stderr)
+        return 1
+
+    if fmt == "json":
+        text = json_mod.dumps(guide, indent=2, ensure_ascii=False)
+    else:
+        text = format_guide_markdown(guide)
+
+    if output:
+        from pathlib import Path
+        Path(output).write_text(text, encoding="utf-8")
+        print(f"Guide written to {output}")
+    else:
+        print(text)
+
+    return 0
 
 
 def _cmd_capsule_diff(
