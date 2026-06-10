@@ -1,0 +1,76 @@
+{
+  "schema_version": "1.0",
+  "tool": "oss-paper-ci",
+  "report_type": "reproduction",
+  "generated_at": "2026-06-10T00:54:14.032385+00:00",
+  "input_url": "examples/demo-reproduce-repo",
+  "repo_url": "E:\\Projects\\OSS-Paper-CI\\examples\\demo-reproduce-repo",
+  "paper_url": "",
+  "resolved_source": "local",
+  "commit_sha": "9077f2593773692d708a7c1a251deda917b47fa8",
+  "clone_ok": true,
+  "clone_error": "",
+  "environment": {
+    "environment_files": [
+      {
+        "type": "requirements.txt",
+        "path": "requirements.txt",
+        "exists": true
+      }
+    ],
+    "install_steps": [
+      {
+        "description": "Install dependencies from requirements.txt",
+        "command": "python -m pip install -r requirements.txt",
+        "env_type": "pip",
+        "timeout": 300
+      }
+    ],
+    "python_version": "",
+    "warnings": [],
+    "supported": true
+  },
+  "install_results": [
+    {
+      "command": "\"E:\\Projects\\OSS-Paper-CI\\examples\\demo-reproduce-repo\\.oss-paper-ci-repro\\venv\\Scripts\\python.exe\" -m pip install -r requirements.txt",
+      "exit_code": 0,
+      "duration_seconds": 2.578,
+      "timed_out": false,
+      "blocked": false,
+      "block_reason": "",
+      "stdout_excerpt": "Requirement already satisfied: numpy>=1.24 in e:\\projects\\oss-paper-ci\\examples\\demo-reproduce-repo\\.oss-paper-ci-repro\\venv\\lib\\site-packages (from -r requirements.txt (line 1)) (2.4.6)\n",
+      "stderr_excerpt": "\n[notice] A new release of pip is available: 24.3.1 -> 26.1.2\n[notice] To update, run: E:\\Projects\\OSS-Paper-CI\\examples\\demo-reproduce-repo\\.oss-paper-ci-repro\\venv\\Scripts\\python.exe -m pip install --upgrade pip\n"
+    }
+  ],
+  "reproduction_commands": [
+    "python scripts/train.py"
+  ],
+  "command_results": [
+    {
+      "command": "python scripts/train.py",
+      "exit_code": 0,
+      "duration_seconds": 0.125,
+      "timed_out": false,
+      "blocked": false,
+      "block_reason": "",
+      "stdout_excerpt": "Starting training...\n  Epoch 1/10 — loss: 1.0028\n  Epoch 2/10 — loss: 0.4905\n  Epoch 3/10 — loss: 0.3288\n  Epoch 4/10 — loss: 0.2445\n  Epoch 5/10 — loss: 0.2047\n  Epoch 6/10 — loss: 0.1702\n  Epoch 7/10 — loss: 0.1507\n  Epoch 8/10 — loss: 0.1167\n  Epoch 9/10 — loss: 0.1095\n  Epoch 10/10 — loss: 0.0906\n\nTraining complete. Accuracy: 0.9472\nMetrics saved to results/metrics.json\n",
+      "stderr_excerpt": ""
+    }
+  ],
+  "generated_artifacts": [
+    "results\\metrics.json"
+  ],
+  "scan_score": 78,
+  "scan_status": "fail",
+  "scan_findings_summary": "26 passed, 16 warnings, 1 errors",
+  "limitations": [
+    "This report documents an attempted reproduction, not a successful one.",
+    "Reproduction success does not guarantee correctness of results.",
+    "Numerical results may differ due to hardware, software, or randomness.",
+    "This tool does not verify scientific claims or paper quality."
+  ],
+  "dry_run": false,
+  "workdir": "E:\\Projects\\OSS-Paper-CI\\examples\\demo-reproduce-repo",
+  "error": "",
+  "warnings": []
+}

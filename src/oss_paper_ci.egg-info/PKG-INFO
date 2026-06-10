@@ -1,6 +1,6 @@
 Metadata-Version: 2.4
 Name: oss-paper-ci
-Version: 1.4.0rc1
+Version: 1.8.0rc1
 Summary: CI tool for checking reproducibility readiness of scientific paper repositories
 Author: oss-paper-ci contributors
 License: MIT
@@ -62,11 +62,24 @@ See [docs/demo.md](docs/demo.md) for full reproduction instructions.
 
 1. **Install**: `python -m pip install -e ".[dev]"`
 2. **Diagnose**: `oss-paper-ci doctor .`
-3. **Initialize**: `oss-paper-ci init --all --dry-run`
+3. **Initialize**: `oss-paper-ci config init --profile publication`
 4. **Scan locally**: `oss-paper-ci scan . --format html --output report.html`
 5. **Generate PR comment**: `oss-paper-ci comment --input report.json --output pr-comment.md`
 6. **Use in GitHub Actions**: see [examples/github-actions/](examples/github-actions/)
 7. **Upload SARIF**: `oss-paper-ci scan . --format sarif --output report.sarif`
+
+## Long-term governance path
+
+For repositories that want ongoing reproducibility tracking:
+
+1. **Init config**: `oss-paper-ci config init --profile publication`
+2. **Validate config**: `oss-paper-ci config validate`
+3. **Scan**: `oss-paper-ci scan . --format json --output report.json`
+4. **Compare against previous**: `oss-paper-ci diff --old previous.json --new report.json`
+5. **Enforce in CI**: use the GitHub Action with `profile` and `fail-under` inputs
+6. **Publish artifacts**: upload reports as CI artifacts
+
+See [docs/policy-profiles.md](docs/policy-profiles.md) and [docs/report-diff.md](docs/report-diff.md).
 
 ### GitHub Actions integration
 
@@ -90,6 +103,39 @@ See also:
 - [examples/demo-paper-repo/](examples/demo-paper-repo/) — example paper repository
 - [examples/reports/demo_paper_report.html](examples/reports/demo_paper_report.html) — example HTML report
 - [examples/reports/demo_paper_pr_comment.md](examples/reports/demo_paper_pr_comment.md) — example PR comment
+
+## One-command reproduction
+
+Try to reproduce a paper repository with a single command:
+
+```bash
+# Safe: dry-run shows what would happen
+oss-paper-ci reproduce https://github.com/owner/paper-repo --dry-run
+
+# Execute: clone, install, run, and generate a report
+oss-paper-ci reproduce https://github.com/owner/paper-repo --execute --install --format html --output repro-report.html
+
+# Local path: reproduce from a local checkout
+oss-paper-ci reproduce ./my-paper-repo --execute --install --format markdown
+```
+
+The reproduce command:
+1. Clones the repository (or uses a local path)
+2. Detects environment files (requirements.txt, pyproject.toml, etc.)
+3. Creates an isolated virtual environment (with `--install`)
+4. Installs dependencies
+5. Runs the reproduction command(s)
+6. Runs an oss-paper-ci scan
+7. Generates a structured report
+
+**Safety**: default mode is dry-run. `--execute` is required to run code.
+See [docs/reproduce.md](docs/reproduce.md) and [docs/reproduce-security.md](docs/reproduce-security.md).
+
+See also:
+- [examples/demo-reproduce-repo/](examples/demo-reproduce-repo/) — demo repository for reproduce
+- [examples/reports/reproduce_demo_report.html](examples/reports/reproduce_demo_report.html) — example reproduce report
+- [docs/environment-detection.md](docs/environment-detection.md) — how environments are detected
+- [docs/reproduction-report.md](docs/reproduction-report.md) — report format details
 
 ## What it checks
 
@@ -164,6 +210,9 @@ For more options (SARIF upload, PR comments, baseline regression), see
 # Scan current directory (markdown output)
 oss-paper-ci scan
 
+# Scan with a specific policy profile
+oss-paper-ci scan . --profile strict
+
 # Scan specific path, output JSON
 oss-paper-ci scan /path/to/repo --format json
 
@@ -177,22 +226,39 @@ oss-paper-ci scan --format sarif -o results.sarif
 oss-paper-ci scan --config my-config.yml
 ```
 
-### Init
-
-Generate a default config file:
+### Config
 
 ```bash
-oss-paper-ci init
+# Generate a default config file
+oss-paper-ci config init
+
+# Generate config for a specific profile
+oss-paper-ci config init --profile strict
+
+# Validate a config file
+oss-paper-ci config validate
+
+# Show resolved configuration
+oss-paper-ci config explain
 ```
 
-Creates `oss-paper-ci.yml` in the current directory.
+### Diff
+
+Compare two scan reports:
+
+```bash
+oss-paper-ci diff --old old-report.json --new new-report.json
+oss-paper-ci diff --old old.json --new new.json --format json --output diff.json
+```
 
 ### Explain
 
-Get details about a specific check:
-
 ```bash
+# Explain a check
 oss-paper-ci explain ENV001
+
+# Explain a policy profile
+oss-paper-ci explain policy strict
 ```
 
 ### List checks
@@ -299,41 +365,85 @@ See [docs/pre-commit.md](docs/pre-commit.md) for configuration options.
 
 ## Configuration
 
-Create `oss-paper-ci.yml` in your repo root (or run `oss-paper-ci init`):
+Create `.oss-paper-ci.yml` in your repo root (or run `oss-paper-ci config init`):
 
 ```yaml
-version: "0.1"
-project:
-  name: "my-paper"
-  paper_dir: "paper"
-  code_dirs:
-    - "src"
-    - "scripts"
-  data_dirs:
-    - "data"
-  results_dirs:
-    - "results"
-    - "figures"
+version: 1
+profile: default
+
 checks:
-  min_score: 70
-  require_license: true
-  require_citation: true
-  require_environment: true
-  require_quickstart: true
-  disabled:
-    - "META005"
-  severity_overrides:
-    "CI001": "warning"
-ignore:
-  paths:
-    - ".git"
-    - ".venv"
-    - "node_modules"
-output:
-  default_format: "markdown"
+  disabled: []
+  severity_overrides: {}
+
+reports:
+  default_format: markdown
 ```
 
 See [docs/configuration.md](docs/configuration.md) for the full reference.
+
+## Policy profiles
+
+Pick a profile that matches your project's stage:
+
+| Profile | Use case |
+|---------|----------|
+| `lenient` | Early-stage projects, fewer blocking findings |
+| `default` | Balanced defaults for general use |
+| `strict` | Stricter governance for mature projects |
+| `publication` | Repos preparing for public release |
+
+See [docs/policy-profiles.md](docs/policy-profiles.md).
+
+## Extending with custom rules
+
+Add custom checks without writing Python code:
+
+```yaml
+# oss-paper-ci-rules.yml
+version: 1
+name: my-rules
+checks:
+  - id: MY001
+    name: Require CITATION.cff
+    severity: error
+    type: file_exists
+    path: CITATION.cff
+    message: "CITATION.cff is required."
+```
+
+```bash
+oss-paper-ci scan . --rules oss-paper-ci-rules.yml
+```
+
+See [docs/rule-sdk.md](docs/rule-sdk.md) and [examples/rule-packs/](examples/rule-packs/).
+
+## Scaling to multiple repositories
+
+Scan multiple projects in a single batch run using a workspace configuration.
+
+```bash
+# Create a workspace file
+oss-paper-ci workspace validate --workspace oss-paper-ci-workspace.yml
+oss-paper-ci workspace list --workspace oss-paper-ci-workspace.yml
+
+# Batch scan
+oss-paper-ci batch scan --workspace oss-paper-ci-workspace.yml --format json --output batch-report.json
+
+# Parallel execution with cache
+oss-paper-ci batch scan --workspace oss-paper-ci-workspace.yml --jobs 2 --cache --format markdown
+
+# Compare two batch reports
+oss-paper-ci batch diff --old old-batch.json --new new-batch.json
+```
+
+See:
+- [docs/workspace.md](docs/workspace.md) — workspace configuration format
+- [docs/batch-scan.md](docs/batch-scan.md) — batch scanning guide
+- [docs/cache.md](docs/cache.md) — incremental cache
+- [docs/parallelism.md](docs/parallelism.md) — parallel execution
+- [docs/batch-diff.md](docs/batch-diff.md) — comparing batch reports
+- [docs/scale-gate.md](docs/scale-gate.md) — scale regression testing
+- [examples/workspaces/](examples/workspaces/) — example workspace files
 
 ## Score interpretation
 

@@ -75,6 +75,39 @@ See also:
 - [examples/reports/demo_paper_report.html](examples/reports/demo_paper_report.html) — example HTML report
 - [examples/reports/demo_paper_pr_comment.md](examples/reports/demo_paper_pr_comment.md) — example PR comment
 
+## One-command reproduction
+
+Try to reproduce a paper repository with a single command:
+
+```bash
+# Safe: dry-run shows what would happen
+oss-paper-ci reproduce https://github.com/owner/paper-repo --dry-run
+
+# Execute: clone, install, run, and generate a report
+oss-paper-ci reproduce https://github.com/owner/paper-repo --execute --install --format html --output repro-report.html
+
+# Local path: reproduce from a local checkout
+oss-paper-ci reproduce ./my-paper-repo --execute --install --format markdown
+```
+
+The reproduce command:
+1. Clones the repository (or uses a local path)
+2. Detects environment files (requirements.txt, pyproject.toml, etc.)
+3. Creates an isolated virtual environment (with `--install`)
+4. Installs dependencies
+5. Runs the reproduction command(s)
+6. Runs an oss-paper-ci scan
+7. Generates a structured report
+
+**Safety**: default mode is dry-run. `--execute` is required to run code.
+See [docs/reproduce.md](docs/reproduce.md) and [docs/reproduce-security.md](docs/reproduce-security.md).
+
+See also:
+- [examples/demo-reproduce-repo/](examples/demo-reproduce-repo/) — demo repository for reproduce
+- [examples/reports/reproduce_demo_report.html](examples/reports/reproduce_demo_report.html) — example reproduce report
+- [docs/environment-detection.md](docs/environment-detection.md) — how environments are detected
+- [docs/reproduction-report.md](docs/reproduction-report.md) — report format details
+
 ## What it checks
 
 Scans a repository for engineering basics needed for reproducibility: environment
