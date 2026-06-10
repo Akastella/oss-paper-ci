@@ -1,4 +1,4 @@
-"""Release gate tests for v1.9.0rc1.
+"""Release gate tests for v2.0.0rc1.
 
 Tests that verify the release package is truthful, clean, and ready for public upload.
 Covers: clean zip structure, docs truthfulness, action.yml correctness,
@@ -220,9 +220,16 @@ class TestReadmeCorrectness:
         assert "cd oss-paper-ci" in content, "README quickstart should use 'cd oss-paper-ci'"
 
     def test_uses_list_checks_command(self):
-        content = (ROOT / "README.md").read_text(encoding="utf-8")
-        assert "oss-paper-ci list-checks" in content, \
-            "README should use 'oss-paper-ci list-checks'"
+        # list-checks is documented in CLI reference, not README
+        cli_ref = ROOT / "docs" / "cli-reference.md"
+        if cli_ref.exists():
+            content = cli_ref.read_text(encoding="utf-8")
+            assert "list-checks" in content, \
+                "CLI reference should document 'list-checks'"
+        else:
+            content = (ROOT / "README.md").read_text(encoding="utf-8")
+            assert "oss-paper-ci list-checks" in content, \
+                "README should use 'oss-paper-ci list-checks'"
 
     def test_no_explain_list_command(self):
         content = (ROOT / "README.md").read_text(encoding="utf-8")
@@ -440,13 +447,13 @@ class TestVersionConsistency:
         # Extract version
         for line in content.split("\n"):
             if "__version__" in line:
-                assert "1.9.0rc1" in line
+                assert "2.0.0rc1" in line
                 return
         pytest.fail("Version not found in __init__.py")
 
     def test_pyproject_version(self):
         content = (ROOT / "pyproject.toml").read_text()
-        assert 'version = "1.9.0rc1"' in content
+        assert 'version = "2.0.0rc1"' in content
 
     def test_cli_version_output(self):
         result = subprocess.run(
@@ -454,7 +461,7 @@ class TestVersionConsistency:
             capture_output=True, text=True, cwd=ROOT, timeout=10,
         )
         assert result.returncode == 0
-        assert "1.9.0rc1" in result.stdout
+        assert "2.0.0rc1" in result.stdout
 
     def test_cli_version_matches_pyproject(self):
         # Get CLI version

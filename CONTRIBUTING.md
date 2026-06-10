@@ -71,8 +71,9 @@ class MyNewCheck(BaseChecker):
 1. Fork the repository.
 2. Create a branch: `git checkout -b my-feature`
 3. Make your changes and add tests.
-4. Run `pytest` and ensure all tests pass.
-5. Open a pull request against `main`.
+4. Run `python -m pytest` and ensure all tests pass.
+5. Run `python scripts/check_docs_truthfulness.py --check` — must pass.
+6. Open a pull request against `main`.
 
 ## Code style
 

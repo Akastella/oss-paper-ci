@@ -1,5 +1,31 @@
 # Changelog
 
+## 2.0.0rc1 (2026-06-10)
+
+### Added
+- README restructured for quick onboarding (one-liner, what-it-does, quickstart, 3 commands)
+- `docs/index.md` — documentation site index
+- `docs/getting-started.md` — new user guide
+- `docs/installation.md` — pip/pipx/source install paths with troubleshooting
+- `docs/cli-reference.md` — auto-generated CLI reference
+- `docs/demo-gallery.md` — gallery of example reports and outputs
+- `docs/security-model.md` — consolidated security documentation
+- `docs/release-process.md` — release process and checklist
+- `scripts/build_docs_site.py` — static HTML docs site generator
+- `scripts/generate_cli_reference.py` — CLI reference auto-generation
+- `scripts/release_gate.py` — release validation checks
+- `.github/workflows/docs.yml` — GitHub Pages deployment workflow
+- `RELEASE_CHECKLIST.md` — pre-release checklist
+- `CODE_OF_CONDUCT.md` — contributor code of conduct
+- `SUPPORT.md` — support and issue guidelines
+- `CONTRIBUTING.md` — contribution guidelines
+- `SECURITY.md` — security policy
+- Tests for docs site, CLI reference, release gate, README, PyPI metadata
+
+### Changed
+- Version bumped to 2.0.0rc1
+- pyproject.toml description updated, added Documentation/Changelog URLs
+
 ## 1.9.0rc1 (2026-06-10)
 
 ### Added

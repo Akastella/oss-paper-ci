@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "oss-paper-ci"
-version = "1.9.0rc1"
-description = "CI tool for checking reproducibility readiness of scientific paper repositories"
+version = "2.0.0rc1"
+description = "CLI toolkit for checking, attempting, and packaging scientific repository reproducibility evidence"
 readme = "README.md"
 license = {text = "MIT"}
 requires-python = ">=3.10"
@@ -40,8 +40,10 @@ oss-paper-ci = "oss_paper_ci.cli:main"
 
 [project.urls]
 Homepage = "https://github.com/Akastella/oss-paper-ci"
+Documentation = "https://akastella.github.io/oss-paper-ci/"
 Repository = "https://github.com/Akastella/oss-paper-ci"
 Issues = "https://github.com/Akastella/oss-paper-ci/issues"
+Changelog = "https://github.com/Akastella/oss-paper-ci/blob/main/CHANGELOG.md"
 
 [tool.setuptools.packages.find]
 where = ["src"]
