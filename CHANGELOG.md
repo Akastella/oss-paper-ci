@@ -1,5 +1,28 @@
 # Changelog
 
+## 2.1.0rc1 (2026-06-10)
+
+### Added
+- `oss-paper-ci guide` — guided entry point with role-based and topic-based guidance
+- `guide --role author|reviewer|maintainer` — role-specific recommendations
+- `guide --topic scan|reproduce|capsule` — topic-specific walkthrough
+- Failure taxonomy: 10 structured failure types with causes, next steps, and role guidance
+- Plain-language summary in reproduction reports
+- `docs/failure-taxonomy.md` — structured failure reference
+- `docs/glossary.md` — terminology glossary
+- `docs/human-centered-reproducibility.md` — human-centered design principles
+- `docs/roles.md` — role-based guidance for authors, reviewers, maintainers
+- `docs/i18n.md` — internationalization guide
+- `README.zh-CN.md` — Simplified Chinese README
+- `README.ja.md` — Japanese README
+- `scripts/check_i18n_readmes.py` — i18n consistency checker
+- Language links in README (English | 简体中文 | 日本語)
+- HTML reports include `lang` attribute for accessibility
+- Tests for guide CLI, failure taxonomy, i18n, plain-language summary
+
+### Changed
+- Version bumped to 2.1.0rc1
+
 ## 2.0.0rc1 (2026-06-10)
 
 ### Added
