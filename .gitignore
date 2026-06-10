@@ -45,3 +45,7 @@ v1_*_truthfulness.*
 
 # Reproduce workdir
 .oss-paper-ci-repro/
+
+# Capsule staging and artifacts
+.oss-paper-ci-capsule-staging/
+*.capsule.zip

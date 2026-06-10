@@ -31,6 +31,7 @@ docs/demo.md
 docs/design-principles.md
 docs/doctor.md
 docs/dogfooding.md
+docs/environment-detection.md
 docs/evidence-graph.md
 docs/github-actions.md
 docs/github-upload.md
@@ -49,7 +50,10 @@ docs/release-checklist.md
 docs/report-diff.md
 docs/report-formats.md
 docs/report-schema.md
+docs/reproduce-security.md
+docs/reproduce.md
 docs/reproducibility-contract.md
+docs/reproduction-report.md
 docs/rule-pack-manifest.md
 docs/rule-sdk.md
 docs/sarif.md
@@ -82,6 +86,15 @@ examples/demo-paper-repo/results/metrics.json
 examples/demo-paper-repo/scripts/evaluate.py
 examples/demo-paper-repo/scripts/make_figures.py
 examples/demo-paper-repo/scripts/train.py
+examples/demo-reproduce-repo/README.md
+examples/demo-reproduce-repo/reproducibility.yml
+examples/demo-reproduce-repo/requirements.txt
+examples/demo-reproduce-repo/data/README.md
+examples/demo-reproduce-repo/figures/README.md
+examples/demo-reproduce-repo/results/README.md
+examples/demo-reproduce-repo/scripts/evaluate.py
+examples/demo-reproduce-repo/scripts/make_figures.py
+examples/demo-reproduce-repo/scripts/train.py
 examples/github-actions/baseline-regression.yml
 examples/github-actions/config-file.yml
 examples/github-actions/custom-rules.yml
@@ -95,6 +108,8 @@ examples/github-actions/pr-comment.yml
 examples/github-actions/publication-profile.yml
 examples/github-actions/publication-with-rules.yml
 examples/github-actions/pypi-after-publication.yml
+examples/github-actions/reproduce-dry-run.yml
+examples/github-actions/reproduce-repo.yml
 examples/github-actions/sarif-upload.yml
 examples/github-actions/source-checkout.yml
 examples/github-actions/use-action.yml
@@ -133,6 +148,10 @@ examples/reports/realistic_ml_pr_comment.md
 examples/reports/realistic_ml_report.json
 examples/reports/realistic_ml_report.md
 examples/reports/realistic_ml_smoke.md
+examples/reports/reproduce_demo_dry_run.md
+examples/reports/reproduce_demo_report.html
+examples/reports/reproduce_demo_report.json
+examples/reports/reproduce_demo_report.md
 examples/rule-packs/README.md
 examples/rule-packs/citation-required.yml
 examples/rule-packs/lab-reproducibility-rules.yml
@@ -155,6 +174,8 @@ src/oss_paper_ci/__main__.py
 src/oss_paper_ci/baseline.py
 src/oss_paper_ci/batch.py
 src/oss_paper_ci/cache.py
+src/oss_paper_ci/capsule.py
+src/oss_paper_ci/capsule_format.py
 src/oss_paper_ci/cli.py
 src/oss_paper_ci/config.py
 src/oss_paper_ci/contract.py
@@ -228,6 +249,13 @@ tests/test_batch_diff.py
 tests/test_batch_reports.py
 tests/test_batch_scan.py
 tests/test_cache.py
+tests/test_capsule_builder.py
+tests/test_capsule_diff.py
+tests/test_capsule_docs_truthfulness.py
+tests/test_capsule_format.py
+tests/test_capsule_inspect.py
+tests/test_capsule_security.py
+tests/test_capsule_verify.py
 tests/test_clean_room_verify.py
 tests/test_cli.py
 tests/test_config.py
@@ -242,6 +270,7 @@ tests/test_parallel_batch.py
 tests/test_release_gate.py
 tests/test_release_package.py
 tests/test_reporting.py
+tests/test_reproduce_capsule_cli.py
 tests/test_reproduce_cli.py
 tests/test_reproduce_docs_truthfulness.py
 tests/test_reproduce_reports.py

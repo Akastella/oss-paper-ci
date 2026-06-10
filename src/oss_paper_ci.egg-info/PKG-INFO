@@ -1,6 +1,6 @@
 Metadata-Version: 2.4
 Name: oss-paper-ci
-Version: 1.8.0rc1
+Version: 1.9.0rc1
 Summary: CI tool for checking reproducibility readiness of scientific paper repositories
 Author: oss-paper-ci contributors
 License: MIT
@@ -136,6 +136,37 @@ See also:
 - [examples/reports/reproduce_demo_report.html](examples/reports/reproduce_demo_report.html) — example reproduce report
 - [docs/environment-detection.md](docs/environment-detection.md) — how environments are detected
 - [docs/reproduction-report.md](docs/reproduction-report.md) — report format details
+
+## Reproduction capsules
+
+Generate a verifiable, archivable reproduction capsule:
+
+```bash
+# Generate capsule during reproduction
+oss-paper-ci reproduce examples/demo-reproduce-repo \
+  --execute --install --capsule repro-capsule.zip
+
+# Verify capsule integrity
+oss-paper-ci capsule verify repro-capsule.zip
+
+# Inspect capsule contents
+oss-paper-ci capsule inspect repro-capsule.zip
+
+# Compare two capsules
+oss-paper-ci capsule diff old.zip new.zip
+```
+
+A capsule contains: manifest, reports, logs, artifacts, metadata, and
+SHA256 integrity checksums. It is a self-contained evidence package for
+a reproduction attempt.
+
+**Important:** A capsule is NOT proof that a paper is correct. It records
+what was done, not whether the results are valid.
+
+See [docs/reproduction-capsules.md](docs/reproduction-capsules.md),
+[docs/capsule-format.md](docs/capsule-format.md),
+[docs/capsule-verify.md](docs/capsule-verify.md),
+[docs/capsule-security.md](docs/capsule-security.md).
 
 ## What it checks
 
