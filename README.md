@@ -94,9 +94,50 @@ A capsule is a self-contained evidence package with manifest, reports,
 logs, artifacts, metadata, and SHA256 integrity checksums. It is NOT
 proof that a paper is correct.
 
-## Guided mode
+## Wizard
 
-Not sure where to start? Use the guided mode:
+Not sure where to start? The wizard gives you safe next-step recommendations:
+
+```bash
+oss-paper-ci wizard
+oss-paper-ci wizard --plain
+```
+
+It detects your repository characteristics and suggests commands to run.
+In CI or non-TTY environments, it prints recommendations without blocking.
+
+## Workbench
+
+Run the full pipeline in one command:
+
+```bash
+# Full pipeline: detect → scan → diagnose → validate → dossier
+oss-paper-ci workbench .
+
+# With output files
+oss-paper-ci workbench . --output-dir oss-paper-ci-out
+
+# Plain mode for CI
+oss-paper-ci workbench . --plain
+
+# High-contrast theme
+oss-paper-ci workbench . --theme contrast
+```
+
+The workbench is safe by default: no experiments are executed, no
+dependencies are installed, all analysis is read-only.
+
+## Themes
+
+```bash
+oss-paper-ci theme list
+oss-paper-ci theme preview
+oss-paper-ci workbench . --theme minimal
+```
+
+Themes: `classic` (default), `minimal` (CI-friendly), `contrast` (accessibility).
+
+## Guided mode
 
 ```bash
 oss-paper-ci guide
@@ -136,6 +177,11 @@ See [examples/github-actions/](examples/github-actions/) for full workflow templ
 | Getting started | [docs/getting-started.md](docs/getting-started.md) |
 | Installation | [docs/installation.md](docs/installation.md) |
 | CLI reference | [docs/cli-reference.md](docs/cli-reference.md) |
+| Terminal workbench | [docs/terminal-workbench.md](docs/terminal-workbench.md) |
+| Wizard | [docs/wizard.md](docs/wizard.md) |
+| Themes | [docs/themes.md](docs/themes.md) |
+| CLI UX | [docs/cli-ux.md](docs/cli-ux.md) |
+| No-color and CI | [docs/no-color-and-ci.md](docs/no-color-and-ci.md) |
 | Security model | [docs/security-model.md](docs/security-model.md) |
 | Demo gallery | [docs/demo-gallery.md](docs/demo-gallery.md) |
 | Reproduction | [docs/reproduce.md](docs/reproduce.md) |

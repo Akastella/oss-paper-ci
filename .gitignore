@@ -53,6 +53,12 @@ v1_*_truthfulness.*
 # Generated docs site
 site/
 
+# Workbench output directories
+oss-paper-ci-out/
+.tmp-workbench-out/
+.tmp-workbench-out-2/
+.tmp-wb-ex/
+
 # Release gate and truthfulness reports
 v2_*_truthfulness.*
 v2_*_release_gate.*

@@ -8,6 +8,13 @@ from pathlib import Path
 
 from oss_paper_ci import __version__
 
+# Module-level output mode and theme, resolved in main()
+from oss_paper_ci.terminal import OutputMode as _OutputMode
+from oss_paper_ci.themes import get_theme as _default_theme_fn
+_mode = _OutputMode()
+_theme = _default_theme_fn()
+_debug = False
+
 
 def main(argv: list[str] | None = None) -> int:
     """Main CLI entry point.
@@ -29,6 +36,16 @@ def main(argv: list[str] | None = None) -> int:
         description="Check reproducibility readiness of scientific paper repositories.",
     )
     parser.add_argument("--version", action="version", version=f"oss-paper-ci {__version__}")
+    parser.add_argument("--plain", action="store_true",
+                        help="Force plain text output (no color, no animation).")
+    parser.add_argument("--no-color", action="store_true", dest="no_color",
+                        help="Disable color output.")
+    parser.add_argument("--no-animate", action="store_true", dest="no_animate",
+                        help="Disable animation (spinners, progress).")
+    parser.add_argument("--theme", choices=["classic", "minimal", "contrast"],
+                        default="classic", help="Terminal theme (default: classic).")
+    parser.add_argument("--debug", action="store_true",
+                        help="Show debug information and tracebacks on error.")
 
     subparsers = parser.add_subparsers(dest="command")
 
@@ -308,7 +325,48 @@ def main(argv: list[str] | None = None) -> int:
     comment_parser.add_argument("--kind", choices=["scan", "baseline"], default="scan", help="Comment type.")
     comment_parser.add_argument("--max-findings", type=int, default=10, help="Max findings to show.")
 
-    args = parser.parse_args(argv)
+    # wizard command
+    wizard_parser = subparsers.add_parser("wizard", help="Guided setup for new users.")
+    wizard_parser.add_argument("path", nargs="?", default=".", help="Path to repository root (default: .)")
+
+    # workbench command
+    workbench_parser = subparsers.add_parser("workbench", help="Run a multi-step reproducibility pipeline.")
+    workbench_parser.add_argument("path", nargs="?", default=".", help="Path to repository root (default: .)")
+    workbench_parser.add_argument("--output-dir", dest="output_dir", default="",
+                                  help="Output directory for results (default: no files).")
+    workbench_parser.add_argument("--with-reproduce-dry-run", action="store_true",
+                                  help="Include reproduce dry-run step.")
+    workbench_parser.add_argument("--force", action="store_true",
+                                  help="Overwrite existing output directory.")
+
+    # theme command group
+    theme_parser = subparsers.add_parser("theme", help="Theme management.")
+    theme_sub = theme_parser.add_subparsers(dest="theme_command")
+    theme_sub.add_parser("list", help="List available themes.")
+    theme_preview = theme_sub.add_parser("preview", help="Preview the current theme.")
+    theme_preview.add_argument("--theme", choices=["classic", "minimal", "contrast"],
+                               default="classic", help="Theme to preview.")
+
+    args, remaining = parser.parse_known_args(argv)
+
+    # Resolve output mode from global flags
+    from oss_paper_ci.terminal import OutputMode
+    from oss_paper_ci.themes import get_theme as _get_theme_fn
+
+    # Handle global flags that may appear after the subcommand
+    global _mode, _theme, _debug
+    plain = getattr(args, "plain", False) or "--plain" in (remaining or [])
+    no_color = getattr(args, "no_color", False) or "--no-color" in (remaining or [])
+    no_animate = getattr(args, "no_animate", False) or "--no-animate" in (remaining or [])
+    debug = getattr(args, "debug", False) or "--debug" in (remaining or [])
+    theme_name = getattr(args, "theme", "classic")
+    for i, arg in enumerate(remaining or []):
+        if arg == "--theme" and i + 1 < len(remaining):
+            theme_name = remaining[i + 1]
+
+    _mode = OutputMode(plain=plain, no_color=no_color, no_animate=no_animate)
+    _theme = _get_theme_fn(theme_name)
+    _debug = debug
 
     if args.command is None:
         parser.print_help()
@@ -410,6 +468,15 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.command == "comment":
         return _cmd_comment(args.input, args.output, args.kind, args.max_findings)
+
+    if args.command == "wizard":
+        return _cmd_wizard(args)
+
+    if args.command == "workbench":
+        return _cmd_workbench(args)
+
+    if args.command == "theme":
+        return _cmd_theme(args)
 
     parser.print_help()
     return 0
@@ -2454,5 +2521,105 @@ def _cmd_comment(input_path: str, output: str | None, kind: str, max_findings: i
         print(f"Comment written to {output}")
     else:
         print(text)
+
+    return 0
+
+
+# ── Wizard command ──────────────────────────────────────────────────────────
+
+def _cmd_wizard(args: argparse.Namespace) -> int:
+    """Handle wizard command."""
+    from oss_paper_ci.wizard import run_wizard
+    return run_wizard(
+        path=getattr(args, "path", "."),
+        mode=_mode,
+        theme=_theme,
+    )
+
+
+# ── Workbench command ───────────────────────────────────────────────────────
+
+def _cmd_workbench(args: argparse.Namespace) -> int:
+    """Handle workbench command."""
+    from oss_paper_ci.workbench import run_workbench
+    result = run_workbench(
+        path=getattr(args, "path", "."),
+        output_dir=getattr(args, "output_dir", ""),
+        with_reproduce_dry_run=getattr(args, "with_reproduce_dry_run", False),
+        force=getattr(args, "force", False),
+        mode=_mode,
+        theme=_theme,
+    )
+    # Exit with appropriate code
+    if any(s.status == "error" for s in result.steps):
+        return 2
+    if any(s.status == "fail" for s in result.steps):
+        return 1
+    return 0
+
+
+# ── Theme command ───────────────────────────────────────────────────────────
+
+def _cmd_theme(args: argparse.Namespace) -> int:
+    """Handle theme command group."""
+    sub = getattr(args, "theme_command", None)
+
+    if sub == "list":
+        return _cmd_theme_list()
+    if sub == "preview":
+        return _cmd_theme_preview(getattr(args, "theme", "classic"))
+
+    print("Usage: oss-paper-ci theme {list|preview}", file=sys.stderr)
+    return 1
+
+
+def _cmd_theme_list() -> int:
+    """List available themes."""
+    from oss_paper_ci.themes import list_themes, get_theme, THEMES
+    from oss_paper_ci.ui import render_table
+
+    themes = list_themes()
+    headers = ["Name", "Description"]
+    rows = [[t["name"], t["description"]] for t in themes]
+    render_table(headers, rows, mode=_mode, theme=_theme)
+    return 0
+
+
+def _cmd_theme_preview(theme_name: str) -> int:
+    """Preview a theme with sample output."""
+    from oss_paper_ci.themes import get_theme
+    from oss_paper_ci.ui import (
+        render_title, render_step, render_steps, render_panel, render_score,
+        render_summary, render_next_actions, render_warning,
+    )
+
+    theme = get_theme(theme_name)
+
+    render_title("Theme Preview", f"Theme: {theme_name}", _mode, theme)
+
+    # Sample steps
+    steps = [
+        {"name": "Detecting ecosystems", "status": "pass"},
+        {"name": "Scanning repository", "status": "warn"},
+        {"name": "Checking data evidence", "status": "fail"},
+        {"name": "Validating results", "status": "pass"},
+        {"name": "Preparing dossier", "status": "skip"},
+    ]
+    render_steps(steps, _mode, theme)
+
+    print()
+    render_score(72, {"metadata": 85, "environment": 60, "experiments": 70, "data": 55, "results": 80}, _mode, theme)
+
+    render_summary([
+        {"label": "Overall readiness", "value": "needs work", "status": "warn"},
+        {"label": "Data evidence", "value": "missing data README", "status": "fail"},
+    ], _mode, theme)
+
+    render_next_actions([
+        "Add data/README.md documenting your datasets.",
+        "Run 'oss-paper-ci scan . --verbose' for details.",
+    ], _mode, theme)
+
+    render_warning("This is a sample warning message.", _mode, theme)
 
     return 0

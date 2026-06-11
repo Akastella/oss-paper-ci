@@ -1,0 +1,47 @@
+========================================================================
+  OSS-Paper-CI Workbench
+  Repository: E:\Projects\OSS-Paper-CI\examples\demo-reproduce-repo
+Mode: safe dry-run
+========================================================================
+
+ [1/5] Detect ecosystems                        [RUNNING]
+ [1/5] Detect ecosystems                        [PASS]
+    Python
+ [2/5] Scan repository                          [RUNNING]
+ [2/5] Scan repository                          [FAIL]
+    Score: 0/100, 18 findings
+ [3/5] Data diagnostics                         [RUNNING]
+ [3/5] Data diagnostics                         [PASS]
+    All checks passed
+ [4/5] Validate results                         [RUNNING]
+ [4/5] Validate results                         [PASS]
+    All checks passed
+ [5/5] Generate dossier                         [RUNNING]
+ [5/5] Generate dossier                         [PASS]
+    Reproducibility dossier generated
+
+  Score: 0/100
+    metadata: 0/100
+    environment: 5/100
+    experiments: 0/100
+    data: 0/100
+    results: 3/100
+
+------------------------------------------------------------------------
+  Summary
+------------------------------------------------------------------------
+  [FAIL] Overall readiness: FAIL
+  [PASS] Detect ecosystems: Python
+  [FAIL] Scan repository: Score: 0/100, 18 findings
+  [PASS] Data diagnostics: All checks passed
+  [PASS] Validate results: All checks passed
+  [PASS] Generate dossier: Reproducibility dossier generated
+------------------------------------------------------------------------
+
+------------------------------------------------------------------------
+  Suggested Next Actions
+------------------------------------------------------------------------
+    1. Run 'oss-paper-ci scan . --verbose' to see detailed findings.
+------------------------------------------------------------------------
+
+  Output directory: E:\Projects\OSS-Paper-CI\.tmp-wb-ex

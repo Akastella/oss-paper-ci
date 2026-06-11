@@ -96,6 +96,9 @@ runs:
     - name: Run oss-paper-ci scan
       if: inputs.workspace == ''
       shell: bash
+      env:
+        NO_COLOR: "1"
+        OSS_PAPER_CI_NO_ANIMATE: "1"
       run: |
         ARGS="scan ${{ inputs.path }} --format ${{ inputs.format }} --output ${{ inputs.output }}"
         if [ -n "${{ inputs.profile }}" ] && [ "${{ inputs.profile }}" != "default" ]; then

@@ -9,6 +9,11 @@
 ## Core Concepts
 
 - [CLI Reference](cli-reference.md) — all commands and options
+- [Terminal Workbench](terminal-workbench.md) — multi-step pipeline
+- [Wizard](wizard.md) — guided setup for new users
+- [Themes](themes.md) — terminal color themes
+- [CLI UX](cli-ux.md) — output modes and components
+- [No-Color and CI](no-color-and-ci.md) — CI-friendly output
 - [Configuration](configuration.md) — `.oss-paper-ci.yml` reference
 - [Policy Profiles](policy-profiles.md) — lenient, default, strict, publication
 - [Report Formats](report-formats.md) — Markdown, JSON, SARIF, HTML

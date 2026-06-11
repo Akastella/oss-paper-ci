@@ -92,10 +92,40 @@ oss-paper-ci capsule diff old.zip new.zip
 复现胶囊是包含清单、报告、日志、元数据和 SHA256 完整性校验的
 自包含证据包。它**不是**论文正确性的证明。
 
+## 向导模式
+
+如果你不想一开始就记住所有子命令，可以先运行 `oss-paper-ci wizard`。
+它会根据你的仓库状态给出安全的下一步建议，不会自动执行任何操作。
+
+```bash
+oss-paper-ci wizard
+oss-paper-ci wizard --plain
+```
+
+## 工作台模式
+
+`oss-paper-ci workbench .` 会把生态识别、扫描、数据诊断、结果验证和
+dossier 摘要串成一次工作流，默认不会执行真实实验。
+
+```bash
+oss-paper-ci workbench .
+oss-paper-ci workbench . --output-dir oss-paper-ci-out
+oss-paper-ci workbench . --plain
+oss-paper-ci workbench . --theme contrast
+```
+
+## 主题
+
+```bash
+oss-paper-ci theme list
+oss-paper-ci theme preview
+```
+
+主题：`classic`（默认）、`minimal`（适合 CI）、`contrast`（高对比度）。
+
 ## 引导模式
 
 ```bash
-# 获取引导帮助
 oss-paper-ci guide
 oss-paper-ci guide --role author
 oss-paper-ci guide --role reviewer
@@ -119,6 +149,11 @@ oss-paper-ci guide --topic reproduce
 | 入门指南 | [docs/getting-started.md](docs/getting-started.md) |
 | 安装 | [docs/installation.md](docs/installation.md) |
 | CLI 参考 | [docs/cli-reference.md](docs/cli-reference.md) |
+| 终端工作台 | [docs/terminal-workbench.md](docs/terminal-workbench.md) |
+| 向导 | [docs/wizard.md](docs/wizard.md) |
+| 主题 | [docs/themes.md](docs/themes.md) |
+| CLI 体验 | [docs/cli-ux.md](docs/cli-ux.md) |
+| 无色与 CI | [docs/no-color-and-ci.md](docs/no-color-and-ci.md) |
 | 安全模型 | [docs/security-model.md](docs/security-model.md) |
 | 失败分类 | [docs/failure-taxonomy.md](docs/failure-taxonomy.md) |
 | 术语表 | [docs/glossary.md](docs/glossary.md) |

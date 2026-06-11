@@ -1,5 +1,35 @@
 # Changelog
 
+## 2.5.0rc1 (2026-06-11)
+
+### Added
+- `oss-paper-ci wizard` — guided setup for new users with safe next-step recommendations
+- `oss-paper-ci workbench PATH` — multi-step pipeline: detect ecosystems → scan → data diagnose → results validate → dossier
+- `oss-paper-ci theme list` — list available terminal themes
+- `oss-paper-ci theme preview` — preview a theme with sample output
+- TTY-aware terminal rendering with automatic CI/non-TTY fallback
+- Spinner and progress indicators (animated in TTY, static in non-TTY)
+- Theme system: classic, minimal, contrast
+- `--plain` global flag — force plain text output (no color, no animation)
+- `--no-color` global flag — disable color output
+- `--no-animate` global flag — disable animation
+- `--theme {classic|minimal|contrast}` global flag — select terminal theme
+- `--debug` global flag — show tracebacks on error
+- `NO_COLOR` environment variable support
+- `OSS_PAPER_CI_NO_ANIMATE` environment variable support
+- `OSS_PAPER_CI_PLAIN` environment variable support
+- Terminal UI components: panels, tables, status indicators, score display, next actions
+- Structured error experience with error codes, explanations, and suggested fixes
+- Workbench output directory with scan.json, data-diagnostics.json, result-validation.json, dossier.md, summary.md, workbench.json
+- `examples/terminal/` with workbench, wizard, and theme previews
+- `docs/terminal-workbench.md`, `docs/wizard.md`, `docs/themes.md`, `docs/cli-ux.md`, `docs/no-color-and-ci.md`
+- `rich>=13.0` added as runtime dependency (graceful fallback if unavailable)
+- Terminal UI tests: wizard, workbench, themes, plain mode, no-color, error messages
+
+### Changed
+- Version bumped to 2.5.0rc1
+- All terminal output now TTY-aware with automatic degradation
+
 ## 2.4.0rc1 (2026-06-11)
 
 ### Added

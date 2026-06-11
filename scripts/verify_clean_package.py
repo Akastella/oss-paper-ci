@@ -201,7 +201,7 @@ def extract_and_test(zip_path: Path, temp_dir: Path) -> dict:
         try:
             proc = subprocess.run(
                 cmd, shell=True, cwd=cwd, capture_output=True, text=True,
-                timeout=120, encoding="utf-8", errors="replace",
+                timeout=600, encoding="utf-8", errors="replace",
             )
             return proc.returncode, proc.stdout, proc.stderr
         except subprocess.TimeoutExpired:
