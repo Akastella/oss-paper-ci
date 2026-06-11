@@ -1,5 +1,26 @@
 # Changelog
 
+## 2.2.0rc1 (2026-06-10)
+
+### Added
+- `oss-paper-ci dossier` — generate reproducibility dossier from scan/reproduce/capsule reports
+- `--audience author|reviewer|maintainer` — role-specific dossier output
+- `--language en|zh-CN|ja` — multilingual dossier generation
+- `--format markdown|json|html|issue|pr-comment` — multiple output formats
+- Evidence map: structured inventory of reproducibility evidence by category
+- Risk register: prioritized list of reproducibility risks
+- Remediation plan: actionable steps to improve reproducibility
+- Author checklist: what to fix in the repository
+- Reviewer summary: how to interpret the evidence
+- Maintainer roadmap: batch governance recommendations
+- Issue and PR comment text generation (text only, no auto-posting)
+- `docs/dossier.md`, `docs/evidence-map.md`, `docs/remediation-plan.md`
+- Examples in `examples/dossiers/` (author, reviewer, maintainer, i18n, issue, pr-comment)
+- Tests for dossier CLI, model, evidence map, risk register, remediation, i18n, reports
+
+### Changed
+- Version bumped to 2.2.0rc1
+
 ## 2.1.0rc1 (2026-06-10)
 
 ### Added

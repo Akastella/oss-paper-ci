@@ -210,6 +210,18 @@ def main(argv: list[str] | None = None) -> int:
     guide_parser.add_argument("--format", choices=["markdown", "json"], default="markdown", help="Output format.")
     guide_parser.add_argument("--output", "-o", help="Write output to file.")
 
+    # dossier command
+    dossier_parser = subparsers.add_parser("dossier", help="Generate a reproducibility dossier.")
+    dossier_parser.add_argument("--scan-report", help="Path to scan JSON report.")
+    dossier_parser.add_argument("--reproduce-report", help="Path to reproduce JSON report.")
+    dossier_parser.add_argument("--capsule", help="Path to capsule zip.")
+    dossier_parser.add_argument("--workspace-report", help="Path to workspace/batch JSON report.")
+    dossier_parser.add_argument("--repo", help="Path to repository (runs scan internally).")
+    dossier_parser.add_argument("--audience", choices=["author", "reviewer", "maintainer"], default="author", help="Target audience.")
+    dossier_parser.add_argument("--language", choices=["en", "zh-CN", "ja"], default="en", help="Output language.")
+    dossier_parser.add_argument("--format", choices=["markdown", "json", "html", "issue", "pr-comment"], default="markdown", help="Output format.")
+    dossier_parser.add_argument("--output", "-o", help="Write output to file.")
+
     # version command
     subparsers.add_parser("version", help="Print version.")
 
@@ -272,6 +284,9 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.command == "guide":
         return _cmd_guide(args)
+
+    if args.command == "dossier":
+        return _cmd_dossier(args)
 
     if args.command == "reproduce":
         return _cmd_reproduce(args)
@@ -1961,6 +1976,63 @@ def _cmd_guide(args: argparse.Namespace) -> int:
         from pathlib import Path
         Path(output).write_text(text, encoding="utf-8")
         print(f"Guide written to {output}")
+    else:
+        print(text)
+
+    return 0
+
+
+# ── Dossier command ──────────────────────────────────────────────────────────
+
+def _cmd_dossier(args: argparse.Namespace) -> int:
+    """Handle the dossier subcommand."""
+    from oss_paper_ci.dossier import build_dossier
+    from oss_paper_ci.reporting.dossier_report import (
+        generate_dossier_html,
+        generate_dossier_issue,
+        generate_dossier_json,
+        generate_dossier_markdown,
+        generate_dossier_pr_comment,
+    )
+
+    scan_report = getattr(args, "scan_report", None)
+    reproduce_report = getattr(args, "reproduce_report", None)
+    capsule = getattr(args, "capsule", None)
+    workspace_report = getattr(args, "workspace_report", None)
+    repo_path = getattr(args, "repo", None)
+    audience = getattr(args, "audience", "author")
+    language = getattr(args, "language", "en")
+    fmt = getattr(args, "format", "markdown")
+    output = getattr(args, "output", None)
+
+    if not any([scan_report, reproduce_report, capsule, workspace_report, repo_path]):
+        print("Error: provide at least one input (--scan-report, --reproduce-report, "
+              "--capsule, --workspace-report, or --repo).", file=sys.stderr)
+        return 1
+
+    dossier = build_dossier(
+        scan_report=scan_report,
+        reproduce_report=reproduce_report,
+        capsule=capsule,
+        workspace_report=workspace_report,
+        repo_path=repo_path,
+        audience=audience,
+        language=language,
+    )
+
+    if fmt == "json":
+        text = generate_dossier_json(dossier, output_path=output)
+    elif fmt == "html":
+        text = generate_dossier_html(dossier, output_path=output)
+    elif fmt == "issue":
+        text = generate_dossier_issue(dossier, output_path=output)
+    elif fmt == "pr-comment":
+        text = generate_dossier_pr_comment(dossier, output_path=output)
+    else:
+        text = generate_dossier_markdown(dossier, output_path=output)
+
+    if output:
+        print(f"Dossier written to {output}")
     else:
         print(text)
 
