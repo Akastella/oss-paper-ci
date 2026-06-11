@@ -1,5 +1,24 @@
 # Changelog
 
+## 2.4.0rc1 (2026-06-11)
+
+### Added
+- `oss-paper-ci data diagnose PATH` — data availability and documentation diagnostics
+- `oss-paper-ci results validate PATH` — result and artifact existence/format validation
+- Evidence score components: readiness_score, data_evidence_score, execution_evidence_score, artifact_evidence_score, provenance_score
+- `score_components` field in scan JSON report (backward compatible with `score`)
+- Deeper runtime adapters for R, Julia, Node, Make, Snakemake, Nextflow, C++, Rust, Java
+- Data diagnostics: checks data/README, availability statements, external data declarations, sample data, large files, checksums
+- Result validation: checks metrics.json existence/format, figures/, tables/, expected artifacts, artifact size
+- `docs/data-diagnostics.md`, `docs/result-validation.md`, `docs/evidence-scores.md`
+- Limitations docs rewritten: "what can be reduced vs what must be retained"
+- Example reports in examples/reports/ for diagnostics and validation
+- Tests for data diagnostics, result validation, score components, runtime adapters
+
+### Changed
+- Version bumped to 2.4.0rc1
+- Limitations section updated to reflect new capabilities while retaining honest boundaries
+
 ## 2.3.0rc1 (2026-06-11)
 
 ### Added

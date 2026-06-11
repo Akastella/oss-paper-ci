@@ -16,6 +16,9 @@
 
 ## Features
 
+- [Data Diagnostics](data-diagnostics.md) — data availability and documentation checks
+- [Result Validation](result-validation.md) — result artifact existence and format
+- [Evidence Scores](evidence-scores.md) — score components and meaning
 - [Language Ecosystems](language-ecosystems.md) — multi-language detection and support
 - [Reproduction](reproduce.md) — one-command reproduction attempt
 - [Reproduction Capsules](reproduction-capsules.md) — verifiable evidence packages

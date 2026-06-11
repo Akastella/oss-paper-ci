@@ -69,6 +69,7 @@ class Summary:
     status: str = "pass"
     counts: dict[str, int] = field(default_factory=lambda: {"info": 0, "warning": 0, "error": 0})
     score_breakdown: list[dict[str, Any]] = field(default_factory=list)
+    score_components: dict[str, int] = field(default_factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
         result = {
@@ -78,6 +79,8 @@ class Summary:
         }
         if self.score_breakdown:
             result["score_breakdown"] = self.score_breakdown
+        if self.score_components:
+            result["score_components"] = self.score_components
         return result
 
 

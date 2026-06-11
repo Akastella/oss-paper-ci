@@ -1,6 +1,6 @@
 Metadata-Version: 2.4
 Name: oss-paper-ci
-Version: 2.3.0rc1
+Version: 2.4.0rc1
 Summary: CLI toolkit for checking, attempting, and packaging scientific repository reproducibility evidence
 Author: oss-paper-ci contributors
 License: MIT

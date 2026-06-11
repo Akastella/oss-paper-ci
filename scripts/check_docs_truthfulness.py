@@ -55,7 +55,7 @@ VALID_CLI_COMMANDS = {
     "scan", "init", "explain", "version", "list-checks",
     "graph", "baseline", "smoke", "doctor", "comment",
     "config", "diff", "rules", "validate-contract",
-    "reproduce", "capsule", "guide", "dossier", "ecosystems",
+    "reproduce", "capsule", "guide", "dossier", "ecosystems", "data", "results",
 }
 
 # Files that exist in the project
