@@ -57,6 +57,7 @@ docs/i18n.md
 docs/index.md
 docs/init.md
 docs/installation.md
+docs/language-ecosystems.md
 docs/limitations.md
 docs/packaging.md
 docs/parallelism.md
@@ -224,6 +225,7 @@ src/oss_paper_ci/cli.py
 src/oss_paper_ci/config.py
 src/oss_paper_ci/contract.py
 src/oss_paper_ci/contract_schema.py
+src/oss_paper_ci/data_diagnostics.py
 src/oss_paper_ci/dossier.py
 src/oss_paper_ci/ecosystems.py
 src/oss_paper_ci/environment.py
@@ -237,6 +239,7 @@ src/oss_paper_ci/policy.py
 src/oss_paper_ci/remediation.py
 src/oss_paper_ci/reproduce.py
 src/oss_paper_ci/resolver.py
+src/oss_paper_ci/result_validation.py
 src/oss_paper_ci/runner.py
 src/oss_paper_ci/scanner.py
 src/oss_paper_ci/schema.py
@@ -314,6 +317,7 @@ tests/test_cli_reference.py
 tests/test_config.py
 tests/test_config_system.py
 tests/test_cross_language.py
+tests/test_data_diagnostics.py
 tests/test_docs_commands.py
 tests/test_docs_site.py
 tests/test_dossier_cli.py
@@ -329,6 +333,7 @@ tests/test_graph_deep.py
 tests/test_graph_v05.py
 tests/test_guide_cli.py
 tests/test_i18n_readmes.py
+tests/test_limitations_truthfulness.py
 tests/test_new_features.py
 tests/test_parallel_batch.py
 tests/test_plain_language_summary.py
@@ -346,10 +351,12 @@ tests/test_reproduce_reports.py
 tests/test_reproduce_resolver.py
 tests/test_reproduce_runner.py
 tests/test_reproduce_security.py
+tests/test_result_validation.py
 tests/test_risk_register.py
 tests/test_round4_features.py
 tests/test_scale_gate.py
 tests/test_scanner.py
+tests/test_score_components.py
 tests/test_scoring.py
 tests/test_smoke_security.py
 tests/test_status_policy.py
@@ -372,6 +379,12 @@ tests/fixtures/broken_paper_repo/results/accuracy.txt
 tests/fixtures/broken_paper_repo/scripts/evaluate.py
 tests/fixtures/broken_paper_repo/scripts/train.py
 tests/fixtures/broken_paper_repo/src/model.py
+tests/fixtures/cpp_minimal_repo/CMakeLists.txt
+tests/fixtures/cpp_minimal_repo/README.md
+tests/fixtures/cpp_minimal_repo/src/main.cpp
+tests/fixtures/java_minimal_repo/README.md
+tests/fixtures/java_minimal_repo/pom.xml
+tests/fixtures/java_minimal_repo/src/main/java/Demo.java
 tests/fixtures/julia_ready_repo/Manifest.toml
 tests/fixtures/julia_ready_repo/Project.toml
 tests/fixtures/julia_ready_repo/README.md
@@ -381,6 +394,7 @@ tests/fixtures/julia_ready_repo/figures/README.md
 tests/fixtures/julia_ready_repo/results/README.md
 tests/fixtures/julia_ready_repo/scripts/analysis.jl
 tests/fixtures/julia_ready_repo/scripts/download_data.jl
+tests/fixtures/julia_ready_repo/scripts/run_analysis.jl
 tests/fixtures/make_snakemake_repo/Makefile
 tests/fixtures/make_snakemake_repo/README.md
 tests/fixtures/make_snakemake_repo/Snakefile
@@ -393,11 +407,16 @@ tests/fixtures/make_snakemake_repo/scripts/evaluate.py
 tests/fixtures/make_snakemake_repo/scripts/make_figures.py
 tests/fixtures/make_snakemake_repo/scripts/train.py
 tests/fixtures/matlab_minimal_repo/README.md
+tests/fixtures/matlab_minimal_repo/run.m
 tests/fixtures/matlab_minimal_repo/startup.m
 tests/fixtures/matlab_minimal_repo/results/.gitkeep
 tests/fixtures/matlab_minimal_repo/results/README.md
 tests/fixtures/matlab_minimal_repo/scripts/run_analysis.m
 tests/fixtures/minimal_bad_repo/main.py
+tests/fixtures/node_minimal_repo/README.md
+tests/fixtures/node_minimal_repo/package-lock.json
+tests/fixtures/node_minimal_repo/package.json
+tests/fixtures/node_minimal_repo/scripts/analyze.js
 tests/fixtures/paper_ready_repo/.gitignore
 tests/fixtures/paper_ready_repo/CHANGELOG.md
 tests/fixtures/paper_ready_repo/CITATION.cff
@@ -425,6 +444,7 @@ tests/fixtures/r_ready_repo/figures/.gitkeep
 tests/fixtures/r_ready_repo/results/README.md
 tests/fixtures/r_ready_repo/scripts/analysis.R
 tests/fixtures/r_ready_repo/scripts/download_data.R
+tests/fixtures/r_ready_repo/scripts/run_analysis.R
 tests/fixtures/realistic_ml_repo/.gitignore
 tests/fixtures/realistic_ml_repo/CITATION.cff
 tests/fixtures/realistic_ml_repo/LICENSE
@@ -447,6 +467,13 @@ tests/fixtures/realistic_ml_repo/scripts/make_figures.py
 tests/fixtures/realistic_ml_repo/scripts/train.py
 tests/fixtures/realistic_ml_repo/src/transformer_reproduction/__init__.py
 tests/fixtures/realistic_ml_repo/src/transformer_reproduction/model.py
+tests/fixtures/rust_minimal_repo/Cargo.toml
+tests/fixtures/rust_minimal_repo/README.md
+tests/fixtures/rust_minimal_repo/src/main.rs
+tests/fixtures/workflow_repo/Makefile
+tests/fixtures/workflow_repo/README.md
+tests/fixtures/workflow_repo/Snakefile
+tests/fixtures/workflow_repo/run.sh
 tests/golden/demo_paper_publication.json
 tests/golden/realistic_ml_default.json
 tests/golden/realistic_ml_strict.json

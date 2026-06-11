@@ -238,6 +238,26 @@ def main(argv: list[str] | None = None) -> int:
     ee.add_argument("ecosystem", help="Ecosystem ID (e.g., r, julia, snakemake).")
     ee.add_argument("--format", choices=["json", "markdown"], default="markdown", help="Output format.")
 
+    # data command group
+    data_parser = subparsers.add_parser("data", help="Data diagnostics.")
+    data_sub = data_parser.add_subparsers(dest="data_command")
+
+    # data diagnose
+    dd = data_sub.add_parser("diagnose", help="Diagnose data availability and documentation.")
+    dd.add_argument("path", nargs="?", default=".", help="Path to repository root (default: .)")
+    dd.add_argument("--format", choices=["json", "markdown"], default="markdown", help="Output format.")
+    dd.add_argument("--output", "-o", help="Write output to file.")
+
+    # results command group
+    results_parser = subparsers.add_parser("results", help="Result and artifact validation.")
+    results_sub = results_parser.add_subparsers(dest="results_command")
+
+    # results validate
+    rv = results_sub.add_parser("validate", help="Validate result artifacts.")
+    rv.add_argument("path", nargs="?", default=".", help="Path to repository root (default: .)")
+    rv.add_argument("--format", choices=["json", "markdown"], default="markdown", help="Output format.")
+    rv.add_argument("--output", "-o", help="Write output to file.")
+
     # version command
     subparsers.add_parser("version", help="Print version.")
 
@@ -306,6 +326,12 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.command == "ecosystems":
         return _cmd_ecosystems(args)
+
+    if args.command == "data":
+        return _cmd_data(args)
+
+    if args.command == "results":
+        return _cmd_results(args)
 
     if args.command == "reproduce":
         return _cmd_reproduce(args)
@@ -2118,6 +2144,130 @@ def _cmd_ecosystems_explain(ecosystem: str, fmt: str) -> int:
             for note in info["safety_notes"]:
                 lines.append(f"  - {note}")
         print("\n".join(lines))
+
+    return 0
+
+
+# ── Data command ─────────────────────────────────────────────────────────────
+
+def _cmd_data(args: argparse.Namespace) -> int:
+    """Handle the data subcommand group."""
+    sub = getattr(args, "data_command", None)
+
+    if sub == "diagnose":
+        return _cmd_data_diagnose(
+            path=getattr(args, "path", "."),
+            fmt=getattr(args, "format", "markdown"),
+            output=getattr(args, "output", None),
+        )
+
+    print("Usage: oss-paper-ci data diagnose [PATH]", file=sys.stderr)
+    return 1
+
+
+def _cmd_data_diagnose(path: str, fmt: str, output: str | None) -> int:
+    """Run data diagnostics."""
+    import json as json_mod
+
+    from oss_paper_ci.data_diagnostics import run_data_diagnostics
+
+    repo_path = Path(path).resolve()
+    if not repo_path.exists():
+        print(f"Error: path does not exist: {path}", file=sys.stderr)
+        return 2
+
+    diagnostics = run_data_diagnostics(str(repo_path))
+
+    if fmt == "json":
+        data = {
+            "repo_path": str(repo_path),
+            "diagnostics": [d.to_dict() for d in diagnostics],
+            "total_checks": len(diagnostics),
+            "missing": sum(1 for d in diagnostics if d.status == "missing"),
+        }
+        text = json_mod.dumps(data, indent=2, ensure_ascii=False)
+    else:
+        lines = ["# Data Diagnostics\n"]
+        lines.append(f"**Repository:** `{repo_path}`\n")
+        missing = sum(1 for d in diagnostics if d.status == "missing")
+        lines.append(f"**{len(diagnostics)} checks:** {missing} missing\n")
+
+        for d in diagnostics:
+            status_icon = {"present": "✅", "missing": "❌", "partial": "⚠️", "unknown": "❓"}.get(d.status, "?")
+            lines.append(f"- {status_icon} **{d.title}**: {d.message}")
+            if d.recommendation:
+                lines.append(f"  - *Recommendation:* {d.recommendation}")
+        lines.append("")
+        text = "\n".join(lines)
+
+    if output:
+        Path(output).write_text(text, encoding="utf-8")
+        print(f"Data diagnostics written to {output}")
+    else:
+        print(text)
+
+    return 0
+
+
+# ── Results command ──────────────────────────────────────────────────────────
+
+def _cmd_results(args: argparse.Namespace) -> int:
+    """Handle the results subcommand group."""
+    sub = getattr(args, "results_command", None)
+
+    if sub == "validate":
+        return _cmd_results_validate(
+            path=getattr(args, "path", "."),
+            fmt=getattr(args, "format", "markdown"),
+            output=getattr(args, "output", None),
+        )
+
+    print("Usage: oss-paper-ci results validate [PATH]", file=sys.stderr)
+    return 1
+
+
+def _cmd_results_validate(path: str, fmt: str, output: str | None) -> int:
+    """Run result validation."""
+    import json as json_mod
+
+    from oss_paper_ci.result_validation import run_result_validation
+
+    repo_path = Path(path).resolve()
+    if not repo_path.exists():
+        print(f"Error: path does not exist: {path}", file=sys.stderr)
+        return 2
+
+    validations = run_result_validation(str(repo_path))
+
+    if fmt == "json":
+        data = {
+            "repo_path": str(repo_path),
+            "validations": [v.to_dict() for v in validations],
+            "total_checks": len(validations),
+            "missing": sum(1 for v in validations if v.status == "missing"),
+            "invalid": sum(1 for v in validations if v.status == "invalid"),
+        }
+        text = json_mod.dumps(data, indent=2, ensure_ascii=False)
+    else:
+        lines = ["# Result Validation\n"]
+        lines.append(f"**Repository:** `{repo_path}`\n")
+        missing = sum(1 for v in validations if v.status == "missing")
+        invalid = sum(1 for v in validations if v.status == "invalid")
+        lines.append(f"**{len(validations)} checks:** {missing} missing, {invalid} invalid\n")
+
+        for v in validations:
+            status_icon = {"present": "✅", "missing": "❌", "invalid": "⚠️", "unknown": "❓"}.get(v.status, "?")
+            lines.append(f"- {status_icon} **{v.title}**: {v.message}")
+            if v.recommendation:
+                lines.append(f"  - *Recommendation:* {v.recommendation}")
+        lines.append("")
+        text = "\n".join(lines)
+
+    if output:
+        Path(output).write_text(text, encoding="utf-8")
+        print(f"Result validation written to {output}")
+    else:
+        print(text)
 
     return 0
 

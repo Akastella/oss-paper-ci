@@ -71,10 +71,12 @@ def scan(repo_path: str, config: Config | None = None) -> Report:
     checks, suppressed_findings = _apply_suppressions(checks, config)
 
     # Compute score with profile thresholds
+    from oss_paper_ci.scoring import compute_score_components
     score, status, counts = compute_score(checks, profile)
     breakdown = get_score_breakdown(checks, profile)
+    score_components = compute_score_components(checks, profile)
 
-    summary = Summary(score=score, status=status, counts=counts, score_breakdown=breakdown)
+    summary = Summary(score=score, status=status, counts=counts, score_breakdown=breakdown, score_components=score_components)
 
     # Populate metadata
     all_files = list_files(repo_path, config.ignore.paths)

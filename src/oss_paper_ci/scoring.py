@@ -171,6 +171,43 @@ def compute_score(
     return score, status, counts
 
 
+def compute_score_components(
+    checks: list[CheckResult],
+    profile: PolicyProfile | None = None,
+) -> dict[str, int]:
+    """Compute score components by evidence category.
+
+    Returns a dict with:
+    - readiness_score: overall readiness (same as compute_score)
+    - data_evidence_score: data documentation and availability
+    - execution_evidence_score: experiment scripts and commands
+    - artifact_evidence_score: results, figures, metrics
+    - provenance_score: metadata, license, citation
+    """
+    # Compute overall score
+    overall_score, _, _ = compute_score(checks, profile)
+
+    # Compute per-category scores
+    categories = {
+        "data": ["DATA"],
+        "execution": ["EXP"],
+        "artifact": ["RES"],
+        "provenance": ["META"],
+    }
+
+    components: dict[str, int] = {"readiness_score": overall_score}
+
+    for name, prefixes in categories.items():
+        cat_checks = [c for c in checks if any(c.id.startswith(p) for p in prefixes)]
+        if cat_checks:
+            cat_score, _, _ = compute_score(cat_checks, profile)
+            components[f"{name}_evidence_score"] = cat_score
+        else:
+            components[f"{name}_evidence_score"] = -1  # No checks for this category
+
+    return components
+
+
 def get_score_breakdown(
     checks: list[CheckResult],
     profile: PolicyProfile | None = None,
