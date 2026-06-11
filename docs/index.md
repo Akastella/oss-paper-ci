@@ -1,80 +1,93 @@
-# Documentation Index
+# OSS-Paper-CI
 
-## Getting Started
+Scientific reproducibility evidence, from terminal to shareable reports.
 
-- [Getting Started](getting-started.md) — first steps with oss-paper-ci
+## Start in three commands
+
+```bash
+# 1. Get guided recommendations
+oss-paper-ci wizard
+
+# 2. Run the full pipeline
+oss-paper-ci workbench .
+
+# 3. Safe reproduction attempt
+oss-paper-ci reproduce examples/demo-reproduce-repo --dry-run
+```
+
+## Core workflows
+
+| Workflow | Command | What it does |
+|----------|---------|--------------|
+| Readiness scan | `oss-paper-ci scan .` | Score and recommend improvements |
+| Data diagnostics | `oss-paper-ci data diagnose .` | Check data documentation |
+| Result validation | `oss-paper-ci results validate .` | Verify result claims |
+| Safe reproduction | `oss-paper-ci reproduce URL --dry-run` | Attempt without executing |
+| Reproduction capsule | `oss-paper-ci reproduce URL --execute --capsule out.zip` | Package evidence |
+| Reproducibility dossier | `oss-paper-ci dossier .` | Human-readable summary |
+| Workspace batch | `oss-paper-ci batch scan --workspace ws.yml` | Multi-project scan |
+| Ecosystem detection | `oss-paper-ci ecosystems detect .` | Multi-language detection |
+| Terminal workbench | `oss-paper-ci workbench .` | Full pipeline with progress |
+
+## Demo gallery
+
+- [Demo paper repo](demo-paper-repo.md) — example repository
+- [Demo gallery](demo-gallery.md) — example reports and outputs
+- [Terminal examples](../examples/terminal/) — workbench, wizard, and theme previews
+- [Example reports](../examples/reports/) — scan, reproduce, and dossier reports
+
+## Documentation
+
+### Getting started
+
+- [Getting started](getting-started.md) — first steps
 - [Installation](installation.md) — pip, pipx, source install
-- [Quickstart](demo.md) — run your first scan
+- [CLI reference](cli-reference.md) — all commands and options
 
-## Core Concepts
+### Core concepts
 
-- [CLI Reference](cli-reference.md) — all commands and options
-- [Terminal Workbench](terminal-workbench.md) — multi-step pipeline
+- [Terminal workbench](terminal-workbench.md) — multi-step pipeline
+- [Project summary](project-summary.md) — what and why
 - [Wizard](wizard.md) — guided setup for new users
 - [Themes](themes.md) — terminal color themes
 - [CLI UX](cli-ux.md) — output modes and components
-- [No-Color and CI](no-color-and-ci.md) — CI-friendly output
+- [No-color and CI](no-color-and-ci.md) — CI-friendly output
 - [Configuration](configuration.md) — `.oss-paper-ci.yml` reference
-- [Policy Profiles](policy-profiles.md) — lenient, default, strict, publication
-- [Report Formats](report-formats.md) — Markdown, JSON, SARIF, HTML
-- [Security Model](security-model.md) — dry-run, execute, capsule safety
+- [Policy profiles](policy-profiles.md) — lenient, default, strict, publication
+- [Report formats](report-formats.md) — Markdown, JSON, SARIF, HTML
+- [Security model](security-model.md) — dry-run, execute, capsule safety
 
-## Features
+### Features
 
-- [Data Diagnostics](data-diagnostics.md) — data availability and documentation checks
-- [Result Validation](result-validation.md) — result artifact existence and format
-- [Evidence Scores](evidence-scores.md) — score components and meaning
-- [Language Ecosystems](language-ecosystems.md) — multi-language detection and support
+- [Data diagnostics](data-diagnostics.md) — data availability and documentation checks
+- [Result validation](result-validation.md) — result artifact existence and format
+- [Evidence scores](evidence-scores.md) — score components and meaning
+- [Language ecosystems](language-ecosystems.md) — multi-language detection and support
 - [Reproduction](reproduce.md) — one-command reproduction attempt
-- [Reproduction Capsules](reproduction-capsules.md) — verifiable evidence packages
-- [Capsule Format](capsule-format.md) — capsule structure specification
-- [Capsule Verification](capsule-verify.md) — integrity checking
-- [Batch Scanning](batch-scan.md) — scan multiple projects
+- [Reproduction capsules](reproduction-capsules.md) — verifiable evidence packages
+- [Batch scanning](batch-scan.md) — scan multiple projects
 - [Workspace](workspace.md) — workspace configuration
-- [Cache](cache.md) — incremental scanning
-- [Batch Diff](batch-diff.md) — compare batch reports
-- [Evidence Graph](evidence-graph.md) — file dependency visualization
-- [Baselines](baselines.md) — regression detection
-- [Smoke Runs](smoke-runs.md) — safe experiment execution
-- [Custom Rules](rule-sdk.md) — extend without Python code
+- [Evidence graph](evidence-graph.md) — file dependency visualization
 
-## Human-Centered
+### Human-centered
 
-- [Human-Centered Reproducibility](human-centered-reproducibility.md) — design principles
-- [Failure Taxonomy](failure-taxonomy.md) — structured failure guidance
+- [Failure taxonomy](failure-taxonomy.md) — structured failure guidance
 - [Roles](roles.md) — guidance for authors, reviewers, maintainers
+- [Reproducibility dossier](dossier.md) — structured reproducibility assessment
 - [Glossary](glossary.md) — terminology definitions
-- [Internationalization](i18n.md) — multilingual READMEs
 
-## Dossier
+### Reference
 
-- [Reproducibility Dossier](dossier.md) — structured reproducibility assessment
-- [Evidence Map](evidence-map.md) — evidence inventory
-- [Remediation Plan](remediation-plan.md) — actionable improvement steps
-
-## Reference
-
-- [Check Categories](checks.md) — what gets checked
-- [Check Authoring](check-authoring.md) — write custom checks
-- [Rule Pack Manifest](rule-pack-manifest.md) — YAML rule format
-- [Report Schema](report-schema.md) — JSON report structure
-- [Cross-Language](cross-language.md) — R, Julia, MATLAB support
+- [Check categories](checks.md) — what gets checked
 - [Limitations](limitations.md) — what this tool does NOT do
+- [Full index](index.md) — this page
 
-## GitHub Actions
+## Safety and limitations
 
-- [GitHub Actions Guide](github-actions.md) — CI integration
-- [GitHub Annotations](github-upload.md) — SARIF and annotations
+OSS-Paper-CI records and explains reproducibility evidence. It does not prove scientific correctness, judge paper quality, or predict acceptance.
 
-## Examples
-
-- [Demo Gallery](demo-gallery.md) — example reports and outputs
-- [Demo Paper Repo](demo-paper-repo.md) — example repository
-- [Rule Packs](../examples/rule-packs/) — example custom rules
-- [Workspaces](../examples/workspaces/) — example workspace configs
-
-## Release
-
-- [Release Process](release-process.md) — how to release
-- [Release Checklist](../RELEASE_CHECKLIST.md) — pre-release checks
-- [Packaging](packaging.md) — package structure
+- Default mode is **dry-run**: no code executed, no dependencies installed
+- `--execute` is required to run reproduction commands
+- Dangerous commands are blocked
+- Score is engineering completeness, not a scientific judgment
+- See [limitations.md](limitations.md) and [security-model.md](security-model.md)

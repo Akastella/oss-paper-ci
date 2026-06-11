@@ -49,6 +49,15 @@ Example reports and outputs from oss-paper-ci.
 | [Custom Rules](../examples/reports/custom_rules_report.md) | Markdown | Rule pack results |
 | [Policy Diff](../examples/reports/policy_diff.md) | Markdown | Profile comparison |
 
+## Terminal Examples
+
+| Example | Description |
+|---------|-------------|
+| [Wizard Output](../examples/terminal/wizard_output.txt) | Guided wizard plain output |
+| [Workbench Output](../examples/terminal/workbench_plain_output.txt) | Workbench pipeline plain output |
+| [Theme Preview](../examples/terminal/theme_preview.md) | Theme preview with sample data |
+| [Pretty Preview](../examples/terminal/workbench_pretty_preview.md) | Rich terminal output description |
+
 ## Example Repositories
 
 - [demo-paper-repo](../examples/demo-paper-repo/) — minimal paper repository
