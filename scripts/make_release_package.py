@@ -51,6 +51,7 @@ DENY_PATTERNS = [
     "dogfooding/results/dogfooding_summary.md",
     ".local_*",  # Local audit/taskboard files
     ".tmp-*",  # Temporary directories
+    ".tmp-ci-workbench-out",  # CI workbench output
     "v2_*_truthfulness.*",
     "v2_*_release_gate.*",
     "site",  # Generated docs site

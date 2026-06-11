@@ -58,6 +58,7 @@ oss-paper-ci-out/
 .tmp-workbench-out/
 .tmp-workbench-out-2/
 .tmp-wb-ex/
+.tmp-ci-workbench-out/
 
 # Release gate and truthfulness reports
 v2_*_truthfulness.*

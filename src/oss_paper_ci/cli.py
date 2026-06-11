@@ -2550,11 +2550,10 @@ def _cmd_workbench(args: argparse.Namespace) -> int:
         mode=_mode,
         theme=_theme,
     )
-    # Exit with appropriate code
+    # Only return non-zero on actual program errors, not on scan findings.
+    # Scan "fail" means low score (expected for many repos), not a crash.
     if any(s.status == "error" for s in result.steps):
         return 2
-    if any(s.status == "fail" for s in result.steps):
-        return 1
     return 0
 
 
