@@ -1,0 +1,9 @@
+{
+  "name": "node-minimal-repo",
+  "version": "0.1.0",
+  "description": "A minimal Node.js project for testing",
+  "main": "scripts/analyze.js",
+  "scripts": {
+    "analyze": "node scripts/analyze.js"
+  }
+}

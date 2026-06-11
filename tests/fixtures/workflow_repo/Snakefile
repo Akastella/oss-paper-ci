@@ -1,0 +1,6 @@
+rule all:
+    input: "results/output.txt"
+
+rule analyze:
+    output: "results/output.txt"
+    shell: "mkdir -p results && echo 'Analysis complete' > {output}"
