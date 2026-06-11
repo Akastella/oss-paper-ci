@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reproducibility Dossier</title>
+<style>
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; max-width: 900px; margin: 2em auto; padding: 0 1em; color: #1f2937; line-height: 1.6; }
+h1 { border-bottom: 2px solid #e5e7eb; padding-bottom: 0.3em; }
+h2 { margin-top: 1.5em; }
+h3 { margin-top: 1em; }
+table { width: 100%; border-collapse: collapse; margin: 1em 0; font-size: 0.9em; }
+th, td { text-align: left; padding: 8px; border-bottom: 1px solid #e5e7eb; }
+th { background: #f3f4f6; }
+code { background: #f3f4f6; padding: 2px 4px; border-radius: 3px; font-size: 0.9em; }
+.disclaimer { background: #f9fafb; padding: 1em; border-radius: 8px; font-size: 0.9em; color: #6b7280; margin: 1em 0; }
+.footer { margin-top: 2em; padding-top: 1em; border-top: 1px solid #e5e7eb; color: #9ca3af; font-size: 0.85em; }
+</style>
+</head>
+<body>
+<h1>Reproducibility Dossier</h1>
+
+<div class="disclaimer">This dossier is an automated assessment of reproducibility readiness. It does not judge paper quality, correctness, or significance. A high score does not guarantee reproduction. A low score does not mean the research is flawed.</div>
+
+<h2>Executive Summary</h2>
+<p>Repository reproducibility readiness score: 91/100. The repository passed basic reproducibility readiness checks.</p>
+<p><strong>Status:</strong> Ready |
+<strong>Score:</strong> 91/100</p>
+
+<ul><li>This section shows what you can do to improve your repository&#x27;s reproducibility. The items are ordered by priority.</li>
+</ul>
+
+<h2>Evidence Map</h2>
+<table>
+<tr><th>Category</th><th>Item</th>
+<th>Status</th><th>Why It Matters</th></tr>
+<tr><td>metadata</td><td>README file</td><td>Present</td><td>A README helps others understand the project.</td></tr>
+<tr><td>metadata</td><td>License</td><td>Present</td><td>A license clarifies usage rights.</td></tr>
+<tr><td>metadata</td><td>Citation information</td><td>Partial</td><td>Citation info helps others give proper credit.</td></tr>
+<tr><td>environment</td><td>Dependency file</td><td>Present</td><td>Dependency files let others install the same environment.</td></tr>
+<tr><td>environment</td><td>Python version</td><td>Partial</td><td>Specifying Python version prevents compatibility issues.</td></tr>
+<tr><td>execution</td><td>Entry point scripts</td><td>Present</td><td>Entry points tell others how to run the code.</td></tr>
+<tr><td>execution</td><td>Reproduction contract</td><td>Present</td><td>A reproducibility.yml declares how to reproduce results.</td></tr>
+<tr><td>data</td><td>Data documentation</td><td>Present</td><td>Data documentation explains what data is needed.</td></tr>
+<tr><td>results</td><td>Output directories</td><td>Present</td><td>Output directories show where results are stored.</td></tr>
+<tr><td>automation</td><td>CI workflow</td><td>Present</td><td>CI workflows automate reproducibility checks.</td></tr>
+
+</table>
+
+<h2>Risk Register</h2>
+<table>
+<tr><th>Severity</th><th>Item</th>
+<th>Impact</th><th>Mitigation</th></tr>
+
+</table>
+
+<h2>Remediation Plan</h2>
+<h3>[P1] Add a CITATION.cff file or a &#x27;Citation&#x27; section to your README so that users know how to properly cite your work.</h3>
+<p><strong>Rationale:</strong> Check META003 reported: No citation information found.</p>
+<p><strong>Verify:</strong> <code>oss-paper-ci scan .  # check META003</code></p>
+<h3>[P1] Add sections such as &#x27;Getting Started&#x27;, &#x27;Installation&#x27;, or &#x27;Usage&#x27; to your README so that others can reproduce your results.</h3>
+<p><strong>Rationale:</strong> Check META004 reported: No reproduction instructions found in README.</p>
+<p><strong>Verify:</strong> <code>oss-paper-ci scan .  # check META004</code></p>
+<h3>[P1] Add a lock file (e.g. poetry.lock, Pipfile.lock, uv.lock, or conda-lock.yml) to ensure reproducible dependency resolution.</h3>
+<p><strong>Rationale:</strong> Check ENV002 reported: No lock file found</p>
+<p><strong>Verify:</strong> <code>oss-paper-ci scan .  # check ENV002</code></p>
+<h3>[P1] Specify the required Python version in pyproject.toml (requires-python), setup.cfg (python_requires), .python-version, or Pipfile.</h3>
+<p><strong>Rationale:</strong> Check ENV003 reported: No Python version specification found</p>
+<p><strong>Verify:</strong> <code>oss-paper-ci scan .  # check ENV003</code></p>
+<h3>[P1] Document in the README which file (requirements.txt or environment.yml) users should use and under what circumstances.</h3>
+<p><strong>Rationale:</strong> Check ENV006 reported: Both requirements.txt and environment.yml exist but no clear guidance found in README</p>
+<p><strong>Verify:</strong> <code>oss-paper-ci scan .  # check ENV006</code></p>
+<h3>[P1] Add a config file (e.g., config.yaml) or use argparse/click so experiment parameters are explicit and reproducible.</h3>
+<p><strong>Rationale:</strong> Check EXP006 reported: No configuration files or CLI argument parsing found.</p>
+<p><strong>Verify:</strong> <code>oss-paper-ci scan .  # check EXP006</code></p>
+<h3>[P1] Add download instructions to your README (e.g. wget/curl commands, links to Zenodo/Figshare/HuggingFace) or include a download_data.sh / get_data.py script.</h3>
+<p><strong>Rationale:</strong> Check DATA002 reported: No data download instructions found.</p>
+<p><strong>Verify:</strong> <code>oss-paper-ci scan .  # check DATA002</code></p>
+<h3>[P1] Add a tests/ directory with unit tests and configure pytest so that others can verify the correctness of your code.</h3>
+<p><strong>Rationale:</strong> Check CI002 reported: No test files or test configuration found.</p>
+<p><strong>Verify:</strong> <code>oss-paper-ci scan .  # check CI002</code></p>
+<h3>[P1] Consider adding issue and pull request templates in .github/ to standardize contributions.</h3>
+<p><strong>Rationale:</strong> Check CI004 reported: No issue or PR templates found.</p>
+<p><strong>Verify:</strong> <code>oss-paper-ci scan .  # check CI004</code></p>
+<h3>[P2] Consider adding a CONTRIBUTING.md file or an issue template to encourage community contributions.</h3>
+<p><strong>Rationale:</strong> Check META005 reported: No contributing guidelines found.</p>
+<p><strong>Verify:</strong> <code>oss-paper-ci scan .  # check META005</code></p>
+<h3>[P2] Add a CHANGELOG, VERSION file, or a version field in pyproject.toml so users can track releases.</h3>
+<p><strong>Rationale:</strong> Check META006 reported: No version or release information found.</p>
+<p><strong>Verify:</strong> <code>oss-paper-ci scan .  # check META006</code></p>
+<h3>[P2] Set random seeds (e.g., random.seed(), np.random.seed(), torch.manual_seed()) so experiments are reproducible.</h3>
+<p><strong>Rationale:</strong> Check EXP005 reported: No random seed setting detected in scripts/ or src/.</p>
+<p><strong>Verify:</strong> <code>oss-paper-ci scan .  # check EXP005</code></p>
+<h3>[P2] Address EXP007: No Jupyter notebooks found in the repository.</h3>
+<p><strong>Rationale:</strong> Check EXP007 reported: No Jupyter notebooks found in the repository.</p>
+<p><strong>Verify:</strong> <code>oss-paper-ci scan .  # check EXP007</code></p>
+<h3>[P2] Consider organizing your data into subdirectories such as raw/, processed/, interim/, and external/ to clarify the data processing pipeline.</h3>
+<p><strong>Rationale:</strong> Check DATA003 reported: No distinction between data categories found.</p>
+<p><strong>Verify:</strong> <code>oss-paper-ci scan .  # check DATA003</code></p>
+<h3>[P2] Add data patterns to .gitignore (e.g. data/, *.csv, *.h5, *.parquet) to prevent accidental commits of large or sensitive data files.</h3>
+<p><strong>Rationale:</strong> Check DATA005 reported: No data-related patterns found in .gitignore.</p>
+<p><strong>Verify:</strong> <code>oss-paper-ci scan .  # check DATA005</code></p>
+<h3>[P2] Add instructions to your README (e.g. &#x27;To reproduce Figure 1, run ...&#x27;) or a Makefile with result-related targets so others can regenerate your results.</h3>
+<p><strong>Rationale:</strong> Check RES005 reported: No result regeneration instructions found.</p>
+<p><strong>Verify:</strong> <code>oss-paper-ci scan .  # check RES005</code></p>
+<h3>[P2] If your project includes a paper, consider placing it in a paper/, manuscript/, or latex/ directory.</h3>
+<p><strong>Rationale:</strong> Check PAP001 reported: No paper or manuscript files detected.</p>
+<p><strong>Verify:</strong> <code>oss-paper-ci scan .  # check PAP001</code></p>
+<h3>[P2] Add a CITATION.cff or .bib file so that users can properly cite your work.</h3>
+<p><strong>Rationale:</strong> Check PAP004 reported: No citation files found to verify.</p>
+<p><strong>Verify:</strong> <code>oss-paper-ci scan .  # check PAP004</code></p>
+<h3>[P2] Address PAP005: No .tex files found; skipping figure path check.</h3>
+<p><strong>Rationale:</strong> Check PAP005 reported: No .tex files found; skipping figure path check.</p>
+<p><strong>Verify:</strong> <code>oss-paper-ci scan .  # check PAP005</code></p>
+
+
+<h2>Next Steps</h2>
+<ul><li>[P1] Add a CITATION.cff file or a &#x27;Citation&#x27; section to your README so that users know how to properly cite your work.</li>
+<li>[P1] Add sections such as &#x27;Getting Started&#x27;, &#x27;Installation&#x27;, or &#x27;Usage&#x27; to your README so that others can reproduce your results.</li>
+<li>[P1] Add a lock file (e.g. poetry.lock, Pipfile.lock, uv.lock, or conda-lock.yml) to ensure reproducible dependency resolution.</li>
+</ul>
+
+<h2>What This Does NOT Mean</h2>
+<ul><li>This dossier is an automated assessment of reproducibility readiness. It does not judge paper quality, correctness, or significance. A high score does not guarantee reproduction. A low score does not mean the research is flawed.</li>
+</ul>
+
+<div class="footer">Generated by oss-paper-ci</div>
+</body>
+</html>

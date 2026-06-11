@@ -37,6 +37,12 @@
 - [Glossary](glossary.md) — terminology definitions
 - [Internationalization](i18n.md) — multilingual READMEs
 
+## Dossier
+
+- [Reproducibility Dossier](dossier.md) — structured reproducibility assessment
+- [Evidence Map](evidence-map.md) — evidence inventory
+- [Remediation Plan](remediation-plan.md) — actionable improvement steps
+
 ## Reference
 
 - [Check Categories](checks.md) — what gets checked

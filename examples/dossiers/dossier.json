@@ -1,0 +1,316 @@
+{
+  "schema_version": "0.1",
+  "dossier_type": "oss-paper-ci-reproducibility-dossier",
+  "created_by": "oss-paper-ci",
+  "oss_paper_ci_version": "2.2.0rc1",
+  "audience": "author",
+  "language": "en",
+  "source": {
+    "scan_report": "examples/reports/demo_paper_report.json"
+  },
+  "executive_summary": {
+    "plain_language": "Repository reproducibility readiness score: 91/100. The repository passed basic reproducibility readiness checks.",
+    "status": "Ready",
+    "confidence": "High",
+    "score": 91,
+    "limitations": [
+      "This dossier is an automated assessment of reproducibility readiness. It does not judge paper quality, correctness, or significance. A high score does not guarantee reproduction. A low score does not mean the research is flawed."
+    ]
+  },
+  "evidence_map": [
+    {
+      "category": "metadata",
+      "item": "README file",
+      "status": "present",
+      "source": "check META001: Found README.md.",
+      "why_it_matters": "A README helps others understand the project.",
+      "suggested_action": "",
+      "audience_note": ""
+    },
+    {
+      "category": "metadata",
+      "item": "License",
+      "status": "present",
+      "source": "check META002: Found LICENSE.",
+      "why_it_matters": "A license clarifies usage rights.",
+      "suggested_action": "",
+      "audience_note": ""
+    },
+    {
+      "category": "metadata",
+      "item": "Citation information",
+      "status": "partial",
+      "source": "check META003: No citation information found.",
+      "why_it_matters": "Citation info helps others give proper credit.",
+      "suggested_action": "Add CITATION.cff or citation instructions in README.",
+      "audience_note": ""
+    },
+    {
+      "category": "environment",
+      "item": "Dependency file",
+      "status": "present",
+      "source": "check ENV001: Found 2 environment specification file(s)",
+      "why_it_matters": "Dependency files let others install the same environment.",
+      "suggested_action": "",
+      "audience_note": ""
+    },
+    {
+      "category": "environment",
+      "item": "Python version",
+      "status": "partial",
+      "source": "check ENV003: No Python version specification found",
+      "why_it_matters": "Specifying Python version prevents compatibility issues.",
+      "suggested_action": "Add python_requires to pyproject.toml or specify in README.",
+      "audience_note": ""
+    },
+    {
+      "category": "execution",
+      "item": "Entry point scripts",
+      "status": "present",
+      "source": "check EXP001: Found experiment entry points. Warnings: train.py exists but has no 'if __name__' or 'def main'.",
+      "why_it_matters": "Entry points tell others how to run the code.",
+      "suggested_action": "",
+      "audience_note": ""
+    },
+    {
+      "category": "execution",
+      "item": "Reproduction contract",
+      "status": "present",
+      "source": "check EXP003: Smoke test or quickstart reference found.",
+      "why_it_matters": "A reproducibility.yml declares how to reproduce results.",
+      "suggested_action": "",
+      "audience_note": ""
+    },
+    {
+      "category": "data",
+      "item": "Data documentation",
+      "status": "present",
+      "source": "check DATA001: Found data source documentation.",
+      "why_it_matters": "Data documentation explains what data is needed.",
+      "suggested_action": "",
+      "audience_note": ""
+    },
+    {
+      "category": "results",
+      "item": "Output directories",
+      "status": "present",
+      "source": "check RES001: Found results directories: results, figures.",
+      "why_it_matters": "Output directories show where results are stored.",
+      "suggested_action": "",
+      "audience_note": ""
+    },
+    {
+      "category": "automation",
+      "item": "CI workflow",
+      "status": "present",
+      "source": "check CI001: No GitHub Actions workflows found (informational).",
+      "why_it_matters": "CI workflows automate reproducibility checks.",
+      "suggested_action": "",
+      "audience_note": ""
+    }
+  ],
+  "risk_register": [],
+  "remediation_plan": [
+    {
+      "priority": "P1",
+      "action": "Add a CITATION.cff file or a 'Citation' section to your README so that users know how to properly cite your work.",
+      "rationale": "Check META003 reported: No citation information found.",
+      "estimated_effort": "low",
+      "suggested_file": "",
+      "command_to_verify": "oss-paper-ci scan .  # check META003",
+      "blocking": false,
+      "audience": "author"
+    },
+    {
+      "priority": "P1",
+      "action": "Add sections such as 'Getting Started', 'Installation', or 'Usage' to your README so that others can reproduce your results.",
+      "rationale": "Check META004 reported: No reproduction instructions found in README.",
+      "estimated_effort": "low",
+      "suggested_file": "",
+      "command_to_verify": "oss-paper-ci scan .  # check META004",
+      "blocking": false,
+      "audience": "author"
+    },
+    {
+      "priority": "P1",
+      "action": "Add a lock file (e.g. poetry.lock, Pipfile.lock, uv.lock, or conda-lock.yml) to ensure reproducible dependency resolution.",
+      "rationale": "Check ENV002 reported: No lock file found",
+      "estimated_effort": "low",
+      "suggested_file": "",
+      "command_to_verify": "oss-paper-ci scan .  # check ENV002",
+      "blocking": false,
+      "audience": "author"
+    },
+    {
+      "priority": "P1",
+      "action": "Specify the required Python version in pyproject.toml (requires-python), setup.cfg (python_requires), .python-version, or Pipfile.",
+      "rationale": "Check ENV003 reported: No Python version specification found",
+      "estimated_effort": "low",
+      "suggested_file": "",
+      "command_to_verify": "oss-paper-ci scan .  # check ENV003",
+      "blocking": false,
+      "audience": "author"
+    },
+    {
+      "priority": "P1",
+      "action": "Document in the README which file (requirements.txt or environment.yml) users should use and under what circumstances.",
+      "rationale": "Check ENV006 reported: Both requirements.txt and environment.yml exist but no clear guidance found in README",
+      "estimated_effort": "low",
+      "suggested_file": "",
+      "command_to_verify": "oss-paper-ci scan .  # check ENV006",
+      "blocking": false,
+      "audience": "author"
+    },
+    {
+      "priority": "P1",
+      "action": "Add a config file (e.g., config.yaml) or use argparse/click so experiment parameters are explicit and reproducible.",
+      "rationale": "Check EXP006 reported: No configuration files or CLI argument parsing found.",
+      "estimated_effort": "low",
+      "suggested_file": "",
+      "command_to_verify": "oss-paper-ci scan .  # check EXP006",
+      "blocking": false,
+      "audience": "author"
+    },
+    {
+      "priority": "P1",
+      "action": "Add download instructions to your README (e.g. wget/curl commands, links to Zenodo/Figshare/HuggingFace) or include a download_data.sh / get_data.py script.",
+      "rationale": "Check DATA002 reported: No data download instructions found.",
+      "estimated_effort": "low",
+      "suggested_file": "",
+      "command_to_verify": "oss-paper-ci scan .  # check DATA002",
+      "blocking": false,
+      "audience": "author"
+    },
+    {
+      "priority": "P1",
+      "action": "Add a tests/ directory with unit tests and configure pytest so that others can verify the correctness of your code.",
+      "rationale": "Check CI002 reported: No test files or test configuration found.",
+      "estimated_effort": "low",
+      "suggested_file": "",
+      "command_to_verify": "oss-paper-ci scan .  # check CI002",
+      "blocking": false,
+      "audience": "author"
+    },
+    {
+      "priority": "P1",
+      "action": "Consider adding issue and pull request templates in .github/ to standardize contributions.",
+      "rationale": "Check CI004 reported: No issue or PR templates found.",
+      "estimated_effort": "low",
+      "suggested_file": "",
+      "command_to_verify": "oss-paper-ci scan .  # check CI004",
+      "blocking": false,
+      "audience": "author"
+    },
+    {
+      "priority": "P2",
+      "action": "Consider adding a CONTRIBUTING.md file or an issue template to encourage community contributions.",
+      "rationale": "Check META005 reported: No contributing guidelines found.",
+      "estimated_effort": "low",
+      "suggested_file": "",
+      "command_to_verify": "oss-paper-ci scan .  # check META005",
+      "blocking": false,
+      "audience": "author"
+    },
+    {
+      "priority": "P2",
+      "action": "Add a CHANGELOG, VERSION file, or a version field in pyproject.toml so users can track releases.",
+      "rationale": "Check META006 reported: No version or release information found.",
+      "estimated_effort": "low",
+      "suggested_file": "",
+      "command_to_verify": "oss-paper-ci scan .  # check META006",
+      "blocking": false,
+      "audience": "author"
+    },
+    {
+      "priority": "P2",
+      "action": "Set random seeds (e.g., random.seed(), np.random.seed(), torch.manual_seed()) so experiments are reproducible.",
+      "rationale": "Check EXP005 reported: No random seed setting detected in scripts/ or src/.",
+      "estimated_effort": "low",
+      "suggested_file": "",
+      "command_to_verify": "oss-paper-ci scan .  # check EXP005",
+      "blocking": false,
+      "audience": "author"
+    },
+    {
+      "priority": "P2",
+      "action": "Address EXP007: No Jupyter notebooks found in the repository.",
+      "rationale": "Check EXP007 reported: No Jupyter notebooks found in the repository.",
+      "estimated_effort": "low",
+      "suggested_file": "",
+      "command_to_verify": "oss-paper-ci scan .  # check EXP007",
+      "blocking": false,
+      "audience": "author"
+    },
+    {
+      "priority": "P2",
+      "action": "Consider organizing your data into subdirectories such as raw/, processed/, interim/, and external/ to clarify the data processing pipeline.",
+      "rationale": "Check DATA003 reported: No distinction between data categories found.",
+      "estimated_effort": "low",
+      "suggested_file": "",
+      "command_to_verify": "oss-paper-ci scan .  # check DATA003",
+      "blocking": false,
+      "audience": "author"
+    },
+    {
+      "priority": "P2",
+      "action": "Add data patterns to .gitignore (e.g. data/, *.csv, *.h5, *.parquet) to prevent accidental commits of large or sensitive data files.",
+      "rationale": "Check DATA005 reported: No data-related patterns found in .gitignore.",
+      "estimated_effort": "low",
+      "suggested_file": "",
+      "command_to_verify": "oss-paper-ci scan .  # check DATA005",
+      "blocking": false,
+      "audience": "author"
+    },
+    {
+      "priority": "P2",
+      "action": "Add instructions to your README (e.g. 'To reproduce Figure 1, run ...') or a Makefile with result-related targets so others can regenerate your results.",
+      "rationale": "Check RES005 reported: No result regeneration instructions found.",
+      "estimated_effort": "low",
+      "suggested_file": "",
+      "command_to_verify": "oss-paper-ci scan .  # check RES005",
+      "blocking": false,
+      "audience": "author"
+    },
+    {
+      "priority": "P2",
+      "action": "If your project includes a paper, consider placing it in a paper/, manuscript/, or latex/ directory.",
+      "rationale": "Check PAP001 reported: No paper or manuscript files detected.",
+      "estimated_effort": "low",
+      "suggested_file": "",
+      "command_to_verify": "oss-paper-ci scan .  # check PAP001",
+      "blocking": false,
+      "audience": "author"
+    },
+    {
+      "priority": "P2",
+      "action": "Add a CITATION.cff or .bib file so that users can properly cite your work.",
+      "rationale": "Check PAP004 reported: No citation files found to verify.",
+      "estimated_effort": "low",
+      "suggested_file": "",
+      "command_to_verify": "oss-paper-ci scan .  # check PAP004",
+      "blocking": false,
+      "audience": "author"
+    },
+    {
+      "priority": "P2",
+      "action": "Address PAP005: No .tex files found; skipping figure path check.",
+      "rationale": "Check PAP005 reported: No .tex files found; skipping figure path check.",
+      "estimated_effort": "low",
+      "suggested_file": "",
+      "command_to_verify": "oss-paper-ci scan .  # check PAP005",
+      "blocking": false,
+      "audience": "author"
+    }
+  ],
+  "audience_notes": [
+    "This section shows what you can do to improve your repository's reproducibility. The items are ordered by priority."
+  ],
+  "next_steps": [
+    "[P1] Add a CITATION.cff file or a 'Citation' section to your README so that users know how to properly cite your work.",
+    "[P1] Add sections such as 'Getting Started', 'Installation', or 'Usage' to your README so that others can reproduce your results.",
+    "[P1] Add a lock file (e.g. poetry.lock, Pipfile.lock, uv.lock, or conda-lock.yml) to ensure reproducible dependency resolution."
+  ],
+  "non_claims": [
+    "This dossier is an automated assessment of reproducibility readiness. It does not judge paper quality, correctness, or significance. A high score does not guarantee reproduction. A low score does not mean the research is flawed."
+  ]
+}

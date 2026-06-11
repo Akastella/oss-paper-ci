@@ -3,7 +3,9 @@ CHANGELOG.md
 CODE_OF_CONDUCT.md
 CONTRIBUTING.md
 LICENSE
+README.ja.md
 README.md
+README.zh-CN.md
 SECURITY.md
 SUPPORT.md
 action.yml
@@ -41,11 +43,15 @@ docs/doctor.md
 docs/dogfooding.md
 docs/environment-detection.md
 docs/evidence-graph.md
+docs/failure-taxonomy.md
 docs/getting-started.md
 docs/github-actions.md
 docs/github-upload.md
+docs/glossary.md
 docs/golden-reports.md
 docs/html-report.md
+docs/human-centered-reproducibility.md
+docs/i18n.md
 docs/index.md
 docs/init.md
 docs/installation.md
@@ -67,6 +73,7 @@ docs/reproduce.md
 docs/reproducibility-contract.md
 docs/reproduction-capsules.md
 docs/reproduction-report.md
+docs/roles.md
 docs/rule-pack-manifest.md
 docs/rule-sdk.md
 docs/sarif.md
@@ -182,6 +189,7 @@ examples/workspaces/mixed-fixtures-workspace.yml
 examples/workspaces/strict-publication-workspace.yml
 scripts/build_docs_site.py
 scripts/check_docs_truthfulness.py
+scripts/check_i18n_readmes.py
 scripts/comment_pr.py
 scripts/generate_cli_reference.py
 scripts/generate_fixture_matrix.py
@@ -203,12 +211,16 @@ src/oss_paper_ci/cli.py
 src/oss_paper_ci/config.py
 src/oss_paper_ci/contract.py
 src/oss_paper_ci/contract_schema.py
+src/oss_paper_ci/dossier.py
 src/oss_paper_ci/environment.py
+src/oss_paper_ci/evidence_map.py
 src/oss_paper_ci/failure_taxonomy.py
 src/oss_paper_ci/graph.py
 src/oss_paper_ci/guidance.py
+src/oss_paper_ci/i18n_templates.py
 src/oss_paper_ci/models.py
 src/oss_paper_ci/policy.py
+src/oss_paper_ci/remediation.py
 src/oss_paper_ci/reproduce.py
 src/oss_paper_ci/resolver.py
 src/oss_paper_ci/runner.py
@@ -254,6 +266,7 @@ src/oss_paper_ci/checks/__pycache__/paper_code.cpython-312.pyc
 src/oss_paper_ci/checks/__pycache__/results.cpython-312.pyc
 src/oss_paper_ci/reporting/__init__.py
 src/oss_paper_ci/reporting/aggregate_report.py
+src/oss_paper_ci/reporting/dossier_report.py
 src/oss_paper_ci/reporting/github_annotations.py
 src/oss_paper_ci/reporting/graph_report.py
 src/oss_paper_ci/reporting/html_report.py
@@ -289,7 +302,12 @@ tests/test_config_system.py
 tests/test_cross_language.py
 tests/test_docs_commands.py
 tests/test_docs_site.py
+tests/test_dossier_cli.py
+tests/test_dossier_i18n.py
+tests/test_dossier_model.py
+tests/test_dossier_reports.py
 tests/test_environment_detection.py
+tests/test_evidence_map.py
 tests/test_failure_taxonomy.py
 tests/test_graph_deep.py
 tests/test_graph_v05.py
@@ -303,6 +321,7 @@ tests/test_pypi_metadata.py
 tests/test_release_gate.py
 tests/test_release_gate_v2.py
 tests/test_release_package.py
+tests/test_remediation_plan.py
 tests/test_reporting.py
 tests/test_reproduce_capsule_cli.py
 tests/test_reproduce_cli.py
@@ -311,6 +330,7 @@ tests/test_reproduce_reports.py
 tests/test_reproduce_resolver.py
 tests/test_reproduce_runner.py
 tests/test_reproduce_security.py
+tests/test_risk_register.py
 tests/test_round4_features.py
 tests/test_scale_gate.py
 tests/test_scanner.py
