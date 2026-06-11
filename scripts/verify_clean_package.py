@@ -266,7 +266,9 @@ def extract_and_test(zip_path: Path, temp_dir: Path) -> dict:
     code, out, err = run_cmd(f'"{sys.executable}" -m pytest tests/ -q')
     result["pytest_ok"] = code == 0
     if code != 0:
-        result["errors"].append(f"Pytest failed: {err[:200]}")
+        # pytest outputs to stdout, not stderr
+        detail = err[:200] if err else out[-500:] if out else "unknown failure"
+        result["errors"].append(f"Pytest failed: {detail}")
 
     return result
 

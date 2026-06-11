@@ -12,6 +12,7 @@ def _run_wizard(*args):
     result = subprocess.run(
         [sys.executable, "-m", "oss_paper_ci", "wizard", *args],
         capture_output=True, text=True, timeout=30,
+        encoding="utf-8", errors="replace",
     )
     return result
 
@@ -37,7 +38,9 @@ class TestWizardCLI:
 
     def test_wizard_shows_repo_info(self):
         result = _run_wizard("--plain", ".")
-        assert "Git:" in result.stdout or "git" in result.stdout.lower()
+        # Wizard should show repo info (Git, Config, Path, etc.)
+        # Git detection depends on .git directory existing
+        assert "Path:" in result.stdout or "Repository" in result.stdout
 
     def test_wizard_shows_recommendations(self):
         result = _run_wizard("--plain", ".")
