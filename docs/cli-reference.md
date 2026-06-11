@@ -5,14 +5,15 @@ Auto-generated from `oss-paper-ci --help` output.
 ## Main
 
 ```
-usage: oss-paper-ci [-h] [--version]
-                    {scan,init,explain,list-checks,config,diff,rules,validate-contract,graph,workspace,batch,cache,reproduce,capsule,version,baseline,smoke,doctor,comment}
+usage: oss-paper-ci [-h] [--version] [--plain] [--no-color] [--no-animate]
+                    [--theme {classic,minimal,contrast}] [--debug]
+                    {scan,init,explain,list-checks,config,diff,rules,validate-contract,graph,workspace,batch,cache,reproduce,capsule,guide,dossier,ecosystems,data,results,version,baseline,smoke,doctor,comment,wizard,workbench,theme}
                     ...
 
 Check reproducibility readiness of scientific paper repositories.
 
 positional arguments:
-  {scan,init,explain,list-checks,config,diff,rules,validate-contract,graph,workspace,batch,cache,reproduce,capsule,version,baseline,smoke,doctor,comment}
+  {scan,init,explain,list-checks,config,diff,rules,validate-contract,graph,workspace,batch,cache,reproduce,capsule,guide,dossier,ecosystems,data,results,version,baseline,smoke,doctor,comment,wizard,workbench,theme}
     scan                Scan a repository for reproducibility checks.
     init                Generate a default config or contract file.
     explain             Explain a check ID or policy profile.
@@ -27,15 +28,29 @@ positional arguments:
     cache               Cache management.
     reproduce           Attempt to reproduce a paper repository.
     capsule             Capsule management.
+    guide               Get guided help for using oss-paper-ci.
+    dossier             Generate a reproducibility dossier.
+    ecosystems          Language ecosystem management.
+    data                Data diagnostics.
+    results             Result and artifact validation.
     version             Print version.
     baseline            Baseline management.
     smoke               Run smoke tests safely.
     doctor              Diagnose repository and environment.
     comment             Generate PR comment from scan results.
+    wizard              Guided setup for new users.
+    workbench           Run a multi-step reproducibility pipeline.
+    theme               Theme management.
 
 options:
   -h, --help            show this help message and exit
   --version             show program's version number and exit
+  --plain               Force plain text output (no color, no animation).
+  --no-color            Disable color output.
+  --no-animate          Disable animation (spinners, progress).
+  --theme {classic,minimal,contrast}
+                        Terminal theme (default: classic).
+  --debug               Show debug information and tracebacks on error.
 ```
 
 ## `oss-paper-ci scan`
@@ -86,7 +101,7 @@ usage: oss-paper-ci reproduce [-h] [--repo REPO_OVERRIDE] [--dry-run]
                               [--execute] [--install] [--no-install]
                               [--command REPRODUCE_COMMAND]
                               [--workdir WORKDIR] [--keep-workdir]
-                              [--timeout TIMEOUT]
+                              [--timeout TIMEOUT] [--ecosystem ECOSYSTEM]
                               [--format {markdown,json,html}]
                               [--output OUTPUT] [--capsule CAPSULE_PATH]
                               [--capsule-include-artifacts]
@@ -108,6 +123,8 @@ options:
   --workdir WORKDIR     Use a specific working directory.
   --keep-workdir        Preserve working directory after run.
   --timeout TIMEOUT     Per-command timeout in seconds (default: 300).
+  --ecosystem ECOSYSTEM
+                        Target language ecosystem (e.g., r, julia, snakemake).
   --format {markdown,json,html}
                         Output format (default: markdown).
   --output OUTPUT, -o OUTPUT

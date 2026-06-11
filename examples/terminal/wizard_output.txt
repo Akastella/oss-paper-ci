@@ -1,0 +1,29 @@
+========================================================================
+  OSS-Paper-CI Wizard
+  Guided setup for reproducibility checking
+========================================================================
+
+------------------------------------------------------------------------
+  Repository
+------------------------------------------------------------------------
+  Path: E:\Projects\OSS-Paper-CI
+  Git: detected
+  Config: found
+  CI: detected
+------------------------------------------------------------------------
+
+  Check your repository: Scan for reproducibility readiness and get a score.
+    $ oss-paper-ci scan .
+
+  Validate result claims: Check that claimed results can be traced to evidence.
+    $ oss-paper-ci results validate .
+
+  Run the workbench: Run a full pipeline: scan + diagnose + validate + dossier.
+    $ oss-paper-ci workbench . --plain
+
+  Generate a reproducibility dossier: Create a human-readable summary of your repo's reproducibility.
+    $ oss-paper-ci dossier . --output dossier.md
+
+
+  Tip: Run these commands manually in your terminal.
+  Use --plain for machine-readable output.

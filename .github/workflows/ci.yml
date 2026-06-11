@@ -32,6 +32,20 @@ jobs:
       - name: Self-scan
         run: python -m oss_paper_ci scan . --format json
 
+      - name: Wizard (plain mode)
+        run: python -m oss_paper_ci --plain wizard .
+        env:
+          NO_COLOR: "1"
+          OSS_PAPER_CI_NO_ANIMATE: "1"
+          OSS_PAPER_CI_PLAIN: "1"
+
+      - name: Workbench (plain mode)
+        run: python -m oss_paper_ci --plain workbench examples/demo-reproduce-repo --output-dir .tmp-ci-workbench-out
+        env:
+          NO_COLOR: "1"
+          OSS_PAPER_CI_NO_ANIMATE: "1"
+          OSS_PAPER_CI_PLAIN: "1"
+
   lint:
     runs-on: ubuntu-latest
     steps:

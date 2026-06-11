@@ -49,6 +49,16 @@ DENY_PATTERNS = [
     "test.sarif", "test_rml.sarif",
     "release_truth_*", "release_quarantine_*",
     "dogfooding/results/dogfooding_summary.md",
+    ".local_*",  # Local audit/taskboard files
+    ".tmp-*",  # Temporary directories
+    ".tmp-ci-workbench-out",  # CI workbench output
+    "v2_*_truthfulness.*",
+    "v2_*_release_gate.*",
+    "site",  # Generated docs site
+    ".oss-paper-ci-repro",  # Reproduce workdir
+    ".oss-paper-ci-cache",  # Cache directory
+    ".oss-paper-ci-capsule-staging",  # Capsule staging
+    "oss-paper-ci-out",  # Workbench output
 ]
 
 

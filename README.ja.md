@@ -94,10 +94,42 @@ oss-paper-ci capsule diff old.zip new.zip
 SHA256完全性チェックサムを含む自己完結型の証拠パッケージです。
 これは論文の正しさの証明**ではありません**。
 
+## ウィザード
+
+すべてのサブコマンドを最初から覚える必要はありません。
+`oss-paper-ci wizard` はリポジトリの状態を検出し、安全な次のステップを提案します。
+自動的にコマンドを実行することはありません。
+
+```bash
+oss-paper-ci wizard
+oss-paper-ci wizard --plain
+```
+
+## ワークベンチモード
+
+`oss-paper-ci workbench .` は、エコシステム検出、スキャン、データ診断、
+結果検証、dossier 要約を一つの流れで実行します。デフォルトでは実際の
+実験は実行しません。
+
+```bash
+oss-paper-ci workbench .
+oss-paper-ci workbench . --output-dir oss-paper-ci-out
+oss-paper-ci workbench . --plain
+oss-paper-ci workbench . --theme contrast
+```
+
+## テーマ
+
+```bash
+oss-paper-ci theme list
+oss-paper-ci theme preview
+```
+
+テーマ: `classic`（デフォルト）、`minimal`（CI向け）、`contrast`（高コントラスト）。
+
 ## ガイドモード
 
 ```bash
-# ガイド付きヘルプを取得
 oss-paper-ci guide
 oss-paper-ci guide --role author
 oss-paper-ci guide --role reviewer
@@ -121,6 +153,11 @@ oss-paper-ci guide --topic reproduce
 | はじめに | [docs/getting-started.md](docs/getting-started.md) |
 | インストール | [docs/installation.md](docs/installation.md) |
 | CLIリファレンス | [docs/cli-reference.md](docs/cli-reference.md) |
+| ターミナルワークベンチ | [docs/terminal-workbench.md](docs/terminal-workbench.md) |
+| ウィザード | [docs/wizard.md](docs/wizard.md) |
+| テーマ | [docs/themes.md](docs/themes.md) |
+| CLI UX | [docs/cli-ux.md](docs/cli-ux.md) |
+| NO_COLORとCI | [docs/no-color-and-ci.md](docs/no-color-and-ci.md) |
 | セキュリティモデル | [docs/security-model.md](docs/security-model.md) |
 | 失敗分類 | [docs/failure-taxonomy.md](docs/failure-taxonomy.md) |
 | 用語集 | [docs/glossary.md](docs/glossary.md) |

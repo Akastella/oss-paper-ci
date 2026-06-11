@@ -56,6 +56,7 @@ VALID_CLI_COMMANDS = {
     "graph", "baseline", "smoke", "doctor", "comment",
     "config", "diff", "rules", "validate-contract",
     "reproduce", "capsule", "guide", "dossier", "ecosystems", "data", "results",
+    "wizard", "workbench", "theme",
 }
 
 # Files that exist in the project
@@ -163,6 +164,16 @@ def check_file_for_issues(filepath: Path, root: Path) -> list[dict]:
                 "message": f"Old round reference: '{match.group()}'",
             })
 
+        # Check for Claude Code branding / misleading imitation
+        if re.search(r"claude\s*code", line, re.IGNORECASE):
+            issues.append({
+                "file": rel_path,
+                "line": line_num,
+                "severity": "blocker",
+                "rule": "claude-code-branding",
+                "message": "References Claude Code branding — must not imitate",
+            })
+
     # Check for referenced docs files
     doc_refs = re.findall(r"\[.*?\]\((docs/[^)]+)\)", content)
     for ref in doc_refs:
@@ -224,6 +235,12 @@ def scan_project(root: Path) -> list[dict]:
     if readme.exists():
         scan_targets.append(readme)
 
+    # i18n READMEs
+    for readme_name in ["README.zh-CN.md", "README.ja.md"]:
+        p = root / readme_name
+        if p.exists():
+            scan_targets.append(p)
+
     # docs/
     docs_dir = root / "docs"
     if docs_dir.exists():
@@ -274,6 +291,56 @@ def scan_project(root: Path) -> list[dict]:
     for filepath in scan_targets:
         if filepath.suffix in (".yml", ".yaml"):
             all_issues.extend(check_workflow_cli_commands(filepath, root))
+
+    # Check i18n READMEs mention new commands
+    for readme_name in ["README.zh-CN.md", "README.ja.md"]:
+        readme_path = root / readme_name
+        if readme_path.exists():
+            content = readme_path.read_text(encoding="utf-8")
+            for cmd in ["wizard", "workbench"]:
+                if cmd not in content.lower():
+                    all_issues.append({
+                        "file": readme_name,
+                        "line": 0,
+                        "severity": "major",
+                        "rule": "i18n-missing-command",
+                        "message": f"{readme_name} does not mention '{cmd}' command",
+                    })
+
+    # Check terminal examples exist
+    terminal_examples = [
+        "examples/terminal/wizard_output.txt",
+        "examples/terminal/workbench_plain_output.txt",
+        "examples/terminal/theme_preview.md",
+        "examples/terminal/README.md",
+    ]
+    for ex in terminal_examples:
+        if not (root / ex).exists():
+            all_issues.append({
+                "file": ex,
+                "line": 0,
+                "severity": "major",
+                "rule": "missing-terminal-example",
+                "message": f"Terminal example file missing: {ex}",
+            })
+
+    # Check new docs exist
+    new_docs = [
+        "docs/terminal-workbench.md",
+        "docs/wizard.md",
+        "docs/themes.md",
+        "docs/cli-ux.md",
+        "docs/no-color-and-ci.md",
+    ]
+    for doc in new_docs:
+        if not (root / doc).exists():
+            all_issues.append({
+                "file": doc,
+                "line": 0,
+                "severity": "major",
+                "rule": "missing-doc",
+                "message": f"Required doc file missing: {doc}",
+            })
 
     return all_issues
 
