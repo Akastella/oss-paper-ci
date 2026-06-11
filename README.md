@@ -1,4 +1,4 @@
-# oss-paper-ci
+# OSS-Paper-CI
 
 **English** | [简体中文](README.zh-CN.md) | [日本語](README.ja.md)
 
@@ -6,203 +6,95 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 
-CLI toolkit for checking, attempting, and packaging scientific repository reproducibility evidence.
-
-## What it does
-
-- **scan** a paper repository for reproducibility readiness (environment files, scripts, data docs, CI config)
-- **reproduce** a repository by cloning, installing, and running commands (default: dry-run)
-- **capsule** a reproduction attempt into a verifiable, archivable evidence package
-- **batch** scan multiple projects from a workspace configuration
-- **diff** scan reports to track changes over time
-
-## Install
+CLI toolkit for checking, attempting, packaging, and explaining reproducibility evidence for scientific repositories.
 
 ```bash
-# From source (recommended for development)
-git clone https://github.com/Akastella/oss-paper-ci.git
-cd oss-paper-ci
-pip install -e ".[dev]"
+# Not sure where to start?
+oss-paper-ci wizard
 
-# Verify
-oss-paper-ci version
-```
+# Run the full pipeline
+oss-paper-ci workbench .
 
-## Three useful commands
-
-```bash
-# 1. Scan a repository
-oss-paper-ci scan examples/demo-paper-repo --format markdown
-
-# 2. Attempt reproduction (safe: dry-run by default)
+# Safe reproduction attempt (dry-run by default)
 oss-paper-ci reproduce examples/demo-reproduce-repo --dry-run
-
-# 3. Verify a reproduction capsule
-oss-paper-ci capsule verify repro-capsule.zip
 ```
+
+OSS-Paper-CI records and explains reproducibility evidence. It does not prove scientific correctness, judge paper quality, or predict acceptance.
 
 ## Quickstart
 
 ```bash
-# Scan your repo
-oss-paper-ci scan /path/to/your/repo
+# Install
+git clone https://github.com/Akastella/oss-paper-ci.git
+cd oss-paper-ci
+pip install -e ".[dev]"
 
-# Get a scored report with recommendations
-oss-paper-ci scan . --format html --output report.html
-
-# Use in CI with GitHub Actions
-oss-paper-ci scan . --format github --github-step-summary "$GITHUB_STEP_SUMMARY"
-```
-
-## One-command reproduction attempt
-
-```bash
-# Dry-run: see what would happen (safe, no code executed)
-oss-paper-ci reproduce https://github.com/owner/paper-repo --dry-run
-
-# Execute: clone, install, run, and generate a report
-oss-paper-ci reproduce https://github.com/owner/paper-repo \
-  --execute --install --format html --output repro-report.html
-
-# Generate a verifiable capsule
-oss-paper-ci reproduce examples/demo-reproduce-repo \
-  --execute --install --capsule repro-capsule.zip
-```
-
-The reproduce command clones a repository, detects environment files,
-installs dependencies (in an isolated venv), runs reproduction commands,
-and generates a structured report. Default mode is dry-run -- `--execute`
-is required to actually run code.
-
-**Important:** This is an *attempted reproduction*, not guaranteed reproduction.
-The tool records what was done, not whether the results are correct.
-
-## Reproduction capsules
-
-```bash
-# Verify capsule integrity
-oss-paper-ci capsule verify repro-capsule.zip
-
-# Inspect capsule contents
-oss-paper-ci capsule inspect repro-capsule.zip
-
-# Compare two capsules
-oss-paper-ci capsule diff old.zip new.zip
-```
-
-A capsule is a self-contained evidence package with manifest, reports,
-logs, artifacts, metadata, and SHA256 integrity checksums. It is NOT
-proof that a paper is correct.
-
-## Wizard
-
-Not sure where to start? The wizard gives you safe next-step recommendations:
-
-```bash
+# Get guided recommendations
 oss-paper-ci wizard
-oss-paper-ci wizard --plain
-```
 
-It detects your repository characteristics and suggests commands to run.
-In CI or non-TTY environments, it prints recommendations without blocking.
-
-## Workbench
-
-Run the full pipeline in one command:
-
-```bash
-# Full pipeline: detect → scan → diagnose → validate → dossier
+# Run the full pipeline
 oss-paper-ci workbench .
 
-# With output files
-oss-paper-ci workbench . --output-dir oss-paper-ci-out
+# Score a repository
+oss-paper-ci scan .
 
-# Plain mode for CI
-oss-paper-ci workbench . --plain
-
-# High-contrast theme
-oss-paper-ci workbench . --theme contrast
+# Safe reproduction attempt
+oss-paper-ci reproduce examples/demo-reproduce-repo --dry-run
 ```
 
-The workbench is safe by default: no experiments are executed, no
-dependencies are installed, all analysis is read-only.
+## What it does
 
-## Themes
+| Feature | Command | Description |
+|---------|---------|-------------|
+| Readiness scan | `oss-paper-ci scan .` | Score reproducibility readiness with recommendations |
+| Data diagnostics | `oss-paper-ci data diagnose .` | Check data documentation and availability |
+| Result validation | `oss-paper-ci results validate .` | Verify claimed results trace to evidence |
+| Safe reproduction | `oss-paper-ci reproduce URL --dry-run` | Attempt reproduction without executing code |
+| Reproduction capsule | `oss-paper-ci capsule verify out.zip` | Verify and inspect evidence packages |
+| Reproducibility dossier | `oss-paper-ci dossier .` | Generate author/reviewer/maintainer summaries |
+| Workspace batch | `oss-paper-ci batch scan --workspace ws.yml` | Scan multiple projects from a config |
+| Ecosystem detection | `oss-paper-ci ecosystems detect .` | Detect Python, R, Julia, MATLAB, Node, and more |
+| Terminal workbench | `oss-paper-ci workbench .` | Multi-step pipeline with progress display |
+| Guided wizard | `oss-paper-ci wizard` | Safe next-step recommendations for new users |
 
-```bash
-oss-paper-ci theme list
-oss-paper-ci theme preview
-oss-paper-ci workbench . --theme minimal
-```
-
-Themes: `classic` (default), `minimal` (CI-friendly), `contrast` (accessibility).
-
-## Guided mode
-
-```bash
-oss-paper-ci guide
-oss-paper-ci guide --role author
-oss-paper-ci guide --role reviewer
-oss-paper-ci guide --topic reproduce
-```
-
-See [docs/roles.md](docs/roles.md) for role-based guidance.
-
-## Failure is information
-
-When a reproduction attempt fails, the failure report is valuable evidence.
-It records what was attempted, where it failed, and what the environment
-looked like. Failure does not mean the paper is wrong — it may be an
-environment or dependency issue.
-
-See [docs/failure-taxonomy.md](docs/failure-taxonomy.md) for structured
-failure guidance.
-
-## GitHub Actions
-
-```yaml
-- uses: actions/checkout@v4
-- uses: Akastella/oss-paper-ci@v1
-  with:
-    path: "."
-    format: "markdown"
-```
-
-See [examples/github-actions/](examples/github-actions/) for full workflow templates.
-
-## Documentation
-
-| Topic | Link |
-|-------|------|
-| Getting started | [docs/getting-started.md](docs/getting-started.md) |
-| Installation | [docs/installation.md](docs/installation.md) |
-| CLI reference | [docs/cli-reference.md](docs/cli-reference.md) |
-| Terminal workbench | [docs/terminal-workbench.md](docs/terminal-workbench.md) |
-| Wizard | [docs/wizard.md](docs/wizard.md) |
-| Themes | [docs/themes.md](docs/themes.md) |
-| CLI UX | [docs/cli-ux.md](docs/cli-ux.md) |
-| No-color and CI | [docs/no-color-and-ci.md](docs/no-color-and-ci.md) |
-| Security model | [docs/security-model.md](docs/security-model.md) |
-| Demo gallery | [docs/demo-gallery.md](docs/demo-gallery.md) |
-| Reproduction | [docs/reproduce.md](docs/reproduce.md) |
-| Capsules | [docs/reproduction-capsules.md](docs/reproduction-capsules.md) |
-| GitHub Actions | [docs/github-actions.md](docs/github-actions.md) |
-| Configuration | [docs/configuration.md](docs/configuration.md) |
-| Policy profiles | [docs/policy-profiles.md](docs/policy-profiles.md) |
-| Failure taxonomy | [docs/failure-taxonomy.md](docs/failure-taxonomy.md) |
-| Roles | [docs/roles.md](docs/roles.md) |
-| Glossary | [docs/glossary.md](docs/glossary.md) |
-| Limitations | [docs/limitations.md](docs/limitations.md) |
-| Full index | [docs/index.md](docs/index.md) |
-
-## Security model
+## Safety model
 
 - Default mode is **dry-run**: no code executed, no dependencies installed
 - `--execute` is required to run reproduction commands
 - `--install` is required to install dependencies (into an isolated venv)
 - Dangerous commands are blocked (rm -rf, sudo, fork bombs)
 - Every command has a configurable timeout
-- See [docs/security-model.md](docs/security-model.md) and [docs/reproduce-security.md](docs/reproduce-security.md)
+- Configurable policy profiles: lenient, default, strict, publication
+- See [docs/security-model.md](docs/security-model.md)
+
+## Example workflows
+
+```bash
+# Score a repository
+oss-paper-ci scan .
+
+# Full pipeline with output files
+oss-paper-ci workbench . --output-dir results
+
+# Safe reproduction attempt
+oss-paper-ci reproduce examples/demo-reproduce-repo --dry-run
+
+# CI integration
+oss-paper-ci scan . --format github --github-step-summary "$GITHUB_STEP_SUMMARY"
+```
+
+See [examples/github-actions/](examples/github-actions/) for workflow templates.
+
+## Documentation
+
+| Topic | Link |
+|-------|------|
+| Getting started | [docs/getting-started.md](docs/getting-started.md) |
+| CLI reference | [docs/cli-reference.md](docs/cli-reference.md) |
+| Terminal workbench | [docs/terminal-workbench.md](docs/terminal-workbench.md) |
+| Project summary | [docs/project-summary.md](docs/project-summary.md) |
+| Demo gallery | [docs/demo-gallery.md](docs/demo-gallery.md) |
+| Full index | [docs/index.md](docs/index.md) |
 
 ## Limitations
 
@@ -210,7 +102,6 @@ See [examples/github-actions/](examples/github-actions/) for full workflow templ
 - Does not verify paper quality, novelty, or acceptance likelihood
 - Does not run experiments (unless explicitly `--execute`)
 - Does not resolve missing data or fix broken code
-- Cross-language checks are shallow outside Python
 - Score is engineering completeness, not a scientific judgment
 
 See [docs/limitations.md](docs/limitations.md).
@@ -220,8 +111,6 @@ See [docs/limitations.md](docs/limitations.md).
 ```bash
 pip install -e ".[dev]"
 python -m pytest
-python -m build
-python -m twine check dist/*
 python scripts/check_docs_truthfulness.py --check
 ```
 
