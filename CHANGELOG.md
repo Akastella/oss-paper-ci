@@ -1,5 +1,25 @@
 # Changelog
 
+## 2.3.0rc1 (2026-06-11)
+
+### Added
+- `oss-paper-ci ecosystems detect PATH` — detect language ecosystems in a repository
+- `oss-paper-ci ecosystems explain LANG` — explain a language ecosystem's support level
+- Multi-language ecosystem detection: Python, R, Julia, MATLAB/Octave, Node, Rust, Java, C/C++, Snakemake, Nextflow, Make, shell
+- `--ecosystem LANG` flag for reproduce command to select target ecosystem
+- Runtime availability detection (checks if R, Julia, etc. are installed)
+- Support levels: native, execute-if-runtime-present, dry-run, detect-only
+- Scan report includes ecosystem detection results
+- Dossier evidence map includes language_ecosystem category
+- Multi-language fixtures for testing (R, Julia, MATLAB, Node, Rust, Java, C++, workflow repos)
+- `docs/language-ecosystems.md` — language ecosystem documentation
+- `examples/ecosystems/` — per-language ecosystem guides
+- GitHub Action examples for ecosystem detection
+- Tests for ecosystem detection, reproduce integration, scan integration
+
+### Changed
+- Version bumped to 2.3.0rc1
+
 ## 2.2.0rc1 (2026-06-10)
 
 ### Added

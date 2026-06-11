@@ -174,6 +174,7 @@ def main(argv: list[str] | None = None) -> int:
     reproduce_parser.add_argument("--workdir", help="Use a specific working directory.")
     reproduce_parser.add_argument("--keep-workdir", action="store_true", help="Preserve working directory after run.")
     reproduce_parser.add_argument("--timeout", type=int, default=300, help="Per-command timeout in seconds (default: 300).")
+    reproduce_parser.add_argument("--ecosystem", help="Target language ecosystem (e.g., r, julia, snakemake).")
     reproduce_parser.add_argument("--format", choices=["markdown", "json", "html"], default="markdown", help="Output format (default: markdown).")
     reproduce_parser.add_argument("--output", "-o", help="Write report to file instead of stdout.")
     reproduce_parser.add_argument("--capsule", dest="capsule_path", help="Generate a reproduction capsule zip at this path.")
@@ -221,6 +222,21 @@ def main(argv: list[str] | None = None) -> int:
     dossier_parser.add_argument("--language", choices=["en", "zh-CN", "ja"], default="en", help="Output language.")
     dossier_parser.add_argument("--format", choices=["markdown", "json", "html", "issue", "pr-comment"], default="markdown", help="Output format.")
     dossier_parser.add_argument("--output", "-o", help="Write output to file.")
+
+    # ecosystems command group
+    ecosystems_parser = subparsers.add_parser("ecosystems", help="Language ecosystem management.")
+    ecosystems_sub = ecosystems_parser.add_subparsers(dest="ecosystems_command")
+
+    # ecosystems detect
+    ed = ecosystems_sub.add_parser("detect", help="Detect language ecosystems in a repository.")
+    ed.add_argument("path", nargs="?", default=".", help="Path to repository root (default: .)")
+    ed.add_argument("--format", choices=["json", "markdown"], default="markdown", help="Output format.")
+    ed.add_argument("--output", "-o", help="Write output to file.")
+
+    # ecosystems explain
+    ee = ecosystems_sub.add_parser("explain", help="Explain a language ecosystem.")
+    ee.add_argument("ecosystem", help="Ecosystem ID (e.g., r, julia, snakemake).")
+    ee.add_argument("--format", choices=["json", "markdown"], default="markdown", help="Output format.")
 
     # version command
     subparsers.add_parser("version", help="Print version.")
@@ -287,6 +303,9 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.command == "dossier":
         return _cmd_dossier(args)
+
+    if args.command == "ecosystems":
+        return _cmd_ecosystems(args)
 
     if args.command == "reproduce":
         return _cmd_reproduce(args)
@@ -1978,6 +1997,127 @@ def _cmd_guide(args: argparse.Namespace) -> int:
         print(f"Guide written to {output}")
     else:
         print(text)
+
+    return 0
+
+
+# ── Ecosystems command ───────────────────────────────────────────────────────
+
+def _cmd_ecosystems(args: argparse.Namespace) -> int:
+    """Handle the ecosystems subcommand group."""
+    sub = getattr(args, "ecosystems_command", None)
+
+    if sub == "detect":
+        return _cmd_ecosystems_detect(
+            path=getattr(args, "path", "."),
+            fmt=getattr(args, "format", "markdown"),
+            output=getattr(args, "output", None),
+        )
+
+    if sub == "explain":
+        return _cmd_ecosystems_explain(
+            ecosystem=getattr(args, "ecosystem", None),
+            fmt=getattr(args, "format", "markdown"),
+        )
+
+    print("Usage: oss-paper-ci ecosystems {detect|explain} ...", file=sys.stderr)
+    return 1
+
+
+def _cmd_ecosystems_detect(path: str, fmt: str, output: str | None) -> int:
+    """Detect language ecosystems in a repository."""
+    import json as json_mod
+
+    from oss_paper_ci.ecosystems import detect_ecosystems
+
+    repo_path = Path(path).resolve()
+    if not repo_path.exists():
+        print(f"Error: path does not exist: {path}", file=sys.stderr)
+        return 2
+
+    ecosystems = detect_ecosystems(str(repo_path))
+
+    if fmt == "json":
+        data = {
+            "repo_path": str(repo_path),
+            "ecosystems": [e.to_dict() for e in ecosystems],
+            "total_detected": len(ecosystems),
+        }
+        text = json_mod.dumps(data, indent=2, ensure_ascii=False)
+    else:
+        lines = ["# Detected Ecosystems\n"]
+        if not ecosystems:
+            lines.append("No language ecosystems detected.\n")
+        else:
+            lines.append(f"**{len(ecosystems)} ecosystem(s) detected** in `{repo_path}`\n")
+            for eco in ecosystems:
+                lines.append(f"## {eco.display_name} (`{eco.id}`)\n")
+                lines.append(f"- **Support level:** {eco.support_level}")
+                lines.append(f"- **Runtime required:** `{eco.runtime_required}`")
+                lines.append(f"- **Runtime available:** {'yes' if eco.runtime_available else 'no'}")
+                if eco.environment_files:
+                    lines.append(f"- **Environment files:** {', '.join(f'`{f}`' for f in eco.environment_files)}")
+                if eco.entrypoint_candidates:
+                    lines.append(f"- **Entrypoints:** {', '.join(f'`{f}`' for f in eco.entrypoint_candidates[:5])}")
+                if eco.install_plan:
+                    lines.append(f"- **Install plan:** {'; '.join(f'`{c}`' for c in eco.install_plan)}")
+                if eco.run_plan:
+                    lines.append(f"- **Run plan:** {'; '.join(f'`{c}`' for c in eco.run_plan[:3])}")
+                if eco.limitations:
+                    lines.append("- **Limitations:**")
+                    for lim in eco.limitations:
+                        lines.append(f"  - {lim}")
+                lines.append("")
+
+        text = "\n".join(lines)
+
+    if output:
+        Path(output).write_text(text, encoding="utf-8")
+        print(f"Ecosystem detection written to {output}")
+    else:
+        print(text)
+
+    return 0
+
+
+def _cmd_ecosystems_explain(ecosystem: str, fmt: str) -> int:
+    """Explain a language ecosystem."""
+    import json as json_mod
+
+    from oss_paper_ci.ecosystems import get_ecosystem_info, list_ecosystems
+
+    if not ecosystem:
+        print("Available ecosystems:", file=sys.stderr)
+        for eco in list_ecosystems():
+            print(f"  {eco['id']}: {eco['display_name']} ({eco['support_level']})")
+        return 1
+
+    info = get_ecosystem_info(ecosystem)
+    if not info:
+        print(f"Unknown ecosystem: {ecosystem}", file=sys.stderr)
+        print(f"Available: {', '.join(e['id'] for e in list_ecosystems())}", file=sys.stderr)
+        return 1
+
+    if fmt == "json":
+        print(json_mod.dumps(info, indent=2, ensure_ascii=False))
+    else:
+        lines = [f"# {info['display_name']} (`{info['id']}`)\n"]
+        lines.append(f"- **Support level:** {info['support_level']}")
+        lines.append(f"- **Runtime required:** `{info['runtime_required']}`")
+        lines.append(f"- **Runtime available:** {'yes' if info['runtime_available'] else 'no'}")
+        if info.get("environment_files"):
+            lines.append(f"- **Environment files:** {', '.join(f'`{f}`' for f in info['environment_files'])}")
+        if info.get("entrypoint_candidates"):
+            lines.append(f"- **Entrypoints:** {', '.join(f'`{f}`' for f in info['entrypoint_candidates'][:5])}")
+        if info.get("limitations"):
+            lines.append("- **Limitations:**")
+            for lim in info["limitations"]:
+                lines.append(f"  - {lim}")
+        if info.get("safety_notes"):
+            lines.append("- **Safety notes:**")
+            for note in info["safety_notes"]:
+                lines.append(f"  - {note}")
+        print("\n".join(lines))
 
     return 0
 
