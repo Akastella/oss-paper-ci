@@ -45,7 +45,7 @@ jobs:
         run: python scripts/verify_clean_package.py --zip release-artifacts/oss-paper-ci-v${{ steps.version.outputs.version }}-github-clean.zip
 
       - name: Upload release artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: release-artifacts
           path: release-artifacts/
