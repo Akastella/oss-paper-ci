@@ -1,5 +1,25 @@
 # Changelog
 
+## 2.6.0rc1 (2026-06-15)
+
+### Added
+- `oss-paper-ci adopt PATH` — generate adoption plan with missing files and recommended scaffolds
+- `oss-paper-ci scaffold PATH` — scaffold missing reproducibility files (dry-run by default)
+- `oss-paper-ci scaffold PATH --apply` — apply scaffold and create files
+- `oss-paper-ci fix preview PATH` — preview recommended fixes
+- `oss-paper-ci fix apply PATH --yes` — apply safe fixes with explicit confirmation
+- Safe write utilities: path validation, force guards, forbidden path protection
+- Ecosystem-aware templates: reproducibility.yml, data/README.md, results/README.md, GitHub Actions workflow
+- Adoption plan integration with workbench and dossier
+- `safe_write.py` — atomic write with path traversal protection
+- `templates.py` — ecosystem-aware file templates
+- `adoption.py` — adoption plan generation from repo analysis
+- `scaffold.py` — scaffold engine with dry-run and apply modes
+- Tests for safe write, adoption plan, scaffold CLI, fix CLI
+
+### Changed
+- Version bumped to 2.6.0rc1
+
 ## 2.5.0rc1 (2026-06-11)
 
 ### Added

@@ -347,6 +347,38 @@ def main(argv: list[str] | None = None) -> int:
     theme_preview.add_argument("--theme", choices=["classic", "minimal", "contrast"],
                                default="classic", help="Theme to preview.")
 
+    # adopt command
+    adopt_parser = subparsers.add_parser("adopt", help="Generate an adoption plan for a repository.")
+    adopt_parser.add_argument("path", nargs="?", default=".", help="Path to repository root (default: .)")
+    adopt_parser.add_argument("--format", choices=["markdown", "json"], default="markdown", help="Output format.")
+    adopt_parser.add_argument("--output", "-o", help="Write plan to file.")
+
+    # scaffold command
+    scaffold_parser = subparsers.add_parser("scaffold", help="Scaffold missing reproducibility files.")
+    scaffold_parser.add_argument("path", nargs="?", default=".", help="Path to repository root (default: .)")
+    scaffold_parser.add_argument("--ecosystem", help="Target ecosystem (python, r, julia, node, make, snakemake).")
+    scaffold_parser.add_argument("--dry-run", action="store_true", default=True, help="Preview only (default).")
+    scaffold_parser.add_argument("--apply", action="store_true", help="Apply scaffold (write files).")
+    scaffold_parser.add_argument("--force", action="store_true", help="Overwrite existing files.")
+    scaffold_parser.add_argument("--output", "-o", help="Write patch preview to file.")
+    scaffold_parser.add_argument("--format", choices=["markdown", "json"], default="markdown", help="Output format.")
+
+    # fix command group
+    fix_parser = subparsers.add_parser("fix", help="Preview and apply safe fixes.")
+    fix_sub = fix_parser.add_subparsers(dest="fix_command")
+
+    # fix preview
+    fix_preview = fix_sub.add_parser("preview", help="Preview recommended fixes.")
+    fix_preview.add_argument("path", nargs="?", default=".", help="Path to repository root (default: .)")
+    fix_preview.add_argument("--format", choices=["markdown", "json"], default="markdown", help="Output format.")
+    fix_preview.add_argument("--output", "-o", help="Write preview to file.")
+
+    # fix apply
+    fix_apply = fix_sub.add_parser("apply", help="Apply safe fixes.")
+    fix_apply.add_argument("path", nargs="?", default=".", help="Path to repository root (default: .)")
+    fix_apply.add_argument("--yes", action="store_true", help="Confirm apply without prompt.")
+    fix_apply.add_argument("--force", action="store_true", help="Overwrite existing files.")
+
     args, remaining = parser.parse_known_args(argv)
 
     # Resolve output mode from global flags
@@ -477,6 +509,15 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.command == "theme":
         return _cmd_theme(args)
+
+    if args.command == "adopt":
+        return _cmd_adopt(args)
+
+    if args.command == "scaffold":
+        return _cmd_scaffold(args)
+
+    if args.command == "fix":
+        return _cmd_fix(args)
 
     parser.print_help()
     return 0
@@ -2620,5 +2661,197 @@ def _cmd_theme_preview(theme_name: str) -> int:
     ], _mode, theme)
 
     render_warning("This is a sample warning message.", _mode, theme)
+
+    return 0
+
+
+# ── Adopt command ──────────────────────────────────────────────────────────
+
+def _cmd_adopt(args: argparse.Namespace) -> int:
+    """Handle adopt command."""
+    import json as json_mod
+    from oss_paper_ci.adoption import build_adoption_plan, format_adoption_plan_markdown
+
+    path = getattr(args, "path", ".")
+    fmt = getattr(args, "format", "markdown")
+    output = getattr(args, "output", None)
+
+    # Detect ecosystems
+    ecosystems = None
+    try:
+        from oss_paper_ci.ecosystems import detect_ecosystems
+        eco_list = detect_ecosystems(path)
+        ecosystems = [e.to_dict() for e in eco_list] if eco_list else []
+    except Exception:
+        pass
+
+    plan = build_adoption_plan(repo_path=path, ecosystems=ecosystems)
+
+    if fmt == "json":
+        text = plan.to_json()
+    else:
+        text = format_adoption_plan_markdown(plan)
+
+    if output:
+        Path(output).write_text(text, encoding="utf-8")
+        print(f"Adoption plan written to {output}")
+    else:
+        print(text)
+
+    return 0
+
+
+# ── Scaffold command ───────────────────────────────────────────────────────
+
+def _cmd_scaffold(args: argparse.Namespace) -> int:
+    """Handle scaffold command."""
+    import json as json_mod
+    from oss_paper_ci.scaffold import run_scaffold, generate_scaffold_patch
+
+    path = getattr(args, "path", ".")
+    apply_mode = getattr(args, "apply", False)
+    force = getattr(args, "force", False)
+    output = getattr(args, "output", None)
+    fmt = getattr(args, "format", "markdown")
+
+    # Detect ecosystems
+    ecosystems = None
+    try:
+        from oss_paper_ci.ecosystems import detect_ecosystems
+        eco_list = detect_ecosystems(path)
+        ecosystems = [e.to_dict() for e in eco_list] if eco_list else []
+    except Exception:
+        pass
+
+    dry_run = not apply_mode
+
+    if dry_run:
+        # Generate patch preview
+        patch = generate_scaffold_patch(repo_path=path, ecosystems=ecosystems)
+        if output:
+            Path(output).write_text(patch, encoding="utf-8")
+            print(f"Scaffold preview written to {output}")
+        else:
+            print(patch)
+    else:
+        # Apply scaffold
+        result = run_scaffold(
+            repo_path=path,
+            ecosystems=ecosystems,
+            dry_run=False,
+            force=force,
+        )
+
+        if fmt == "json":
+            text = json_mod.dumps(result.to_dict(), indent=2, ensure_ascii=False)
+        else:
+            # Format as markdown summary
+            lines = ["# Scaffold Apply Results", ""]
+            if result.apply_result:
+                lines.append(f"- Attempted: {result.apply_result.total_attempted}")
+                lines.append(f"- Written: {result.apply_result.total_written}")
+                lines.append(f"- Skipped: {result.apply_result.total_skipped}")
+                lines.append(f"- Errors: {result.apply_result.total_errors}")
+                lines.append("")
+                for r in result.apply_result.results:
+                    icon = "OK" if r.success else "X"
+                    lines.append(f"- [{icon}] {r.message}")
+            text = "\n".join(lines)
+
+        if output:
+            Path(output).write_text(text, encoding="utf-8")
+            print(f"Scaffold results written to {output}")
+        else:
+            print(text)
+
+    return 0
+
+
+# ── Fix command ────────────────────────────────────────────────────────────
+
+def _cmd_fix(args: argparse.Namespace) -> int:
+    """Handle fix command group."""
+    sub = getattr(args, "fix_command", None)
+
+    if sub == "preview":
+        return _cmd_fix_preview(args)
+    if sub == "apply":
+        return _cmd_fix_apply(args)
+
+    print("Usage: oss-paper-ci fix {preview|apply}", file=sys.stderr)
+    return 1
+
+
+def _cmd_fix_preview(args: argparse.Namespace) -> int:
+    """Handle fix preview command."""
+    from oss_paper_ci.scaffold import run_scaffold, generate_scaffold_patch
+
+    path = getattr(args, "path", ".")
+    fmt = getattr(args, "format", "markdown")
+    output = getattr(args, "output", None)
+
+    # Detect ecosystems
+    ecosystems = None
+    try:
+        from oss_paper_ci.ecosystems import detect_ecosystems
+        eco_list = detect_ecosystems(path)
+        ecosystems = [e.to_dict() for e in eco_list] if eco_list else []
+    except Exception:
+        pass
+
+    # Generate adoption plan as fix preview
+    from oss_paper_ci.adoption import build_adoption_plan, format_adoption_plan_markdown
+    plan = build_adoption_plan(repo_path=path, ecosystems=ecosystems)
+
+    if fmt == "json":
+        text = plan.to_json()
+    else:
+        text = format_adoption_plan_markdown(plan)
+
+    if output:
+        Path(output).write_text(text, encoding="utf-8")
+        print(f"Fix preview written to {output}")
+    else:
+        print(text)
+
+    return 0
+
+
+def _cmd_fix_apply(args: argparse.Namespace) -> int:
+    """Handle fix apply command."""
+    yes = getattr(args, "yes", False)
+    force = getattr(args, "force", False)
+    path = getattr(args, "path", ".")
+
+    if not yes:
+        print("Fix apply requires --yes to confirm.", file=sys.stderr)
+        print("This will write files to your repository.", file=sys.stderr)
+        print("Use 'oss-paper-ci fix preview .' first to see what would be written.", file=sys.stderr)
+        return 1
+
+    # Detect ecosystems
+    ecosystems = None
+    try:
+        from oss_paper_ci.ecosystems import detect_ecosystems
+        eco_list = detect_ecosystems(path)
+        ecosystems = [e.to_dict() for e in eco_list] if eco_list else []
+    except Exception:
+        pass
+
+    from oss_paper_ci.scaffold import run_scaffold
+    result = run_scaffold(
+        repo_path=path,
+        ecosystems=ecosystems,
+        dry_run=False,
+        force=force,
+    )
+
+    if result.apply_result:
+        print(f"Applied {result.apply_result.total_written} file(s).")
+        if result.apply_result.total_skipped > 0:
+            print(f"Skipped {result.apply_result.total_skipped} existing file(s).")
+        if result.apply_result.total_errors > 0:
+            print(f"Errors: {result.apply_result.total_errors}")
+            return 2
 
     return 0

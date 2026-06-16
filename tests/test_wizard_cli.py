@@ -55,9 +55,10 @@ class TestWizardCLI:
         result = _run_wizard("--no-animate", ".")
         assert result.returncode == 0
 
-    def test_wizard_version_shows_2_5(self):
+    def test_wizard_version_shows_current(self):
         result = subprocess.run(
             [sys.executable, "-m", "oss_paper_ci", "version"],
             capture_output=True, text=True, timeout=10,
+            encoding="utf-8", errors="replace",
         )
-        assert "2.5.0rc1" in result.stdout
+        assert "2.6.0rc1" in result.stdout
