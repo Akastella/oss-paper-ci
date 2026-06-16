@@ -7,13 +7,13 @@ Auto-generated from `oss-paper-ci --help` output.
 ```
 usage: oss-paper-ci [-h] [--version] [--plain] [--no-color] [--no-animate]
                     [--theme {classic,minimal,contrast}] [--debug]
-                    {scan,init,explain,list-checks,config,diff,rules,validate-contract,graph,workspace,batch,cache,reproduce,capsule,guide,dossier,ecosystems,data,results,version,baseline,smoke,doctor,comment,wizard,workbench,theme}
+                    {scan,init,explain,list-checks,config,diff,rules,validate-contract,graph,workspace,batch,cache,reproduce,capsule,guide,dossier,ecosystems,data,results,version,baseline,smoke,doctor,comment,wizard,workbench,theme,adopt,scaffold,fix}
                     ...
 
 Check reproducibility readiness of scientific paper repositories.
 
 positional arguments:
-  {scan,init,explain,list-checks,config,diff,rules,validate-contract,graph,workspace,batch,cache,reproduce,capsule,guide,dossier,ecosystems,data,results,version,baseline,smoke,doctor,comment,wizard,workbench,theme}
+  {scan,init,explain,list-checks,config,diff,rules,validate-contract,graph,workspace,batch,cache,reproduce,capsule,guide,dossier,ecosystems,data,results,version,baseline,smoke,doctor,comment,wizard,workbench,theme,adopt,scaffold,fix}
     scan                Scan a repository for reproducibility checks.
     init                Generate a default config or contract file.
     explain             Explain a check ID or policy profile.
@@ -41,6 +41,9 @@ positional arguments:
     wizard              Guided setup for new users.
     workbench           Run a multi-step reproducibility pipeline.
     theme               Theme management.
+    adopt               Generate an adoption plan for a repository.
+    scaffold            Scaffold missing reproducibility files.
+    fix                 Preview and apply safe fixes.
 
 options:
   -h, --help            show this help message and exit

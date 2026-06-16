@@ -57,6 +57,7 @@ VALID_CLI_COMMANDS = {
     "config", "diff", "rules", "validate-contract",
     "reproduce", "capsule", "guide", "dossier", "ecosystems", "data", "results",
     "wizard", "workbench", "theme",
+    "adopt", "scaffold", "fix",
 }
 
 # Files that exist in the project
