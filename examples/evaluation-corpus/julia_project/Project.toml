@@ -1,0 +1,7 @@
+name = "SyntheticAnalysis"
+uuid = "12345678-1234-1234-1234-123456789abc"
+version = "0.1.0"
+
+[deps]
+DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
+JSON = "682c06a0-de6a-54ab-a142-c8b1cf79cde6"

@@ -42,6 +42,29 @@ oss-paper-ci scan .
 oss-paper-ci reproduce examples/demo-reproduce-repo --dry-run
 ```
 
+## 評価
+
+このプロジェクトには、異なる研究リポジトリ状態に対する出力の安定性を検証するための **synthetic-but-realistic な評価コーパス** が含まれています。
+
+```bash
+# 評価の実行
+oss-paper-ci eval run examples/evaluation-corpus
+
+# JSON レポートの生成
+oss-paper-ci eval run examples/evaluation-corpus --format json --output report.json
+
+# ベースラインとの比較
+oss-paper-ci eval compare --baseline tests/golden/evaluation_summary.json --current report.json
+```
+
+評価コーパスには 12+ の合成リポジトリが含まれ、以下をカバーします：
+- Python（良好な再現性、データ欠落、環境欠落、結果異常）
+- R、Julia、Node.js、Make、Snakemake、C++ プロジェクト
+- 安全でないスクリプトの検出
+- 採用前後の比較
+
+**重要な注意：** これらは合成テストフィクスチャであり、実世界のリポジトリではありません。ベンチマークはツールの安定性を示すものであり、科学的正しさを証明するものではありません。
+
 ## 機能一覧
 
 | 機能 | コマンド | 説明 |

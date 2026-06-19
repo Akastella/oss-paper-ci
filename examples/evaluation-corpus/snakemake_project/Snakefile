@@ -1,0 +1,19 @@
+# Synthetic Snakefile for test fixture
+# This is a minimal workflow for oss-paper-ci evaluation.
+
+configfile: "config/config.yml"
+
+rule all:
+    input:
+        "results/results.json"
+
+rule analyze:
+    input:
+        data="data/input.csv"
+    output:
+        results="results/results.json"
+    shell:
+        """
+        echo "Running analysis..."
+        echo '{{"status": "success"}}' > {output.results}
+        """

@@ -1,0 +1,179 @@
+# Expected outcomes for oss-paper-ci evaluation corpus
+# These are the expected scan results for each test repository.
+
+- repo_id: python_good_repro
+  expected_ecosystems:
+    - python
+  expected_status: good
+  expected_major_findings:
+    - "Has requirements.txt"
+    - "Has reproducibility.yml"
+    - "Has data documentation"
+    - "Has results/metrics.json"
+    - "Has LICENSE"
+  expected_score_band: [80, 100]
+  expected_risks: []
+  expected_scaffold_suggestions: []
+  should_execute_by_default: false
+
+- repo_id: python_missing_data
+  expected_ecosystems:
+    - python
+  expected_status: needs-work
+  expected_major_findings:
+    - "Has requirements.txt"
+    - "Missing data documentation"
+    - "Missing data availability statement"
+  expected_score_band: [40, 60]
+  expected_risks: []
+  expected_scaffold_suggestions:
+    - "Add data/README.md"
+    - "Add data availability statement to README"
+  should_execute_by_default: false
+
+- repo_id: python_missing_environment
+  expected_ecosystems:
+    - python
+  expected_status: needs-work
+  expected_major_findings:
+    - "Missing requirements.txt"
+    - "Missing pyproject.toml"
+    - "Has data documentation"
+  expected_score_band: [30, 50]
+  expected_risks: []
+  expected_scaffold_suggestions:
+    - "Add requirements.txt"
+    - "Add pyproject.toml"
+  should_execute_by_default: false
+
+- repo_id: python_bad_results
+  expected_ecosystems:
+    - python
+  expected_status: critical
+  expected_major_findings:
+    - "Has requirements.txt"
+    - "Has data documentation"
+    - "Invalid JSON in results/metrics.json"
+  expected_score_band: [20, 40]
+  expected_risks:
+    - "Invalid results file"
+  expected_scaffold_suggestions:
+    - "Fix JSON syntax in results/metrics.json"
+  should_execute_by_default: false
+
+- repo_id: r_repro_project
+  expected_ecosystems:
+    - r
+  expected_status: good
+  expected_major_findings:
+    - "Has DESCRIPTION"
+    - "Has renv.lock"
+    - "Has data documentation"
+    - "Has results/results.json"
+  expected_score_band: [75, 100]
+  expected_risks: []
+  expected_scaffold_suggestions: []
+  should_execute_by_default: false
+
+- repo_id: julia_project
+  expected_ecosystems:
+    - julia
+  expected_status: good
+  expected_major_findings:
+    - "Has Project.toml"
+    - "Has Manifest.toml"
+    - "Has data documentation"
+    - "Has results/results.json"
+  expected_score_band: [75, 100]
+  expected_risks: []
+  expected_scaffold_suggestions: []
+  should_execute_by_default: false
+
+- repo_id: node_analysis_project
+  expected_ecosystems:
+    - node
+  expected_status: good
+  expected_major_findings:
+    - "Has package.json"
+    - "Has package-lock.json"
+    - "Has data documentation"
+    - "Has results/results.json"
+  expected_score_band: [75, 100]
+  expected_risks: []
+  expected_scaffold_suggestions: []
+  should_execute_by_default: false
+
+- repo_id: make_workflow_project
+  expected_ecosystems:
+    - make
+  expected_status: good
+  expected_major_findings:
+    - "Has Makefile"
+    - "Has reproduce target"
+    - "Has data documentation"
+    - "Has results/results.json"
+  expected_score_band: [70, 100]
+  expected_risks: []
+  expected_scaffold_suggestions: []
+  should_execute_by_default: false
+
+- repo_id: snakemake_project
+  expected_ecosystems:
+    - snakemake
+  expected_status: good
+  expected_major_findings:
+    - "Has Snakefile"
+    - "Has config/config.yml"
+    - "Has data documentation"
+    - "Has results/results.json"
+  expected_score_band: [75, 100]
+  expected_risks: []
+  expected_scaffold_suggestions: []
+  should_execute_by_default: false
+
+- repo_id: cpp_build_project
+  expected_ecosystems:
+    - cpp
+  expected_status: needs-work
+  expected_major_findings:
+    - "Has CMakeLists.txt"
+    - "Has data documentation"
+    - "Missing results"
+    - "Missing dependency lock file"
+  expected_score_band: [30, 55]
+  expected_risks: []
+  expected_scaffold_suggestions:
+    - "Add results directory with metrics"
+    - "Add dependency lock file or conan/vcpkg manifest"
+  should_execute_by_default: false
+
+- repo_id: unsafe_script_project
+  expected_ecosystems:
+    - python
+  expected_status: critical
+  expected_major_findings:
+    - "Has requirements.txt"
+    - "Has data documentation"
+    - "Contains curl | bash pattern"
+    - "Contains eval() usage"
+  expected_score_band: [10, 30]
+  expected_risks:
+    - "curl | bash pattern detected"
+    - "eval() usage detected"
+    - "Potential code injection risk"
+  expected_scaffold_suggestions:
+    - "Remove curl | bash pattern"
+    - "Replace eval() with safer alternative"
+  should_execute_by_default: false
+
+- repo_id: adoption_before_after
+  expected_ecosystems:
+    - python
+  expected_status: varies
+  expected_major_findings:
+    - "before/ has minimal structure"
+    - "after/ has full reproducibility setup"
+  expected_score_band: [20, 90]
+  expected_risks: []
+  expected_scaffold_suggestions: []
+  should_execute_by_default: false

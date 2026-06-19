@@ -1,0 +1,10 @@
+{
+  "analysis": "time_series_decomposition",
+  "dataset": "synthetic_timeseries",
+  "results": {
+    "trend_slope": 0.05,
+    "seasonal_amplitude": 1.2,
+    "residual_std": 0.3
+  },
+  "timestamp": "2026-06-19T00:00:00Z"
+}

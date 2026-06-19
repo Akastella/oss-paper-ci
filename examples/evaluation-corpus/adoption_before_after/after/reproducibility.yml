@@ -1,0 +1,16 @@
+# Reproducibility configuration
+version: 1
+profile: default
+
+environment:
+  python: "3.10"
+  requirements: requirements.txt
+
+data:
+  description: "Synthetic dataset for testing"
+  availability: "Included in repository"
+
+results:
+  metrics:
+    - name: accuracy
+      path: results/metrics.json

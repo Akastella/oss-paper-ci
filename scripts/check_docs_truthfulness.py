@@ -50,6 +50,231 @@ OLD_ROUND_REFERENCE = re.compile(
     r"(round[3-7]|ROUND[3-7]|FINAL_DELIVERABLES_ROUND|RED_TEAM_AUDIT_ROUND)"
 )
 
+# --- Evaluation check functions ---
+
+def check_eval_command_exists(root: Path) -> list[dict]:
+    """Check that eval CLI command is documented."""
+    issues = []
+    cli_path = root / "src" / "oss_paper_ci" / "cli.py"
+    if cli_path.exists():
+        content = cli_path.read_text(encoding="utf-8")
+        if "eval" not in content:
+            issues.append({
+                "file": "src/oss_paper_ci/cli.py",
+                "line": 0,
+                "severity": "major",
+                "rule": "eval-command-missing",
+                "message": "eval command not found in cli.py",
+            })
+    return issues
+
+
+def check_eval_corpus_exists(root: Path) -> list[dict]:
+    """Check that evaluation corpus directory exists."""
+    issues = []
+    corpus_dir = root / "examples" / "evaluation-corpus"
+    if not corpus_dir.exists():
+        issues.append({
+            "file": "examples/evaluation-corpus",
+            "line": 0,
+            "severity": "major",
+            "rule": "eval-corpus-missing",
+            "message": "examples/evaluation-corpus/ not found",
+        })
+    elif not (corpus_dir / "README.md").exists():
+        issues.append({
+            "file": "examples/evaluation-corpus/README.md",
+            "line": 0,
+            "severity": "major",
+            "rule": "eval-corpus-readme-missing",
+            "message": "evaluation-corpus/README.md not found",
+        })
+    return issues
+
+
+def check_expected_outcomes_exists(root: Path) -> list[dict]:
+    """Check that expected_outcomes.yml exists."""
+    issues = []
+    outcomes = root / "examples" / "evaluation-corpus" / "expected_outcomes.yml"
+    if not outcomes.exists():
+        issues.append({
+            "file": "examples/evaluation-corpus/expected_outcomes.yml",
+            "line": 0,
+            "severity": "major",
+            "rule": "expected-outcomes-missing",
+            "message": "expected_outcomes.yml not found",
+        })
+    return issues
+
+
+def check_eval_reports_exist(root: Path) -> list[dict]:
+    """Check that evaluation reports exist."""
+    issues = []
+    reports_dir = root / "examples" / "reports"
+    required = ["evaluation_summary.json", "evaluation_summary.md", "evaluation_summary.html"]
+    for report in required:
+        if not (reports_dir / report).exists():
+            issues.append({
+                "file": f"examples/reports/{report}",
+                "line": 0,
+                "severity": "major",
+                "rule": "eval-report-missing",
+                "message": f"{report} not found",
+            })
+    return issues
+
+
+def check_no_corpus_overclaim(root: Path) -> list[dict]:
+    """Check docs don't claim corpus represents all real repos."""
+    issues = []
+    docs_to_check = [
+        "README.md", "README.zh-CN.md", "README.ja.md",
+        "docs/evaluation.md", "docs/evaluation-corpus.md",
+        "docs/benchmark-methodology.md",
+    ]
+
+    overclaim_patterns = [
+        "represent all",
+        "covers all",
+        "exhaustive",
+        "comprehensive coverage of all",
+        "all real-world",
+        "all scientific",
+    ]
+
+    for doc_path in docs_to_check:
+        path = root / doc_path
+        if path.exists():
+            content = path.read_text(encoding="utf-8").lower()
+            for pattern in overclaim_patterns:
+                if pattern in content:
+                    issues.append({
+                        "file": doc_path,
+                        "line": 0,
+                        "severity": "major",
+                        "rule": "corpus-overclaim",
+                        "message": f"{doc_path} contains overclaim: '{pattern}'",
+                    })
+    return issues
+
+
+def check_no_correctness_claim(root: Path) -> list[dict]:
+    """Check docs don't claim benchmark proves scientific correctness."""
+    issues = []
+    docs_to_check = [
+        "README.md", "README.zh-CN.md", "README.ja.md",
+        "docs/evaluation.md", "docs/benchmark-methodology.md",
+    ]
+
+    correctness_patterns = [
+        "proves correctness",
+        "scientifically correct",
+        "validates scientific",
+        "proves the paper",
+        "confirms the results are correct",
+    ]
+
+    for doc_path in docs_to_check:
+        path = root / doc_path
+        if path.exists():
+            content = path.read_text(encoding="utf-8").lower()
+            for pattern in correctness_patterns:
+                if pattern in content:
+                    issues.append({
+                        "file": doc_path,
+                        "line": 0,
+                        "severity": "blocker",
+                        "rule": "correctness-claim",
+                        "message": f"{doc_path} claims correctness: '{pattern}'",
+                    })
+    return issues
+
+
+def check_i18n_eval_section(root: Path) -> list[dict]:
+    """Check that i18n READMEs have eval section."""
+    issues = []
+    readmes = {
+        "zh-CN": "README.zh-CN.md",
+        "ja": "README.ja.md",
+    }
+
+    for lang, readme_name in readmes.items():
+        path = root / readme_name
+        if path.exists():
+            content = path.read_text(encoding="utf-8")
+            if lang == "zh-CN":
+                if "评估" not in content and "eval" not in content.lower():
+                    issues.append({
+                        "file": readme_name,
+                        "line": 0,
+                        "severity": "major",
+                        "rule": "i18n-eval-section-missing",
+                        "message": f"{readme_name} missing eval section",
+                    })
+            elif lang == "ja":
+                if "評価" not in content and "eval" not in content.lower():
+                    issues.append({
+                        "file": readme_name,
+                        "line": 0,
+                        "severity": "major",
+                        "rule": "i18n-eval-section-missing",
+                        "message": f"{readme_name} missing eval section",
+                    })
+    return issues
+
+
+def check_no_absolute_paths_in_reports(root: Path) -> list[dict]:
+    """Check evaluation reports don't contain absolute paths."""
+    issues = []
+    reports_dir = root / "examples" / "reports"
+    if reports_dir.exists():
+        for report in reports_dir.glob("evaluation_*"):
+            if report.is_file():
+                content = report.read_text(encoding="utf-8")
+                if "C:\\" in content or "/home/" in content or "/Users/" in content:
+                    issues.append({
+                        "file": f"examples/reports/{report.name}",
+                        "line": 0,
+                        "severity": "major",
+                        "rule": "absolute-path-in-report",
+                        "message": f"{report.name} contains absolute paths",
+                    })
+    return issues
+
+
+def check_synthetic_fixtures_documented(root: Path) -> list[dict]:
+    """Check that synthetic fixtures have documentation."""
+    issues = []
+    corpus_readme = root / "examples" / "evaluation-corpus" / "README.md"
+    if corpus_readme.exists():
+        content = corpus_readme.read_text(encoding="utf-8").lower()
+        if "synthetic" not in content:
+            issues.append({
+                "file": "examples/evaluation-corpus/README.md",
+                "line": 0,
+                "severity": "major",
+                "rule": "synthetic-not-documented",
+                "message": "corpus README doesn't mention synthetic nature",
+            })
+    return issues
+
+
+def check_unsafe_script_not_executed(root: Path) -> list[dict]:
+    """Check that unsafe script fixture warns about not executing."""
+    issues = []
+    unsafe_readme = root / "examples" / "evaluation-corpus" / "unsafe_script_project" / "README.md"
+    if unsafe_readme.exists():
+        content = unsafe_readme.read_text(encoding="utf-8").lower()
+        if not any(word in content for word in ["not executed", "dry-run", "dry run", "testing only"]):
+            issues.append({
+                "file": "examples/evaluation-corpus/unsafe_script_project/README.md",
+                "line": 0,
+                "severity": "major",
+                "rule": "unsafe-script-no-warning",
+                "message": "unsafe_script_project README doesn't warn about execution",
+            })
+    return issues
+
 # CLI commands that oss-paper-ci supports
 VALID_CLI_COMMANDS = {
     "scan", "init", "explain", "version", "list-checks",
@@ -57,7 +282,7 @@ VALID_CLI_COMMANDS = {
     "config", "diff", "rules", "validate-contract",
     "reproduce", "capsule", "guide", "dossier", "ecosystems", "data", "results",
     "wizard", "workbench", "theme",
-    "adopt", "scaffold", "fix",
+    "adopt", "scaffold", "fix", "eval",
 }
 
 # Files that exist in the project
@@ -342,6 +567,18 @@ def scan_project(root: Path) -> list[dict]:
                 "rule": "missing-doc",
                 "message": f"Required doc file missing: {doc}",
             })
+
+    # Evaluation checks
+    all_issues.extend(check_eval_command_exists(root))
+    all_issues.extend(check_eval_corpus_exists(root))
+    all_issues.extend(check_expected_outcomes_exists(root))
+    all_issues.extend(check_eval_reports_exist(root))
+    all_issues.extend(check_no_corpus_overclaim(root))
+    all_issues.extend(check_no_correctness_claim(root))
+    all_issues.extend(check_i18n_eval_section(root))
+    all_issues.extend(check_no_absolute_paths_in_reports(root))
+    all_issues.extend(check_synthetic_fixtures_documented(root))
+    all_issues.extend(check_unsafe_script_not_executed(root))
 
     return all_issues
 

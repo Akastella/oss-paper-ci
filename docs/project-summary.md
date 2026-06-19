@@ -17,6 +17,7 @@ OSS-Paper-CI provides a structured, automated approach to reproducibility eviden
 - **Workspace batch scanning** for checking multiple projects from a single configuration
 - **Multi-language ecosystem detection** for Python, R, Julia, MATLAB/Octave, Node, Rust, Java, C/C++, Snakemake, Nextflow, Make, and shell
 - **Terminal workbench** that orchestrates multiple analysis steps with progress display
+- **Evaluation corpus** with 12+ synthetic-but-realistic test repositories for output stability verification
 
 ## Safety boundary
 

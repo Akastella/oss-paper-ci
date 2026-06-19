@@ -1,0 +1,10 @@
+{
+  "analysis": "workflow_output",
+  "dataset": "synthetic_workflow",
+  "results": {
+    "steps_completed": 3,
+    "status": "success",
+    "output_value": 78.5
+  },
+  "timestamp": "2026-06-19T00:00:00Z"
+}

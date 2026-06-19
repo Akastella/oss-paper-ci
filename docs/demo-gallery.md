@@ -63,6 +63,20 @@ Example reports and outputs from oss-paper-ci.
 - [demo-paper-repo](../examples/demo-paper-repo/) — minimal paper repository
 - [demo-reproduce-repo](../examples/demo-reproduce-repo/) — reproduction target
 
+## Evaluation Reports
+
+| Report | Format | Description |
+|--------|--------|-------------|
+| [Evaluation Summary (JSON)](../examples/reports/evaluation_summary.json) | JSON | Full evaluation results |
+| [Evaluation Summary (Markdown)](../examples/reports/evaluation_summary.md) | Markdown | Human-readable summary |
+| [Evaluation Summary (HTML)](../examples/reports/evaluation_summary.html) | HTML | Single-file HTML report |
+
+## Example Repositories
+
+- [demo-paper-repo](../examples/demo-paper-repo/) — minimal paper repository
+- [demo-reproduce-repo](../examples/demo-reproduce-repo/) — reproduction target
+- [evaluation-corpus](../examples/evaluation-corpus/) — 12+ synthetic test repositories
+
 ## Example Workflows
 
 - [examples/github-actions/](../examples/github-actions/) — 20+ workflow templates
