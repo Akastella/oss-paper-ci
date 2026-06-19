@@ -398,6 +398,44 @@ def main(argv: list[str] | None = None) -> int:
     fix_apply.add_argument("--yes", action="store_true", help="Confirm apply without prompt.")
     fix_apply.add_argument("--force", action="store_true", help="Overwrite existing files.")
 
+    # quickstart command
+    qs = subparsers.add_parser(
+        "quickstart",
+        help="Show recommended first steps for new users.",
+    )
+    qs.add_argument(
+        "--format",
+        choices=["text", "markdown", "json"],
+        default="text",
+        help="Output format (default: text).",
+    )
+    qs.add_argument(
+        "--topic",
+        choices=["install", "github-action", "reproduce", "eval"],
+        help="Show topic-specific guidance.",
+    )
+
+    # try-demo command
+    td = subparsers.add_parser(
+        "try-demo",
+        help="Run a self-contained demo using built-in examples.",
+    )
+    td.add_argument(
+        "--format",
+        choices=["text", "markdown", "json"],
+        default="text",
+        help="Output format (default: text).",
+    )
+    td.add_argument(
+        "--output",
+        help="Write output to file.",
+    )
+    td.add_argument(
+        "--plain",
+        action="store_true",
+        help="Plain text output (no colors).",
+    )
+
     args, remaining = parser.parse_known_args(argv)
 
     # Resolve output mode from global flags
@@ -540,6 +578,12 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.command == "eval":
         return _cmd_eval(args)
+
+    if args.command == "quickstart":
+        return _cmd_quickstart(args)
+
+    if args.command == "try-demo":
+        return _cmd_try_demo(args)
 
     parser.print_help()
     return 0
@@ -2992,5 +3036,346 @@ def _cmd_eval_compare(
         print(f"Comparison written to {output}")
     else:
         print(text)
+
+    return 0
+
+
+# ── Quickstart command ─────────────────────────────────────────────────────
+
+def _cmd_quickstart(args: argparse.Namespace) -> int:
+    """Handle quickstart command."""
+    topic = getattr(args, "topic", None)
+    fmt = getattr(args, "format", "text")
+
+    # Detect current directory state
+    cwd = Path.cwd()
+    has_git = (cwd / ".git").exists()
+    has_readme = (cwd / "README.md").exists()
+    has_scripts = (cwd / "scripts").exists()
+    has_pyproject = (cwd / "pyproject.toml").exists()
+    has_requirements = (cwd / "requirements.txt").exists()
+
+    is_repo = has_git and has_readme
+    is_empty = not any([has_git, has_readme, has_scripts, has_pyproject])
+
+    if topic == "install":
+        lines = _quickstart_install()
+    elif topic == "github-action":
+        lines = _quickstart_github_action()
+    elif topic == "reproduce":
+        lines = _quickstart_reproduce()
+    elif topic == "eval":
+        lines = _quickstart_eval()
+    elif is_empty:
+        lines = _quickstart_empty_dir()
+    elif is_repo:
+        lines = _quickstart_repo()
+    else:
+        lines = _quickstart_general()
+
+    if fmt == "json":
+        import json
+        output = {"topic": topic, "recommendations": lines}
+        print(json.dumps(output, indent=2))
+    elif fmt == "markdown":
+        print("\n".join(lines))
+    else:
+        print("\n".join(lines))
+
+    return 0
+
+
+def _quickstart_install() -> list[str]:
+    """Installation quickstart."""
+    return [
+        "# Installation",
+        "",
+        "## From GitHub (recommended)",
+        "",
+        "```bash",
+        "git clone https://github.com/Akastella/oss-paper-ci.git",
+        "cd oss-paper-ci",
+        "pip install -e .",
+        "```",
+        "",
+        "## From wheel (if you have a .whl file)",
+        "",
+        "```bash",
+        "# After building: python -m build",
+        "pip install dist/oss_paper_ci-*.whl",
+        "```",
+        "",
+        "## Verify installation",
+        "",
+        "```bash",
+        "oss-paper-ci version",
+        "oss-paper-ci quickstart",
+        "```",
+        "",
+        "See docs/installation.md for pipx, uv, and more options.",
+    ]
+
+
+def _quickstart_github_action() -> list[str]:
+    """GitHub Action quickstart."""
+    return [
+        "# GitHub Actions Integration",
+        "",
+        "Add to your workflow (.github/workflows/ci.yml):",
+        "",
+        "```yaml",
+        "name: Reproducibility Check",
+        "on: [push, pull_request]",
+        "jobs:",
+        "  check:",
+        "    runs-on: ubuntu-latest",
+        "    steps:",
+        "      - uses: actions/checkout@v4",
+        "      - uses: Akastella/oss-paper-ci@v2",
+        "        with:",
+        "          profile: default",
+        "```",
+        "",
+        "See docs/github-actions.md for more options.",
+    ]
+
+
+def _quickstart_reproduce() -> list[str]:
+    """Reproduction quickstart."""
+    return [
+        "# Reproduction",
+        "",
+        "## Dry-run (safe, no code executed)",
+        "",
+        "```bash",
+        "oss-paper-ci reproduce . --dry-run",
+        "```",
+        "",
+        "## Execute with capsule",
+        "",
+        "```bash",
+        "oss-paper-ci reproduce . --execute --capsule out.zip",
+        "```",
+        "",
+        "See docs/reproduce.md for details.",
+    ]
+
+
+def _quickstart_eval() -> list[str]:
+    """Evaluation quickstart."""
+    return [
+        "# Evaluation",
+        "",
+        "Run the built-in evaluation corpus:",
+        "",
+        "```bash",
+        "oss-paper-ci eval run examples/evaluation-corpus --format markdown",
+        "```",
+        "",
+        "Compare against baseline:",
+        "",
+        "```bash",
+        "oss-paper-ci eval compare \\",
+        "  --baseline tests/golden/evaluation_summary.json \\",
+        "  --current result.json",
+        "```",
+        "",
+        "See docs/evaluation.md for details.",
+    ]
+
+
+def _quickstart_empty_dir() -> list[str]:
+    """Quickstart for empty directory."""
+    return [
+        "# Welcome to oss-paper-ci!",
+        "",
+        "This directory appears to be empty. Here's how to get started:",
+        "",
+        "## 1. Try the built-in demo",
+        "",
+        "```bash",
+        "oss-paper-ci try-demo",
+        "```",
+        "",
+        "## 2. Create a new reproducible project",
+        "",
+        "```bash",
+        "oss-paper-ci scaffold .",
+        "```",
+        "",
+        "## 3. Scan an existing repository",
+        "",
+        "```bash",
+        "oss-paper-ci scan /path/to/your/repo",
+        "```",
+        "",
+        "Run `oss-paper-ci quickstart --topic install` for installation help.",
+    ]
+
+
+def _quickstart_repo() -> list[str]:
+    """Quickstart for existing repo."""
+    return [
+        "# Quick Start for This Repository",
+        "",
+        "This looks like a scientific repository. Here's what to try:",
+        "",
+        "## 1. Scan for reproducibility",
+        "",
+        "```bash",
+        "oss-paper-ci scan .",
+        "```",
+        "",
+        "## 2. Full pipeline with progress",
+        "",
+        "```bash",
+        "oss-paper-ci workbench .",
+        "```",
+        "",
+        "## 3. Get an adoption plan",
+        "",
+        "```bash",
+        "oss-paper-ci adopt .",
+        "```",
+        "",
+        "## 4. Safe reproduction attempt",
+        "",
+        "```bash",
+        "oss-paper-ci reproduce . --dry-run",
+        "```",
+        "",
+        "Run `oss-paper-ci wizard` for guided recommendations.",
+    ]
+
+
+def _quickstart_general() -> list[str]:
+    """General quickstart."""
+    return [
+        "# Quick Start",
+        "",
+        "## 1. Try the built-in demo",
+        "",
+        "```bash",
+        "oss-paper-ci try-demo",
+        "```",
+        "",
+        "## 2. Scan a repository",
+        "",
+        "```bash",
+        "oss-paper-ci scan .",
+        "```",
+        "",
+        "## 3. Get guided help",
+        "",
+        "```bash",
+        "oss-paper-ci wizard",
+        "oss-paper-ci guide --role author",
+        "```",
+        "",
+        "Run `oss-paper-ci quickstart --topic` for specific guidance.",
+    ]
+
+
+# ── Try-demo command ───────────────────────────────────────────────────────
+
+def _cmd_try_demo(args: argparse.Namespace) -> int:
+    """Handle try-demo command."""
+    import json
+    import subprocess
+
+    fmt = getattr(args, "format", "text")
+    output_file = getattr(args, "output", None)
+    plain = getattr(args, "plain", False)
+
+    # Find built-in demos
+    root = Path(__file__).parent.parent.parent
+    demo_paper = root / "examples" / "demo-paper-repo"
+    demo_reproduce = root / "demo-reproduce-repo"
+    eval_corpus = root / "examples" / "evaluation-corpus"
+
+    results = []
+    results.append("# oss-paper-ci Demo")
+    results.append("")
+    results.append("Running built-in demos...")
+    results.append("")
+
+    # Step 1: Scan demo-paper-repo
+    if demo_paper.exists():
+        results.append("## Step 1: Scan demo-paper-repo")
+        results.append("")
+        try:
+            scan_result = subprocess.run(
+                ["oss-paper-ci", "scan", str(demo_paper), "--format", "json", "--no-color"],
+                capture_output=True, text=True, timeout=60,
+            )
+            if scan_result.returncode in (0, 2):
+                data = json.loads(scan_result.stdout)
+                score = data.get("summary", {}).get("score", "N/A")
+                status = data.get("summary", {}).get("status", "N/A")
+                results.append(f"Score: {score}, Status: {status}")
+            else:
+                results.append("Scan completed (check output for details)")
+        except Exception as e:
+            results.append(f"Scan note: {e}")
+        results.append("")
+
+    # Step 2: Reproduce demo-reproduce-repo (dry-run)
+    if demo_reproduce.exists():
+        results.append("## Step 2: Reproduce demo-reproduce-repo (dry-run)")
+        results.append("")
+        try:
+            repro_result = subprocess.run(
+                ["oss-paper-ci", "reproduce", str(demo_reproduce), "--dry-run", "--format", "json", "--no-color"],
+                capture_output=True, text=True, timeout=60,
+            )
+            if repro_result.returncode == 0:
+                results.append("Dry-run reproduction completed successfully")
+            else:
+                results.append("Reproduction dry-run completed (check output for details)")
+        except Exception as e:
+            results.append(f"Reproduction note: {e}")
+        results.append("")
+
+    # Step 3: Eval run
+    if eval_corpus.exists():
+        results.append("## Step 3: Evaluation corpus")
+        results.append("")
+        try:
+            eval_result = subprocess.run(
+                ["oss-paper-ci", "eval", "run", str(eval_corpus), "--format", "json", "--no-color"],
+                capture_output=True, text=True, timeout=120,
+            )
+            if eval_result.returncode == 0:
+                data = json.loads(eval_result.stdout)
+                total = data.get("total_repos", 0)
+                summary = data.get("summary", {})
+                results.append(f"Evaluated {total} repos: {summary}")
+            else:
+                results.append("Evaluation completed (check output for details)")
+        except Exception as e:
+            results.append(f"Evaluation note: {e}")
+        results.append("")
+
+    # Next steps
+    results.append("## Next Steps")
+    results.append("")
+    results.append("- `oss-paper-ci scan .` - scan your own repository")
+    results.append("- `oss-paper-ci wizard` - guided recommendations")
+    results.append("- `oss-paper-ci quickstart --topic install` - installation help")
+    results.append("- See docs/ for full documentation")
+
+    output_text = "\n".join(results)
+
+    # Write to file if requested
+    if output_file:
+        out_path = Path(output_file)
+        out_path.parent.mkdir(parents=True, exist_ok=True)
+        out_path.write_text(output_text, encoding="utf-8")
+        if fmt == "text" and not plain:
+            print(f"Demo output written to {output_file}")
+        else:
+            print(output_text)
+    else:
+        print(output_text)
 
     return 0

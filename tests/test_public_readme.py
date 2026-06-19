@@ -23,7 +23,7 @@ class TestReadmeStructure:
     def test_readme_has_quickstart(self):
         """README should have a quickstart section."""
         content = (ROOT / "README.md").read_text(encoding="utf-8")
-        assert "## Install" in content or "## Quickstart" in content
+        assert "## Install" in content or "## Quickstart" in content or "## Quick start" in content
 
     def test_readme_has_three_commands(self):
         """README should show three useful commands."""

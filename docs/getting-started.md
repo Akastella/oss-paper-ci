@@ -1,5 +1,32 @@
 # Getting Started
 
+## Quick Install
+
+```bash
+# Clone and install
+git clone https://github.com/Akastella/oss-paper-ci.git
+cd oss-paper-ci
+pip install -e .
+
+# Verify
+oss-paper-ci version
+```
+
+> **Note:** oss-paper-ci is not yet published on PyPI.
+
+## First Steps
+
+```bash
+# Get recommendations
+oss-paper-ci quickstart
+
+# Run the demo
+oss-paper-ci try-demo
+
+# Scan your project
+oss-paper-ci scan .
+```
+
 ## Install
 
 ```bash

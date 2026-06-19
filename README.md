@@ -21,25 +21,36 @@ oss-paper-ci reproduce examples/demo-reproduce-repo --dry-run
 
 OSS-Paper-CI records and explains reproducibility evidence. It does not prove scientific correctness, judge paper quality, or predict acceptance.
 
-## Quickstart
+## Quick start
 
 ```bash
-# Install
+# 1. Install from GitHub
 git clone https://github.com/Akastella/oss-paper-ci.git
 cd oss-paper-ci
-pip install -e ".[dev]"
+pip install -e .
 
-# Get guided recommendations
-oss-paper-ci wizard
+# 2. Try it in 60 seconds
+oss-paper-ci try-demo
 
-# Run the full pipeline
-oss-paper-ci workbench .
-
-# Score a repository
+# 3. Scan your repository
 oss-paper-ci scan .
+```
 
-# Safe reproduction attempt
-oss-paper-ci reproduce examples/demo-reproduce-repo --dry-run
+**Alternative install methods:** See [Installation](docs/installation.md) for pipx, wheel, and source options.
+
+> **Note:** oss-paper-ci is not yet published on PyPI. Install from GitHub source.
+
+## First run
+
+```bash
+# Get personalized recommendations
+oss-paper-ci quickstart
+
+# Topic-specific guidance
+oss-paper-ci quickstart --topic install
+oss-paper-ci quickstart --topic github-action
+oss-paper-ci quickstart --topic reproduce
+oss-paper-ci quickstart --topic eval
 ```
 
 ## Evaluation

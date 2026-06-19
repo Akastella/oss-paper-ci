@@ -24,22 +24,33 @@ OSS-Paper-CI は再現性の証拠を記録し説明します。科学的正し�
 ## クイックスタート
 
 ```bash
-# インストール
+# 1. GitHub からインストール
 git clone https://github.com/Akastella/oss-paper-ci.git
 cd oss-paper-ci
-pip install -e ".[dev]"
+pip install -e .
 
-# ガイド付き推奨事項を取得
-oss-paper-ci wizard
+# 2. 60秒で試す
+oss-paper-ci try-demo
 
-# フルパイプラインを実行
-oss-paper-ci workbench .
-
-# リポジトリをスキャン
+# 3. リポジトリをスキャン
 oss-paper-ci scan .
+```
 
-# 安全な再現試行
-oss-paper-ci reproduce examples/demo-reproduce-repo --dry-run
+**他のインストール方法：** pipx、wheel、ソースインストールの詳細は [インストール](docs/installation.md) を参照。
+
+> **注意：** oss-paper-ci はまだ PyPI で公開されていません。GitHub ソースからインストールしてください。
+
+## 初回実行
+
+```bash
+# パーソナライズされた推奨事項を取得
+oss-paper-ci quickstart
+
+# トピック別のガイダンス
+oss-paper-ci quickstart --topic install
+oss-paper-ci quickstart --topic github-action
+oss-paper-ci quickstart --topic reproduce
+oss-paper-ci quickstart --topic eval
 ```
 
 ## 評価

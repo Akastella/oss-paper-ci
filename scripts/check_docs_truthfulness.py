@@ -275,6 +275,153 @@ def check_unsafe_script_not_executed(root: Path) -> list[dict]:
             })
     return issues
 
+
+# --- Distribution check functions ---
+
+def check_quickstart_command_exists(root: Path) -> list[dict]:
+    """Check that quickstart CLI command is documented."""
+    issues = []
+    cli_path = root / "src" / "oss_paper_ci" / "cli.py"
+    if cli_path.exists():
+        content = cli_path.read_text(encoding="utf-8")
+        if "quickstart" not in content:
+            issues.append({
+                "file": "src/oss_paper_ci/cli.py",
+                "line": 0,
+                "severity": "major",
+                "rule": "quickstart-command-missing",
+                "message": "quickstart command not found in cli.py",
+            })
+    return issues
+
+
+def check_try_demo_command_exists(root: Path) -> list[dict]:
+    """Check that try-demo CLI command is documented."""
+    issues = []
+    cli_path = root / "src" / "oss_paper_ci" / "cli.py"
+    if cli_path.exists():
+        content = cli_path.read_text(encoding="utf-8")
+        if "try-demo" not in content:
+            issues.append({
+                "file": "src/oss_paper_ci/cli.py",
+                "line": 0,
+                "severity": "major",
+                "rule": "try-demo-command-missing",
+                "message": "try-demo command not found in cli.py",
+            })
+    return issues
+
+
+def check_dockerfile_docs(root: Path) -> list[dict]:
+    """Check that Dockerfile has corresponding docs."""
+    issues = []
+    if (root / "Dockerfile").exists():
+        if not (root / "docs" / "docker.md").exists():
+            issues.append({
+                "file": "docs/",
+                "line": 0,
+                "severity": "major",
+                "rule": "docker-docs-missing",
+                "message": "Dockerfile exists but docs/docker.md missing",
+            })
+    return issues
+
+
+def check_devcontainer_docs(root: Path) -> list[dict]:
+    """Check that devcontainer has corresponding docs."""
+    issues = []
+    if (root / ".devcontainer" / "devcontainer.json").exists():
+        if not (root / "docs" / "devcontainer.md").exists():
+            issues.append({
+                "file": "docs/",
+                "line": 0,
+                "severity": "major",
+                "rule": "devcontainer-docs-missing",
+                "message": "devcontainer exists but docs/devcontainer.md missing",
+            })
+    return issues
+
+
+def check_install_smoke_workflow(root: Path) -> list[dict]:
+    """Check that install-smoke workflow exists."""
+    issues = []
+    workflow = root / ".github" / "workflows" / "install-smoke.yml"
+    if not workflow.exists():
+        issues.append({
+            "file": ".github/workflows/",
+            "line": 0,
+            "severity": "major",
+            "rule": "install-smoke-missing",
+            "message": "install-smoke.yml workflow not found",
+        })
+    return issues
+
+
+def check_no_pypi_published_claim(root: Path) -> list[dict]:
+    """Check that docs don't claim PyPI is published."""
+    issues = []
+    docs_to_check = [
+        "README.md", "README.zh-CN.md", "README.ja.md",
+        "docs/installation.md",
+    ]
+
+    pypi_published_patterns = [
+        "published on pypi",
+        "available on pypi",
+        "install from pypi",
+        "pip install oss-paper-ci",  # Without "after PyPI" qualifier
+    ]
+
+    for doc_path in docs_to_check:
+        path = root / doc_path
+        if path.exists():
+            content = path.read_text(encoding="utf-8").lower()
+            for pattern in pypi_published_patterns:
+                if pattern in content:
+                    # Check if it has proper qualifier
+                    if "after pypi" not in content and "not yet" not in content:
+                        issues.append({
+                            "file": doc_path,
+                            "line": 0,
+                            "severity": "blocker",
+                            "rule": "pypi-claim-without-qualifier",
+                            "message": f"{doc_path} claims PyPI without 'after PyPI' qualifier",
+                        })
+
+    return issues
+
+
+def check_no_docker_hub_claim(root: Path) -> list[dict]:
+    """Check that docs don't claim Docker Hub publishing."""
+    issues = []
+    docs_to_check = [
+        "README.md", "README.zh-CN.md", "README.ja.md",
+        "docs/docker.md",
+    ]
+
+    docker_hub_patterns = [
+        "docker hub",
+        "docker pull",
+        "published to docker",
+    ]
+
+    for doc_path in docs_to_check:
+        path = root / doc_path
+        if path.exists():
+            content = path.read_text(encoding="utf-8").lower()
+            for pattern in docker_hub_patterns:
+                if pattern in content:
+                    issues.append({
+                        "file": doc_path,
+                        "line": 0,
+                        "severity": "blocker",
+                        "rule": "docker-hub-claim",
+                        "message": f"{doc_path} claims Docker Hub publishing",
+                    })
+
+    return issues
+
+
 # CLI commands that oss-paper-ci supports
 VALID_CLI_COMMANDS = {
     "scan", "init", "explain", "version", "list-checks",
@@ -283,6 +430,7 @@ VALID_CLI_COMMANDS = {
     "reproduce", "capsule", "guide", "dossier", "ecosystems", "data", "results",
     "wizard", "workbench", "theme",
     "adopt", "scaffold", "fix", "eval",
+    "quickstart", "try-demo",
 }
 
 # Files that exist in the project
@@ -579,6 +727,15 @@ def scan_project(root: Path) -> list[dict]:
     all_issues.extend(check_no_absolute_paths_in_reports(root))
     all_issues.extend(check_synthetic_fixtures_documented(root))
     all_issues.extend(check_unsafe_script_not_executed(root))
+
+    # Distribution checks
+    all_issues.extend(check_quickstart_command_exists(root))
+    all_issues.extend(check_try_demo_command_exists(root))
+    all_issues.extend(check_dockerfile_docs(root))
+    all_issues.extend(check_devcontainer_docs(root))
+    all_issues.extend(check_install_smoke_workflow(root))
+    all_issues.extend(check_no_pypi_published_claim(root))
+    all_issues.extend(check_no_docker_hub_claim(root))
 
     return all_issues
 
