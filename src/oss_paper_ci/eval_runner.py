@@ -96,11 +96,32 @@ def detect_ecosystems(repo_path: Path) -> list[str]:
     return ecosystems
 
 
+def _normalize_path(path: Path) -> str:
+    """Convert absolute path to relative, removing machine-specific prefixes."""
+    path_str = str(path)
+    # Remove Windows drive letters
+    if len(path_str) > 1 and path_str[1] == ":":
+        path_str = path_str[2:]
+    # Remove common absolute path prefixes
+    for prefix in ["/home/runner/work/", "/home/", "/Users/", "/tmp/", "\\Users\\"]:
+        idx = path_str.find(prefix)
+        if idx != -1:
+            # Find the project-relative part
+            remainder = path_str[idx + len(prefix):]
+            # Skip the workspace directory name (e.g., "oss-paper-ci/oss-paper-ci/")
+            parts = remainder.split("/")
+            if len(parts) > 2 and parts[0] == parts[1]:
+                return "/".join(parts[1:])
+            return remainder
+    # If it's already relative or unknown format, return as-is
+    return path_str
+
+
 def evaluate_repo(repo_path: Path, expected: dict | None = None) -> dict:
     """Evaluate a single repo against expected outcomes."""
     result: dict[str, Any] = {
         "repo_id": repo_path.name,
-        "repo_path": str(repo_path),
+        "repo_path": _normalize_path(repo_path),
         "ecosystems": detect_ecosystems(repo_path),
         "scan_result": None,
         "expected": expected or {},
@@ -149,7 +170,7 @@ def run_evaluation(corpus_dir: Path) -> dict:
 
     results: dict[str, Any] = {
         "version": __version__,
-        "corpus_dir": str(corpus_dir),
+        "corpus_dir": _normalize_path(corpus_dir),
         "total_repos": len(repos),
         "repos": [],
         "summary": {

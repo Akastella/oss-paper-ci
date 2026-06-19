@@ -1,11 +1,221 @@
 {
   "version": "2.7.0rc1",
-  "corpus_dir": "E:\\Projects\\OSS-Paper-CI\\examples\\evaluation-corpus",
-  "total_repos": 4,
+  "corpus_dir": "\\Projects\\OSS-Paper-CI\\examples\\evaluation-corpus",
+  "total_repos": 14,
   "repos": [
     {
+      "repo_id": "adoption_before_after",
+      "repo_path": "\\Projects\\OSS-Paper-CI\\examples\\evaluation-corpus\\adoption_before_after",
+      "ecosystems": [],
+      "scan_result": {
+        "error": "Scan failed",
+        "returncode": 2
+      },
+      "expected": {
+        "repo_id": "adoption_before_after",
+        "expected_ecosystems": [
+          "python"
+        ],
+        "expected_status": "varies",
+        "expected_major_findings": [
+          "before/ has minimal structure",
+          "after/ has full reproducibility setup"
+        ],
+        "expected_score_band": [
+          20,
+          90
+        ],
+        "expected_risks": [],
+        "expected_scaffold_suggestions": [],
+        "should_execute_by_default": false
+      },
+      "comparison": {
+        "ecosystems_match": false,
+        "status_match": false,
+        "score_in_band": false
+      },
+      "status": "fail"
+    },
+    {
+      "repo_id": "before",
+      "repo_path": "\\Projects\\OSS-Paper-CI\\examples\\evaluation-corpus\\adoption_before_after\\before",
+      "ecosystems": [],
+      "scan_result": {
+        "error": "Scan failed",
+        "returncode": 2
+      },
+      "expected": {},
+      "comparison": {},
+      "status": "evaluated"
+    },
+    {
+      "repo_id": "after",
+      "repo_path": "\\Projects\\OSS-Paper-CI\\examples\\evaluation-corpus\\adoption_before_after\\after",
+      "ecosystems": [
+        "python"
+      ],
+      "scan_result": {
+        "error": "Scan failed",
+        "returncode": 2
+      },
+      "expected": {},
+      "comparison": {},
+      "status": "evaluated"
+    },
+    {
+      "repo_id": "cpp_build_project",
+      "repo_path": "\\Projects\\OSS-Paper-CI\\examples\\evaluation-corpus\\cpp_build_project",
+      "ecosystems": [
+        "cpp"
+      ],
+      "scan_result": {
+        "error": "Scan failed",
+        "returncode": 2
+      },
+      "expected": {
+        "repo_id": "cpp_build_project",
+        "expected_ecosystems": [
+          "cpp"
+        ],
+        "expected_status": "needs-work",
+        "expected_major_findings": [
+          "Has CMakeLists.txt",
+          "Has data documentation",
+          "Missing results",
+          "Missing dependency lock file"
+        ],
+        "expected_score_band": [
+          30,
+          55
+        ],
+        "expected_risks": [],
+        "expected_scaffold_suggestions": [
+          "Add results directory with metrics",
+          "Add dependency lock file or conan/vcpkg manifest"
+        ],
+        "should_execute_by_default": false
+      },
+      "comparison": {
+        "ecosystems_match": true,
+        "status_match": false,
+        "score_in_band": false
+      },
+      "status": "partial"
+    },
+    {
+      "repo_id": "julia_project",
+      "repo_path": "\\Projects\\OSS-Paper-CI\\examples\\evaluation-corpus\\julia_project",
+      "ecosystems": [
+        "julia"
+      ],
+      "scan_result": {
+        "error": "Scan failed",
+        "returncode": 2
+      },
+      "expected": {
+        "repo_id": "julia_project",
+        "expected_ecosystems": [
+          "julia"
+        ],
+        "expected_status": "good",
+        "expected_major_findings": [
+          "Has Project.toml",
+          "Has Manifest.toml",
+          "Has data documentation",
+          "Has results/results.json"
+        ],
+        "expected_score_band": [
+          75,
+          100
+        ],
+        "expected_risks": [],
+        "expected_scaffold_suggestions": [],
+        "should_execute_by_default": false
+      },
+      "comparison": {
+        "ecosystems_match": true,
+        "status_match": false,
+        "score_in_band": false
+      },
+      "status": "partial"
+    },
+    {
+      "repo_id": "make_workflow_project",
+      "repo_path": "\\Projects\\OSS-Paper-CI\\examples\\evaluation-corpus\\make_workflow_project",
+      "ecosystems": [
+        "make"
+      ],
+      "scan_result": {
+        "error": "Scan failed",
+        "returncode": 2
+      },
+      "expected": {
+        "repo_id": "make_workflow_project",
+        "expected_ecosystems": [
+          "make"
+        ],
+        "expected_status": "good",
+        "expected_major_findings": [
+          "Has Makefile",
+          "Has reproduce target",
+          "Has data documentation",
+          "Has results/results.json"
+        ],
+        "expected_score_band": [
+          70,
+          100
+        ],
+        "expected_risks": [],
+        "expected_scaffold_suggestions": [],
+        "should_execute_by_default": false
+      },
+      "comparison": {
+        "ecosystems_match": true,
+        "status_match": false,
+        "score_in_band": false
+      },
+      "status": "partial"
+    },
+    {
+      "repo_id": "node_analysis_project",
+      "repo_path": "\\Projects\\OSS-Paper-CI\\examples\\evaluation-corpus\\node_analysis_project",
+      "ecosystems": [
+        "node"
+      ],
+      "scan_result": {
+        "error": "Scan failed",
+        "returncode": 2
+      },
+      "expected": {
+        "repo_id": "node_analysis_project",
+        "expected_ecosystems": [
+          "node"
+        ],
+        "expected_status": "good",
+        "expected_major_findings": [
+          "Has package.json",
+          "Has package-lock.json",
+          "Has data documentation",
+          "Has results/results.json"
+        ],
+        "expected_score_band": [
+          75,
+          100
+        ],
+        "expected_risks": [],
+        "expected_scaffold_suggestions": [],
+        "should_execute_by_default": false
+      },
+      "comparison": {
+        "ecosystems_match": true,
+        "status_match": false,
+        "score_in_band": false
+      },
+      "status": "partial"
+    },
+    {
       "repo_id": "python_bad_results",
-      "repo_path": "E:\\Projects\\OSS-Paper-CI\\examples\\evaluation-corpus\\python_bad_results",
+      "repo_path": "\\Projects\\OSS-Paper-CI\\examples\\evaluation-corpus\\python_bad_results",
       "ecosystems": [
         "python"
       ],
@@ -14,7 +224,7 @@
         "tool": "oss-paper-ci",
         "version": "2.7.0rc1",
         "metadata": {
-          "generated_at": "2026-06-19T00:52:31.707337+00:00",
+          "generated_at": "2026-06-19T10:31:18.405948+00:00",
           "scanned_files": 7,
           "ignored_paths": [
             ".git",
@@ -378,7 +588,7 @@
             "status": "pass",
             "message": "Found data privacy or licensing information.",
             "evidence": [
-              "README.md (license, synthetic)",
+              "README.md (synthetic, license)",
               "data/README.md"
             ],
             "recommendation": ""
@@ -604,7 +814,7 @@
     },
     {
       "repo_id": "python_good_repro",
-      "repo_path": "E:\\Projects\\OSS-Paper-CI\\examples\\evaluation-corpus\\python_good_repro",
+      "repo_path": "\\Projects\\OSS-Paper-CI\\examples\\evaluation-corpus\\python_good_repro",
       "ecosystems": [
         "python"
       ],
@@ -642,7 +852,7 @@
     },
     {
       "repo_id": "python_missing_data",
-      "repo_path": "E:\\Projects\\OSS-Paper-CI\\examples\\evaluation-corpus\\python_missing_data",
+      "repo_path": "\\Projects\\OSS-Paper-CI\\examples\\evaluation-corpus\\python_missing_data",
       "ecosystems": [
         "python"
       ],
@@ -651,7 +861,7 @@
         "tool": "oss-paper-ci",
         "version": "2.7.0rc1",
         "metadata": {
-          "generated_at": "2026-06-19T00:52:32.370295+00:00",
+          "generated_at": "2026-06-19T10:31:18.933176+00:00",
           "scanned_files": 6,
           "ignored_paths": [
             ".git",
@@ -1237,7 +1447,7 @@
     },
     {
       "repo_id": "python_missing_environment",
-      "repo_path": "E:\\Projects\\OSS-Paper-CI\\examples\\evaluation-corpus\\python_missing_environment",
+      "repo_path": "\\Projects\\OSS-Paper-CI\\examples\\evaluation-corpus\\python_missing_environment",
       "ecosystems": [],
       "scan_result": {
         "error": "Scan failed",
@@ -1271,13 +1481,690 @@
         "score_in_band": false
       },
       "status": "fail"
+    },
+    {
+      "repo_id": "r_repro_project",
+      "repo_path": "\\Projects\\OSS-Paper-CI\\examples\\evaluation-corpus\\r_repro_project",
+      "ecosystems": [
+        "r"
+      ],
+      "scan_result": {
+        "error": "Scan failed",
+        "returncode": 2
+      },
+      "expected": {
+        "repo_id": "r_repro_project",
+        "expected_ecosystems": [
+          "r"
+        ],
+        "expected_status": "good",
+        "expected_major_findings": [
+          "Has DESCRIPTION",
+          "Has renv.lock",
+          "Has data documentation",
+          "Has results/results.json"
+        ],
+        "expected_score_band": [
+          75,
+          100
+        ],
+        "expected_risks": [],
+        "expected_scaffold_suggestions": [],
+        "should_execute_by_default": false
+      },
+      "comparison": {
+        "ecosystems_match": true,
+        "status_match": false,
+        "score_in_band": false
+      },
+      "status": "partial"
+    },
+    {
+      "repo_id": "snakemake_project",
+      "repo_path": "\\Projects\\OSS-Paper-CI\\examples\\evaluation-corpus\\snakemake_project",
+      "ecosystems": [
+        "snakemake"
+      ],
+      "scan_result": {
+        "error": "Scan failed",
+        "returncode": 2
+      },
+      "expected": {
+        "repo_id": "snakemake_project",
+        "expected_ecosystems": [
+          "snakemake"
+        ],
+        "expected_status": "good",
+        "expected_major_findings": [
+          "Has Snakefile",
+          "Has config/config.yml",
+          "Has data documentation",
+          "Has results/results.json"
+        ],
+        "expected_score_band": [
+          75,
+          100
+        ],
+        "expected_risks": [],
+        "expected_scaffold_suggestions": [],
+        "should_execute_by_default": false
+      },
+      "comparison": {
+        "ecosystems_match": true,
+        "status_match": false,
+        "score_in_band": false
+      },
+      "status": "partial"
+    },
+    {
+      "repo_id": "unsafe_script_project",
+      "repo_path": "\\Projects\\OSS-Paper-CI\\examples\\evaluation-corpus\\unsafe_script_project",
+      "ecosystems": [
+        "python"
+      ],
+      "scan_result": {
+        "schema_version": "0.4",
+        "tool": "oss-paper-ci",
+        "version": "2.7.0rc1",
+        "metadata": {
+          "generated_at": "2026-06-19T10:31:19.969725+00:00",
+          "scanned_files": 6,
+          "ignored_paths": [
+            ".git",
+            ".venv",
+            "node_modules",
+            "__pycache__"
+          ]
+        },
+        "repository": {
+          "path": "E:\\Projects\\OSS-Paper-CI\\examples\\evaluation-corpus\\unsafe_script_project",
+          "detected_languages": [
+            "Python"
+          ],
+          "detected_project_types": [
+            "Python (pip)"
+          ]
+        },
+        "summary": {
+          "score": 90,
+          "status": "pass",
+          "counts": {
+            "info": 21,
+            "warning": 18,
+            "error": 4
+          },
+          "score_breakdown": [
+            {
+              "id": "META003",
+              "title": "Citation information exists",
+              "severity": "warning",
+              "status": "warn",
+              "deduction": 1,
+              "classification": "advisory"
+            },
+            {
+              "id": "META004",
+              "title": "Reproduction instructions exist",
+              "severity": "warning",
+              "status": "warn",
+              "deduction": 1,
+              "classification": "advisory"
+            },
+            {
+              "id": "ENV003",
+              "title": "Python version specified",
+              "severity": "warning",
+              "status": "warn",
+              "deduction": 1,
+              "classification": "advisory"
+            },
+            {
+              "id": "EXP002",
+              "title": "One-command reproduction script exists",
+              "severity": "warning",
+              "status": "warn",
+              "deduction": 1,
+              "classification": "advisory"
+            },
+            {
+              "id": "EXP003",
+              "title": "Smoke test or quickstart exists",
+              "severity": "warning",
+              "status": "warn",
+              "deduction": 1,
+              "classification": "advisory"
+            },
+            {
+              "id": "EXP004",
+              "title": "Long vs short experiment distinction",
+              "severity": "warning",
+              "status": "warn",
+              "deduction": 1,
+              "classification": "advisory"
+            },
+            {
+              "id": "EXP006",
+              "title": "Configuration files exist",
+              "severity": "warning",
+              "status": "warn",
+              "deduction": 1,
+              "classification": "advisory"
+            },
+            {
+              "id": "RES001",
+              "title": "Results directory exists",
+              "severity": "warning",
+              "status": "warn",
+              "deduction": 1,
+              "classification": "advisory"
+            },
+            {
+              "id": "CI002",
+              "title": "Tests exist",
+              "severity": "warning",
+              "status": "warn",
+              "deduction": 1,
+              "classification": "advisory"
+            },
+            {
+              "id": "CI004",
+              "title": "Issue or PR templates exist",
+              "severity": "warning",
+              "status": "warn",
+              "deduction": 1,
+              "classification": "advisory"
+            }
+          ],
+          "score_components": {
+            "readiness_score": 90,
+            "data_evidence_score": 100,
+            "execution_evidence_score": 96,
+            "artifact_evidence_score": 99,
+            "provenance_evidence_score": 98
+          }
+        },
+        "checks": [
+          {
+            "id": "META001",
+            "title": "README file exists",
+            "severity": "error",
+            "status": "pass",
+            "message": "Found README.md.",
+            "evidence": [
+              "README.md"
+            ],
+            "recommendation": ""
+          },
+          {
+            "id": "META002",
+            "title": "LICENSE file exists",
+            "severity": "error",
+            "status": "pass",
+            "message": "Found LICENSE.",
+            "evidence": [
+              "LICENSE"
+            ],
+            "recommendation": ""
+          },
+          {
+            "id": "META003",
+            "title": "Citation information exists",
+            "severity": "warning",
+            "status": "warn",
+            "message": "No citation information found.",
+            "evidence": [],
+            "recommendation": "Add a CITATION.cff file or a 'Citation' section to your README so that users know how to properly cite your work."
+          },
+          {
+            "id": "META004",
+            "title": "Reproduction instructions exist",
+            "severity": "warning",
+            "status": "warn",
+            "message": "Found reproduction keywords in README.md but no executable code blocks (```bash or ```sh).",
+            "evidence": [
+              "README.md"
+            ],
+            "recommendation": "Add executable code blocks (```bash, ```sh, or ```python) to your README so that others can copy-paste commands to reproduce your results."
+          },
+          {
+            "id": "META005",
+            "title": "Contributing guidelines exist",
+            "severity": "info",
+            "status": "warn",
+            "message": "No contributing guidelines found.",
+            "evidence": [],
+            "recommendation": "Consider adding a CONTRIBUTING.md file or an issue template to encourage community contributions."
+          },
+          {
+            "id": "META006",
+            "title": "Version or release information",
+            "severity": "info",
+            "status": "warn",
+            "message": "No version or release information found.",
+            "evidence": [],
+            "recommendation": "Add a CHANGELOG, VERSION file, or a version field in pyproject.toml so users can track releases."
+          },
+          {
+            "id": "META007",
+            "title": "Artifact metadata file exists",
+            "severity": "info",
+            "status": "warn",
+            "message": "No artifact metadata file found.",
+            "evidence": [],
+            "recommendation": "Add an artifact metadata file (e.g. artifact.yml or reproducibility.yml) to describe how to reproduce your experiments."
+          },
+          {
+            "id": "ENV001",
+            "title": "Environment specification file exists",
+            "severity": "error",
+            "status": "pass",
+            "message": "Found 1 environment specification file(s)",
+            "evidence": [
+              "requirements.txt"
+            ],
+            "recommendation": ""
+          },
+          {
+            "id": "ENV002",
+            "title": "Lock file exists",
+            "severity": "warning",
+            "status": "pass",
+            "message": "Found lock file(s): requirements.txt (pinned versions)",
+            "evidence": [
+              "requirements.txt (pinned versions)"
+            ],
+            "recommendation": ""
+          },
+          {
+            "id": "ENV003",
+            "title": "Python version specified",
+            "severity": "warning",
+            "status": "warn",
+            "message": "No Python version specification found",
+            "evidence": [],
+            "recommendation": "Specify the required Python version in pyproject.toml (requires-python), setup.cfg (python_requires), .python-version, or Pipfile."
+          },
+          {
+            "id": "ENV004",
+            "title": "System dependencies documented",
+            "severity": "info",
+            "status": "pass",
+            "message": "No system dependency documentation found",
+            "evidence": [],
+            "recommendation": "Document any system-level prerequisites (e.g. apt packages, brew packages, or OS-level libraries) in the README or a dedicated file like apt.txt or Brewfile."
+          },
+          {
+            "id": "ENV005",
+            "title": "GPU/CPU requirements documented",
+            "severity": "info",
+            "status": "pass",
+            "message": "No GPU/CPU/hardware requirements documentation found",
+            "evidence": [],
+            "recommendation": "If the project requires specific hardware (GPU, CUDA, large memory), document these requirements in the README."
+          },
+          {
+            "id": "ENV006",
+            "title": "Multiple environment files consistent",
+            "severity": "warning",
+            "status": "pass",
+            "message": "No conflicting environment file pairs detected",
+            "evidence": [],
+            "recommendation": ""
+          },
+          {
+            "id": "EXP001",
+            "title": "Experiment entry points exist",
+            "severity": "error",
+            "status": "pass",
+            "message": "Found experiment entry points.",
+            "evidence": [
+              "directory: scripts/"
+            ],
+            "recommendation": ""
+          },
+          {
+            "id": "EXP002",
+            "title": "One-command reproduction script exists",
+            "severity": "warning",
+            "status": "warn",
+            "message": "No clear single-command reproduction path found.",
+            "evidence": [],
+            "recommendation": "Add a run.sh or Makefile that reproduces the main results, or document a single command in the README."
+          },
+          {
+            "id": "EXP003",
+            "title": "Smoke test or quickstart exists",
+            "severity": "warning",
+            "status": "warn",
+            "message": "No smoke test or quickstart found.",
+            "evidence": [],
+            "recommendation": "Add a quick_start.py, smoke_test.py, or a short demo so users can verify the setup works before running the full experiment."
+          },
+          {
+            "id": "EXP004",
+            "title": "Long vs short experiment distinction",
+            "severity": "warning",
+            "status": "warn",
+            "message": "No distinction between long and short experiment runs found.",
+            "evidence": [],
+            "recommendation": "Document how to run a quick sanity-check experiment vs. the full experiment (e.g., --quick flag, separate config file, or a demo mode)."
+          },
+          {
+            "id": "EXP005",
+            "title": "Random seed setting detected",
+            "severity": "info",
+            "status": "warn",
+            "message": "No random seed setting detected in scripts/ or src/.",
+            "evidence": [],
+            "recommendation": "Set random seeds (e.g., random.seed(), np.random.seed(), torch.manual_seed()) so experiments are reproducible."
+          },
+          {
+            "id": "EXP006",
+            "title": "Configuration files exist",
+            "severity": "warning",
+            "status": "warn",
+            "message": "No configuration files or CLI argument parsing found.",
+            "evidence": [],
+            "recommendation": "Add a config file (e.g., config.yaml) or use argparse/click so experiment parameters are explicit and reproducible."
+          },
+          {
+            "id": "EXP007",
+            "title": "Notebook risk assessment",
+            "severity": "info",
+            "status": "warn",
+            "message": "No Jupyter notebooks found in the repository.",
+            "evidence": [],
+            "recommendation": ""
+          },
+          {
+            "id": "DATA001",
+            "title": "Data source documentation exists",
+            "severity": "warning",
+            "status": "pass",
+            "message": "Found data source documentation.",
+            "evidence": [
+              "README.md (data keywords)",
+              "data/",
+              "data/README.md"
+            ],
+            "recommendation": ""
+          },
+          {
+            "id": "DATA002",
+            "title": "Data download instructions exist",
+            "severity": "warning",
+            "status": "pass",
+            "message": "Found data download instructions.",
+            "evidence": [
+              "README.md (download keywords)"
+            ],
+            "recommendation": ""
+          },
+          {
+            "id": "DATA003",
+            "title": "Data categories distinguished",
+            "severity": "info",
+            "status": "warn",
+            "message": "No distinction between data categories found.",
+            "evidence": [],
+            "recommendation": "Consider organizing your data into subdirectories such as raw/, processed/, interim/, and external/ to clarify the data processing pipeline."
+          },
+          {
+            "id": "DATA004",
+            "title": "Large files not in repository",
+            "severity": "warning",
+            "status": "pass",
+            "message": "No large data files found in the repository.",
+            "evidence": [],
+            "recommendation": ""
+          },
+          {
+            "id": "DATA005",
+            "title": "Data paths in .gitignore",
+            "severity": "info",
+            "status": "warn",
+            "message": "No data-related patterns found in .gitignore.",
+            "evidence": [],
+            "recommendation": "Add data patterns to .gitignore (e.g. data/, *.csv, *.h5, *.parquet) to prevent accidental commits of large or sensitive data files."
+          },
+          {
+            "id": "DATA006",
+            "title": "Privacy and licensing for data",
+            "severity": "info",
+            "status": "pass",
+            "message": "Found data privacy or licensing information.",
+            "evidence": [
+              "README.md (license, synthetic)",
+              "data/README.md"
+            ],
+            "recommendation": ""
+          },
+          {
+            "id": "RES001",
+            "title": "Results directory exists",
+            "severity": "warning",
+            "status": "warn",
+            "message": "No results directories found.",
+            "evidence": [],
+            "recommendation": "Create a results directory (e.g. results/, output/, figures/) to store experiment outputs so reviewers can inspect them."
+          },
+          {
+            "id": "RES002",
+            "title": "Figures referenced in README exist",
+            "severity": "warning",
+            "status": "pass",
+            "message": "No figure references found in README.",
+            "evidence": [
+              "README.md"
+            ],
+            "recommendation": ""
+          },
+          {
+            "id": "RES003",
+            "title": "Results have generation scripts",
+            "severity": "info",
+            "status": "pass",
+            "message": "No results directories found; skipping generation script check.",
+            "evidence": [],
+            "recommendation": ""
+          },
+          {
+            "id": "RES004",
+            "title": "No orphan figures",
+            "severity": "info",
+            "status": "pass",
+            "message": "No image files found in the repository.",
+            "evidence": [],
+            "recommendation": ""
+          },
+          {
+            "id": "RES005",
+            "title": "Result regeneration instructions",
+            "severity": "info",
+            "status": "warn",
+            "message": "No result regeneration instructions found.",
+            "evidence": [],
+            "recommendation": "Add instructions to your README (e.g. 'To reproduce Figure 1, run ...') or a Makefile with result-related targets so others can regenerate your results."
+          },
+          {
+            "id": "PAP001",
+            "title": "Paper directory detected",
+            "severity": "info",
+            "status": "warn",
+            "message": "No paper or manuscript files detected.",
+            "evidence": [],
+            "recommendation": "If your project includes a paper, consider placing it in a paper/, manuscript/, or latex/ directory."
+          },
+          {
+            "id": "PAP002",
+            "title": "README commands match existing scripts",
+            "severity": "warning",
+            "status": "pass",
+            "message": "No script references found in README code blocks.",
+            "evidence": [],
+            "recommendation": ""
+          },
+          {
+            "id": "PAP003",
+            "title": "README directory references exist",
+            "severity": "warning",
+            "status": "pass",
+            "message": "No directory references found in README.",
+            "evidence": [],
+            "recommendation": ""
+          },
+          {
+            "id": "PAP004",
+            "title": "Citation keys consistent",
+            "severity": "info",
+            "status": "warn",
+            "message": "No citation files found to verify.",
+            "evidence": [],
+            "recommendation": "Add a CITATION.cff or .bib file so that users can properly cite your work."
+          },
+          {
+            "id": "PAP005",
+            "title": "Figure paths in paper match files",
+            "severity": "info",
+            "status": "warn",
+            "message": "No .tex files found; skipping figure path check.",
+            "evidence": [],
+            "recommendation": ""
+          },
+          {
+            "id": "CI001",
+            "title": "GitHub Actions workflows exist",
+            "severity": "info",
+            "status": "pass",
+            "message": "No GitHub Actions workflows found (informational).",
+            "evidence": [],
+            "recommendation": ""
+          },
+          {
+            "id": "CI002",
+            "title": "Tests exist",
+            "severity": "warning",
+            "status": "warn",
+            "message": "No test files or test configuration found.",
+            "evidence": [],
+            "recommendation": "Add a tests/ directory with unit tests and configure pytest so that others can verify the correctness of your code."
+          },
+          {
+            "id": "CI003",
+            "title": "Linting or formatting configured",
+            "severity": "info",
+            "status": "pass",
+            "message": "No linting or formatting configuration found (informational).",
+            "evidence": [],
+            "recommendation": ""
+          },
+          {
+            "id": "CI004",
+            "title": "Issue or PR templates exist",
+            "severity": "warning",
+            "status": "warn",
+            "message": "No issue or PR templates found.",
+            "evidence": [],
+            "recommendation": "Consider adding issue and pull request templates in .github/ to standardize contributions."
+          },
+          {
+            "id": "CI005",
+            "title": "Security policy exists",
+            "severity": "info",
+            "status": "pass",
+            "message": "No security policy found (informational).",
+            "evidence": [],
+            "recommendation": "Consider adding a SECURITY.md file to describe how users should report security vulnerabilities."
+          },
+          {
+            "id": "CI006",
+            "title": "Package metadata complete",
+            "severity": "info",
+            "status": "pass",
+            "message": "No package metadata files found (informational).",
+            "evidence": [],
+            "recommendation": "Add a pyproject.toml (or setup.py/setup.cfg) with name, version, description, license, and authors fields."
+          },
+          {
+            "id": "CONTRACT001",
+            "title": "Reproducibility contract",
+            "severity": "info",
+            "status": "warn",
+            "message": "No reproducibility contract found; using inferred mode.",
+            "evidence": [],
+            "recommendation": "Create a reproducibility.yml file to explicitly describe how to reproduce your paper. Run `oss-paper-ci init --contract` to generate a template."
+          }
+        ],
+        "recommendations": [
+          "Add a CITATION.cff file or a 'Citation' section to your README so that users know how to properly cite your work.",
+          "Add executable code blocks (```bash, ```sh, or ```python) to your README so that others can copy-paste commands to reproduce your results.",
+          "Consider adding a CONTRIBUTING.md file or an issue template to encourage community contributions.",
+          "Add a CHANGELOG, VERSION file, or a version field in pyproject.toml so users can track releases.",
+          "Add an artifact metadata file (e.g. artifact.yml or reproducibility.yml) to describe how to reproduce your experiments.",
+          "Specify the required Python version in pyproject.toml (requires-python), setup.cfg (python_requires), .python-version, or Pipfile.",
+          "Add a run.sh or Makefile that reproduces the main results, or document a single command in the README.",
+          "Add a quick_start.py, smoke_test.py, or a short demo so users can verify the setup works before running the full experiment.",
+          "Document how to run a quick sanity-check experiment vs. the full experiment (e.g., --quick flag, separate config file, or a demo mode).",
+          "Set random seeds (e.g., random.seed(), np.random.seed(), torch.manual_seed()) so experiments are reproducible.",
+          "Add a config file (e.g., config.yaml) or use argparse/click so experiment parameters are explicit and reproducible.",
+          "Consider organizing your data into subdirectories such as raw/, processed/, interim/, and external/ to clarify the data processing pipeline.",
+          "Add data patterns to .gitignore (e.g. data/, *.csv, *.h5, *.parquet) to prevent accidental commits of large or sensitive data files.",
+          "Create a results directory (e.g. results/, output/, figures/) to store experiment outputs so reviewers can inspect them.",
+          "Add instructions to your README (e.g. 'To reproduce Figure 1, run ...') or a Makefile with result-related targets so others can regenerate your results.",
+          "If your project includes a paper, consider placing it in a paper/, manuscript/, or latex/ directory.",
+          "Add a CITATION.cff or .bib file so that users can properly cite your work.",
+          "Add a tests/ directory with unit tests and configure pytest so that others can verify the correctness of your code.",
+          "Consider adding issue and pull request templates in .github/ to standardize contributions.",
+          "Create a reproducibility.yml file to explicitly describe how to reproduce your paper. Run `oss-paper-ci init --contract` to generate a template."
+        ],
+        "blocking_issues": [],
+        "policy": {
+          "profile": "default",
+          "pass_score": 85,
+          "warn_score": 60,
+          "fail_under": 50
+        }
+      },
+      "expected": {
+        "repo_id": "unsafe_script_project",
+        "expected_ecosystems": [
+          "python"
+        ],
+        "expected_status": "critical",
+        "expected_major_findings": [
+          "Has requirements.txt",
+          "Has data documentation",
+          "Contains curl | bash pattern",
+          "Contains eval() usage"
+        ],
+        "expected_score_band": [
+          10,
+          30
+        ],
+        "expected_risks": [
+          "curl | bash pattern detected",
+          "eval() usage detected",
+          "Potential code injection risk"
+        ],
+        "expected_scaffold_suggestions": [
+          "Remove curl | bash pattern",
+          "Replace eval() with safer alternative"
+        ],
+        "should_execute_by_default": false
+      },
+      "comparison": {
+        "ecosystems_match": true,
+        "status_match": false,
+        "score_in_band": false
+      },
+      "status": "partial"
     }
   ],
   "summary": {
     "pass": 0,
-    "partial": 3,
-    "fail": 1,
-    "evaluated": 0,
+    "partial": 10,
+    "fail": 2,
+    "evaluated": 2,
     "error": 0
   }
 }
