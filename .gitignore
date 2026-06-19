@@ -58,6 +58,9 @@ oss-paper-ci-out/
 .tmp-workbench-out/
 .tmp-workbench-out-2/
 .tmp-wb-ex/
+
+# Demo output
+.oss-paper-ci-demo-out/
 .tmp-ci-workbench-out/
 
 # Release gate and truthfulness reports

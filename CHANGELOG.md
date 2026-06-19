@@ -1,5 +1,28 @@
 # Changelog
 
+## [2.8.0rc1] - 2026-06-19
+
+### Added
+- `oss-paper-ci quickstart` command for first-run guidance
+- `oss-paper-ci try-demo` command for self-contained demo
+- Dockerfile for optional container-based usage
+- .devcontainer for VS Code development
+- .github/workflows/install-smoke.yml for CI verification
+- scripts/verify_distribution_artifacts.py for release validation
+- docs/first-run.md - getting started guide
+- docs/docker.md - Docker usage guide
+- docs/devcontainer.md - dev container guide
+- Topic-specific quickstart: --topic install, github-action, reproduce, eval
+
+### Changed
+- Version bumped to 2.8.0rc1
+- Development status classifier updated to "Beta"
+- README restructured for first-run experience
+
+### Notes
+- PyPI publication not yet active (requires explicit token)
+- Docker image is for local testing only (not published to Docker Hub)
+
 ## [2.7.0rc1] - 2026-06-19
 
 ### Added

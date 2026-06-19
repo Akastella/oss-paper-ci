@@ -29,6 +29,8 @@ oss-paper-ci reproduce examples/demo-reproduce-repo --dry-run
 | Ecosystem detection | `oss-paper-ci ecosystems detect .` | Multi-language detection |
 | Terminal workbench | `oss-paper-ci workbench .` | Full pipeline with progress |
 | Evaluation | `oss-paper-ci eval run examples/evaluation-corpus` | Run benchmark evaluation |
+| Quickstart | `oss-paper-ci quickstart` | Show first steps |
+| Try demo | `oss-paper-ci try-demo` | Run built-in demo |
 
 ## Evaluation
 
@@ -56,6 +58,7 @@ See [Evaluation](evaluation.md) for details.
 ### Getting started
 
 - [Getting started](getting-started.md) — first steps
+- [First run](first-run.md) — 60-second getting started guide
 - [Installation](installation.md) — pip, pipx, source install
 - [CLI reference](cli-reference.md) — all commands and options
 
@@ -94,6 +97,9 @@ See [Evaluation](evaluation.md) for details.
 ### Reference
 
 - [Check categories](checks.md) — what gets checked
+- [Docker](docker.md) — container-based usage
+- [Dev Container](devcontainer.md) — VS Code development environment
+- [Troubleshooting](troubleshooting.md) — common issues and solutions
 - [Limitations](limitations.md) — what this tool does NOT do
 - [Full index](index.md) — this page
 

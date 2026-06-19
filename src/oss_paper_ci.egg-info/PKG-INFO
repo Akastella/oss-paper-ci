@@ -1,6 +1,6 @@
 Metadata-Version: 2.4
 Name: oss-paper-ci
-Version: 2.7.0rc1
+Version: 2.8.0rc1
 Summary: CLI toolkit for checking, attempting, and packaging scientific repository reproducibility evidence
 Author: oss-paper-ci contributors
 License: MIT
@@ -10,7 +10,7 @@ Project-URL: Repository, https://github.com/Akastella/oss-paper-ci
 Project-URL: Issues, https://github.com/Akastella/oss-paper-ci/issues
 Project-URL: Changelog, https://github.com/Akastella/oss-paper-ci/blob/main/CHANGELOG.md
 Keywords: reproducibility,science,ci,paper,open-source
-Classifier: Development Status :: 3 - Alpha
+Classifier: Development Status :: 4 - Beta
 Classifier: Intended Audience :: Science/Research
 Classifier: Programming Language :: Python :: 3
 Classifier: Programming Language :: Python :: 3.10
@@ -53,25 +53,36 @@ oss-paper-ci reproduce examples/demo-reproduce-repo --dry-run
 
 OSS-Paper-CI records and explains reproducibility evidence. It does not prove scientific correctness, judge paper quality, or predict acceptance.
 
-## Quickstart
+## Quick start
 
 ```bash
-# Install
+# 1. Install from GitHub
 git clone https://github.com/Akastella/oss-paper-ci.git
 cd oss-paper-ci
-pip install -e ".[dev]"
+pip install -e .
 
-# Get guided recommendations
-oss-paper-ci wizard
+# 2. Try it in 60 seconds
+oss-paper-ci try-demo
 
-# Run the full pipeline
-oss-paper-ci workbench .
-
-# Score a repository
+# 3. Scan your repository
 oss-paper-ci scan .
+```
 
-# Safe reproduction attempt
-oss-paper-ci reproduce examples/demo-reproduce-repo --dry-run
+**Alternative install methods:** See [Installation](docs/installation.md) for pipx, wheel, and source options.
+
+> **Note:** oss-paper-ci is not yet published on PyPI. Install from GitHub source.
+
+## First run
+
+```bash
+# Get personalized recommendations
+oss-paper-ci quickstart
+
+# Topic-specific guidance
+oss-paper-ci quickstart --topic install
+oss-paper-ci quickstart --topic github-action
+oss-paper-ci quickstart --topic reproduce
+oss-paper-ci quickstart --topic eval
 ```
 
 ## Evaluation

@@ -1,0 +1,38 @@
+# Build artifacts
+dist/
+build/
+site/
+release-artifacts/
+*.egg-info/
+__pycache__/
+*.py[cod]
+
+# Test/coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# IDE
+.vscode/
+.idea/
+
+# Git
+.git/
+.gitignore
+
+# Temporary files
+.tmp-*
+.oss-paper-ci-repro/
+.oss-paper-ci-cache/
+.oss-paper-ci-capsule-staging/
+*.capsule.zip
+
+# Local audit/taskboard
+.local_*
+
+# Node
+node_modules/
+
+# OS
+.DS_Store
+Thumbs.db

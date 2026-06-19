@@ -1,0 +1,66 @@
+# Install Smoke Test
+# Verifies that oss-paper-ci can be built, installed, and run from a clean environment.
+# This workflow does NOT publish anything to PyPI.
+
+name: Install Smoke
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  install-smoke:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11", "3.12"]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install build tools
+        run: python -m pip install --upgrade pip build
+
+      - name: Build package
+        run: python -m build
+
+      - name: Create temp venv and install wheel
+        run: |
+          python -m venv /tmp/test-venv
+          /tmp/test-venv/bin/pip install dist/*.whl
+
+      - name: Verify version
+        run: /tmp/test-venv/bin/oss-paper-ci version
+
+      - name: Verify quickstart (text)
+        run: /tmp/test-venv/bin/oss-paper-ci quickstart
+
+      - name: Verify quickstart (json)
+        run: /tmp/test-venv/bin/oss-paper-ci quickstart --format json
+
+      - name: Verify try-demo (json)
+        run: /tmp/test-venv/bin/oss-paper-ci try-demo --format json
+
+      - name: Verify scan on demo repo
+        run: /tmp/test-venv/bin/oss-paper-ci scan examples/demo-paper-repo --format json --no-color
+
+      - name: Verify eval on corpus
+        run: /tmp/test-venv/bin/oss-paper-ci eval run examples/evaluation-corpus --format json --no-color
+
+      - name: Check for local path pollution
+        run: |
+          # Ensure no absolute paths in JSON output
+          OUTPUT=$(/tmp/test-venv/bin/oss-paper-ci try-demo --format json 2>&1)
+          if echo "$OUTPUT" | grep -q "/home/runner"; then
+            echo "ERROR: Local path found in output"
+            echo "$OUTPUT"
+            exit 1
+          fi

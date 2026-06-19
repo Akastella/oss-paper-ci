@@ -24,22 +24,33 @@ OSS-Paper-CI 记录和解释复现证据。它不证明科学正确性，不判�
 ## 快速开始
 
 ```bash
-# 安装
+# 1. 从 GitHub 安装
 git clone https://github.com/Akastella/oss-paper-ci.git
 cd oss-paper-ci
-pip install -e ".[dev]"
+pip install -e .
 
-# 获取引导建议
-oss-paper-ci wizard
+# 2. 60 秒试用
+oss-paper-ci try-demo
 
-# 运行完整流水线
-oss-paper-ci workbench .
-
-# 扫描仓库
+# 3. 扫描你的仓库
 oss-paper-ci scan .
+```
 
-# 安全复现尝试
-oss-paper-ci reproduce examples/demo-reproduce-repo --dry-run
+**其他安装方式：** 参见 [安装文档](docs/installation.md) 了解 pipx、wheel 和源码安装选项。
+
+> **注意：** oss-paper-ci 尚未在 PyPI 上发布，请从 GitHub 源码安装。
+
+## 首次运行
+
+```bash
+# 获取个性化推荐
+oss-paper-ci quickstart
+
+# 主题特定指南
+oss-paper-ci quickstart --topic install
+oss-paper-ci quickstart --topic github-action
+oss-paper-ci quickstart --topic reproduce
+oss-paper-ci quickstart --topic eval
 ```
 
 ## 评估
