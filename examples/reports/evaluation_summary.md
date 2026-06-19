@@ -7,8 +7,8 @@
 ## Summary
 
 - Pass: 0
-- Partial: 10
-- Fail: 2
+- Partial: 11
+- Fail: 1
 - Evaluated: 2
 - Error: 0
 
@@ -16,7 +16,7 @@
 
 | Repo ID | Ecosystems | Status | Score | Expected Status | Match |
 |---------|------------|--------|-------|-----------------|-------|
-| adoption_before_after | unknown | fail | N/A | varies | False |
+| adoption_before_after | unknown | partial | N/A | varies | False |
 | before | unknown | evaluated | N/A | N/A | N/A |
 | after | python | evaluated | N/A | N/A | N/A |
 | cpp_build_project | cpp | partial | N/A | needs-work | False |

@@ -49,8 +49,30 @@ def discover_repos(corpus_dir: Path) -> list[Path]:
     return repos
 
 
+def _sanitize_paths_in_obj(obj: Any, repo_path: Path) -> Any:
+    """Recursively replace absolute paths with relative ones in a dict/list."""
+    if isinstance(obj, dict):
+        return {k: _sanitize_paths_in_obj(v, repo_path) for k, v in obj.items()}
+    if isinstance(obj, list):
+        return [_sanitize_paths_in_obj(v, repo_path) for v in obj]
+    if isinstance(obj, str):
+        # Replace any absolute path containing the repo path with just the repo name
+        repo_str = str(repo_path)
+        if repo_str in obj:
+            obj = obj.replace(repo_str, repo_path.name)
+        # Also handle forward-slash variant
+        repo_fwd = repo_str.replace("\\", "/")
+        if repo_fwd in obj:
+            obj = obj.replace(repo_fwd, repo_path.name)
+    return obj
+
+
 def scan_repo(repo_path: Path) -> dict:
-    """Run oss-paper-ci scan on a repo and return results."""
+    """Run oss-paper-ci scan on a repo and return results.
+
+    Note: oss-paper-ci scan returns exit code 2 when blocking issues are found,
+    but still produces valid JSON output. We treat exit codes 0 and 2 as success.
+    """
     try:
         result = subprocess.run(
             ["oss-paper-ci", "scan", str(repo_path), "--format", "json", "--no-color"],
@@ -59,8 +81,10 @@ def scan_repo(repo_path: Path) -> dict:
             timeout=60,
             cwd=str(repo_path),
         )
-        if result.returncode == 0 and result.stdout.strip():
-            return json.loads(result.stdout)
+        # Exit code 0 = pass, 2 = blocking issues found (still valid output)
+        if result.returncode in (0, 2) and result.stdout.strip():
+            data = json.loads(result.stdout)
+            return _sanitize_paths_in_obj(data, repo_path)
         else:
             return {
                 "error": result.stderr or "Scan failed",
@@ -131,6 +155,11 @@ def evaluate_repo(repo_path: Path, expected: dict | None = None, base: Path | No
     scan = scan_repo(repo_path)
     result["scan_result"] = scan
 
+    # Extract score and status from scan result (nested under summary)
+    summary = scan.get("summary", {})
+    actual_score = summary.get("score", scan.get("score", 0))
+    actual_status = summary.get("status", scan.get("status", "unknown"))
+
     # Compare with expected
     if expected:
         exp_ecos = set(expected.get("expected_ecosystems", []))
@@ -138,11 +167,10 @@ def evaluate_repo(repo_path: Path, expected: dict | None = None, base: Path | No
         result["comparison"]["ecosystems_match"] = exp_ecos.issubset(actual_ecos)
 
         if "expected_status" in expected:
-            actual_status = scan.get("status", "unknown")
             result["comparison"]["status_match"] = actual_status == expected["expected_status"]
 
         if "expected_score_band" in expected:
-            score = scan.get("score", 0)
+            score = actual_score
             bands = expected["expected_score_band"]
             if bands and len(bands) == 2:
                 result["comparison"]["score_in_band"] = bands[0] <= score <= bands[1]
