@@ -1,7 +1,7 @@
 # Evaluation Summary
 
 **Version:** 2.7.0rc1
-**Corpus:** \Projects\OSS-Paper-CI\examples\evaluation-corpus
+**Corpus:** examples/evaluation-corpus
 **Total Repos:** 14
 
 ## Summary

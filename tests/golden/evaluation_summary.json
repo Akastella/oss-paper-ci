@@ -1,11 +1,11 @@
 {
   "version": "2.7.0rc1",
-  "corpus_dir": "\\Projects\\OSS-Paper-CI\\examples\\evaluation-corpus",
+  "corpus_dir": "examples/evaluation-corpus",
   "total_repos": 14,
   "repos": [
     {
       "repo_id": "adoption_before_after",
-      "repo_path": "\\Projects\\OSS-Paper-CI\\examples\\evaluation-corpus\\adoption_before_after",
+      "repo_path": "adoption_before_after",
       "ecosystems": [],
       "scan_result": {
         "error": "Scan failed",
@@ -38,7 +38,7 @@
     },
     {
       "repo_id": "before",
-      "repo_path": "\\Projects\\OSS-Paper-CI\\examples\\evaluation-corpus\\adoption_before_after\\before",
+      "repo_path": "adoption_before_after\\before",
       "ecosystems": [],
       "scan_result": {
         "error": "Scan failed",
@@ -50,7 +50,7 @@
     },
     {
       "repo_id": "after",
-      "repo_path": "\\Projects\\OSS-Paper-CI\\examples\\evaluation-corpus\\adoption_before_after\\after",
+      "repo_path": "adoption_before_after\\after",
       "ecosystems": [
         "python"
       ],
@@ -64,7 +64,7 @@
     },
     {
       "repo_id": "cpp_build_project",
-      "repo_path": "\\Projects\\OSS-Paper-CI\\examples\\evaluation-corpus\\cpp_build_project",
+      "repo_path": "cpp_build_project",
       "ecosystems": [
         "cpp"
       ],
@@ -104,7 +104,7 @@
     },
     {
       "repo_id": "julia_project",
-      "repo_path": "\\Projects\\OSS-Paper-CI\\examples\\evaluation-corpus\\julia_project",
+      "repo_path": "julia_project",
       "ecosystems": [
         "julia"
       ],
@@ -141,7 +141,7 @@
     },
     {
       "repo_id": "make_workflow_project",
-      "repo_path": "\\Projects\\OSS-Paper-CI\\examples\\evaluation-corpus\\make_workflow_project",
+      "repo_path": "make_workflow_project",
       "ecosystems": [
         "make"
       ],
@@ -178,7 +178,7 @@
     },
     {
       "repo_id": "node_analysis_project",
-      "repo_path": "\\Projects\\OSS-Paper-CI\\examples\\evaluation-corpus\\node_analysis_project",
+      "repo_path": "node_analysis_project",
       "ecosystems": [
         "node"
       ],
@@ -215,7 +215,7 @@
     },
     {
       "repo_id": "python_bad_results",
-      "repo_path": "\\Projects\\OSS-Paper-CI\\examples\\evaluation-corpus\\python_bad_results",
+      "repo_path": "python_bad_results",
       "ecosystems": [
         "python"
       ],
@@ -224,7 +224,7 @@
         "tool": "oss-paper-ci",
         "version": "2.7.0rc1",
         "metadata": {
-          "generated_at": "2026-06-19T10:31:18.405948+00:00",
+          "generated_at": "2026-06-19T10:42:49.068333+00:00",
           "scanned_files": 7,
           "ignored_paths": [
             ".git",
@@ -588,7 +588,7 @@
             "status": "pass",
             "message": "Found data privacy or licensing information.",
             "evidence": [
-              "README.md (synthetic, license)",
+              "README.md (license, synthetic)",
               "data/README.md"
             ],
             "recommendation": ""
@@ -814,7 +814,7 @@
     },
     {
       "repo_id": "python_good_repro",
-      "repo_path": "\\Projects\\OSS-Paper-CI\\examples\\evaluation-corpus\\python_good_repro",
+      "repo_path": "python_good_repro",
       "ecosystems": [
         "python"
       ],
@@ -852,7 +852,7 @@
     },
     {
       "repo_id": "python_missing_data",
-      "repo_path": "\\Projects\\OSS-Paper-CI\\examples\\evaluation-corpus\\python_missing_data",
+      "repo_path": "python_missing_data",
       "ecosystems": [
         "python"
       ],
@@ -861,7 +861,7 @@
         "tool": "oss-paper-ci",
         "version": "2.7.0rc1",
         "metadata": {
-          "generated_at": "2026-06-19T10:31:18.933176+00:00",
+          "generated_at": "2026-06-19T10:42:49.579595+00:00",
           "scanned_files": 6,
           "ignored_paths": [
             ".git",
@@ -1447,7 +1447,7 @@
     },
     {
       "repo_id": "python_missing_environment",
-      "repo_path": "\\Projects\\OSS-Paper-CI\\examples\\evaluation-corpus\\python_missing_environment",
+      "repo_path": "python_missing_environment",
       "ecosystems": [],
       "scan_result": {
         "error": "Scan failed",
@@ -1484,7 +1484,7 @@
     },
     {
       "repo_id": "r_repro_project",
-      "repo_path": "\\Projects\\OSS-Paper-CI\\examples\\evaluation-corpus\\r_repro_project",
+      "repo_path": "r_repro_project",
       "ecosystems": [
         "r"
       ],
@@ -1521,7 +1521,7 @@
     },
     {
       "repo_id": "snakemake_project",
-      "repo_path": "\\Projects\\OSS-Paper-CI\\examples\\evaluation-corpus\\snakemake_project",
+      "repo_path": "snakemake_project",
       "ecosystems": [
         "snakemake"
       ],
@@ -1558,7 +1558,7 @@
     },
     {
       "repo_id": "unsafe_script_project",
-      "repo_path": "\\Projects\\OSS-Paper-CI\\examples\\evaluation-corpus\\unsafe_script_project",
+      "repo_path": "unsafe_script_project",
       "ecosystems": [
         "python"
       ],
@@ -1567,7 +1567,7 @@
         "tool": "oss-paper-ci",
         "version": "2.7.0rc1",
         "metadata": {
-          "generated_at": "2026-06-19T10:31:19.969725+00:00",
+          "generated_at": "2026-06-19T10:42:50.768754+00:00",
           "scanned_files": 6,
           "ignored_paths": [
             ".git",

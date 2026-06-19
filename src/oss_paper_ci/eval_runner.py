@@ -96,32 +96,30 @@ def detect_ecosystems(repo_path: Path) -> list[str]:
     return ecosystems
 
 
-def _normalize_path(path: Path) -> str:
-    """Convert absolute path to relative, removing machine-specific prefixes."""
-    path_str = str(path)
-    # Remove Windows drive letters
-    if len(path_str) > 1 and path_str[1] == ":":
-        path_str = path_str[2:]
-    # Remove common absolute path prefixes
-    for prefix in ["/home/runner/work/", "/home/", "/Users/", "/tmp/", "\\Users\\"]:
-        idx = path_str.find(prefix)
-        if idx != -1:
-            # Find the project-relative part
-            remainder = path_str[idx + len(prefix):]
-            # Skip the workspace directory name (e.g., "oss-paper-ci/oss-paper-ci/")
-            parts = remainder.split("/")
-            if len(parts) > 2 and parts[0] == parts[1]:
-                return "/".join(parts[1:])
-            return remainder
-    # If it's already relative or unknown format, return as-is
-    return path_str
+def _normalize_path(path: Path, base: Path | None = None) -> str:
+    """Convert absolute path to relative, removing machine-specific prefixes.
+
+    If *base* is given the result is relative to *base*; otherwise only the
+    last two path components are kept (``parent/name``) which is enough for
+    the evaluation corpus layout.
+    """
+    if base is not None:
+        try:
+            return str(path.relative_to(base))
+        except ValueError:
+            pass
+    # Fallback: return just the last two components (e.g. "corpus/python_good_repro")
+    parts = path.parts
+    if len(parts) >= 2:
+        return "/".join(parts[-2:])
+    return path.name
 
 
-def evaluate_repo(repo_path: Path, expected: dict | None = None) -> dict:
+def evaluate_repo(repo_path: Path, expected: dict | None = None, base: Path | None = None) -> dict:
     """Evaluate a single repo against expected outcomes."""
     result: dict[str, Any] = {
         "repo_id": repo_path.name,
-        "repo_path": _normalize_path(repo_path),
+        "repo_path": _normalize_path(repo_path, base),
         "ecosystems": detect_ecosystems(repo_path),
         "scan_result": None,
         "expected": expected or {},
@@ -185,7 +183,7 @@ def run_evaluation(corpus_dir: Path) -> dict:
     for repo_path in repos:
         repo_id = repo_path.name
         expected = outcomes.get(repo_id, {})
-        eval_result = evaluate_repo(repo_path, expected)
+        eval_result = evaluate_repo(repo_path, expected, base=corpus_dir)
         results["repos"].append(eval_result)
 
         status = eval_result["status"]
