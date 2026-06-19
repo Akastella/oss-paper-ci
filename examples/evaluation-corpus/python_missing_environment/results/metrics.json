@@ -1,0 +1,10 @@
+{
+  "model": "LinearRegression",
+  "dataset": "synthetic_regression",
+  "metrics": {
+    "r2_score": 0.88,
+    "mse": 0.12,
+    "mae": 0.25
+  },
+  "timestamp": "2026-06-19T00:00:00Z"
+}

@@ -1,0 +1,8 @@
+# Synthetic Snakemake configuration for test fixture
+# This is a minimal config for oss-paper-ci evaluation.
+
+input_data: "data/input.csv"
+output_dir: "results/"
+parameters:
+  threshold: 0.5
+  iterations: 100

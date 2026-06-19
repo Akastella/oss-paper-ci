@@ -1,0 +1,14 @@
+{
+  "analysis": "linear_regression",
+  "dataset": "synthetic_survey",
+  "results": {
+    "r_squared": 0.78,
+    "p_value": 0.001,
+    "coefficients": {
+      "intercept": 2.5,
+      "x1": 0.8,
+      "x2": -0.3
+    }
+  },
+  "timestamp": "2026-06-19T00:00:00Z"
+}

@@ -42,6 +42,29 @@ oss-paper-ci scan .
 oss-paper-ci reproduce examples/demo-reproduce-repo --dry-run
 ```
 
+## Evaluation
+
+The project includes a **synthetic-but-realistic evaluation corpus** to verify output stability across different repository states.
+
+```bash
+# Run evaluation against the corpus
+oss-paper-ci eval run examples/evaluation-corpus
+
+# Generate JSON report
+oss-paper-ci eval run examples/evaluation-corpus --format json --output report.json
+
+# Compare against baseline
+oss-paper-ci eval compare --baseline tests/golden/evaluation_summary.json --current report.json
+```
+
+The evaluation corpus contains 12+ synthetic repositories covering:
+- Python (well-reproducible, missing data, missing environment, bad results)
+- R, Julia, Node.js, Make, Snakemake, C++ projects
+- Unsafe script detection
+- Before/after adoption comparison
+
+**Important:** These are synthetic test fixtures, not real-world repositories. The benchmark demonstrates tool stability, not scientific correctness.
+
 ## What it does
 
 | Feature | Command | Description |

@@ -1,0 +1,9 @@
+Package: syntheticAnalysis
+Title: Synthetic Analysis Package for Testing
+Version: 0.1.0
+Authors@R: person("Test", "Author", email = "test@example.com", role = c("aut", "cre"))
+Description: A synthetic R package for oss-paper-ci evaluation.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.3

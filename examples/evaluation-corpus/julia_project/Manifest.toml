@@ -1,0 +1,17 @@
+# This file is machine-generated - editing it directly is not advised
+
+julia_version = "1.9.0"
+manifest_format = "2.0"
+project_hash = "abc123"
+
+[[deps.DataFrames]]
+deps = ["Compat", "DataStructures", "Future", "InvertedIndices", "LinearAlgebra", "Markdown", "Missings", "PooledArrays", "PrettyTables", "Printf", "REPL", "Random", "Reexport", "SentinelArrays", "SortingAlgorithms", "Statistics", "StatsBase", "Tables", "Unicode"]
+git-tree-sha1 = "abc123"
+uuid = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
+version = "1.5.0"
+
+[[deps.JSON]]
+deps = ["Dates", "Mmap", "Parsers", "Unicode"]
+git-tree-sha1 = "def456"
+uuid = "682c06a0-de6a-54ab-a142-c8b1cf79cde6"
+version = "0.21.4"

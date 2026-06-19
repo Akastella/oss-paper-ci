@@ -1,0 +1,27 @@
+# Reproducibility configuration for synthetic test fixture
+# This is a test file for oss-paper-ci evaluation
+
+project:
+  name: "synthetic-ml-project"
+  version: "1.0.0"
+  description: "Synthetic ML project for testing"
+
+environment:
+  python_version: "3.10"
+  dependencies_file: "requirements.txt"
+
+data:
+  source: "https://example.com/synthetic-data"
+  documentation: "data/README.md"
+
+results:
+  format: "json"
+  location: "results/"
+
+scripts:
+  - name: "train.py"
+    description: "Train the model"
+    command: "python scripts/train.py"
+  - name: "evaluate.py"
+    description: "Evaluate the model"
+    command: "python scripts/evaluate.py"

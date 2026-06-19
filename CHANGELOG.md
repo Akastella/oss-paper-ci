@@ -1,5 +1,29 @@
 # Changelog
 
+## [2.7.0rc1] - 2026-06-19
+
+### Added
+- Evaluation corpus with 12+ synthetic-but-realistic test repositories
+- `oss-paper-ci eval` command group for running benchmark evaluations
+- `eval run` - run evaluation against corpus
+- `eval compare` - compare evaluation results against baseline
+- Expected outcomes YAML for evaluation corpus validation
+- Multi-format evaluation reports (JSON, Markdown, HTML)
+- Golden regression files for evaluation output stability
+- Evaluation methodology documentation
+- Cross-language corpus: Python, R, Julia, Node.js, Make, Snakemake, C++
+- Defect taxonomy fixtures: missing data, missing environment, bad results, unsafe scripts
+- Before/after adoption evaluation fixture
+- Truthfulness checks for evaluation claims
+
+### Changed
+- Version bumped to 2.7.0rc1
+
+### Notes
+- Evaluation corpus uses synthetic fixtures, not real repositories
+- Benchmark results do not claim scientific correctness
+- Default evaluation mode is scan-only (no script execution)
+
 ## 2.6.0rc1 (2026-06-15)
 
 ### Added

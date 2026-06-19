@@ -363,6 +363,25 @@ def main(argv: list[str] | None = None) -> int:
     scaffold_parser.add_argument("--output", "-o", help="Write patch preview to file.")
     scaffold_parser.add_argument("--format", choices=["markdown", "json"], default="markdown", help="Output format.")
 
+    # eval command group
+    eval_parser = subparsers.add_parser("eval", help="Benchmark evaluation.")
+    eval_sub = eval_parser.add_subparsers(dest="eval_command")
+
+    # eval run
+    er = eval_sub.add_parser("run", help="Run evaluation on a benchmark corpus.")
+    er.add_argument("corpus_dir", help="Path to corpus directory.")
+    er.add_argument("--format", choices=["json", "markdown", "html"], default="markdown",
+                    help="Output format (default: markdown).")
+    er.add_argument("--output", "-o", help="Write report to file instead of stdout.")
+
+    # eval compare
+    ec = eval_sub.add_parser("compare", help="Compare two evaluation results.")
+    ec.add_argument("--baseline", required=True, help="Path to baseline evaluation JSON.")
+    ec.add_argument("--current", required=True, help="Path to current evaluation JSON.")
+    ec.add_argument("--format", choices=["json", "markdown"], default="markdown",
+                    help="Output format (default: markdown).")
+    ec.add_argument("--output", "-o", help="Write output to file instead of stdout.")
+
     # fix command group
     fix_parser = subparsers.add_parser("fix", help="Preview and apply safe fixes.")
     fix_sub = fix_parser.add_subparsers(dest="fix_command")
@@ -518,6 +537,9 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.command == "fix":
         return _cmd_fix(args)
+
+    if args.command == "eval":
+        return _cmd_eval(args)
 
     parser.print_help()
     return 0
@@ -2853,5 +2875,122 @@ def _cmd_fix_apply(args: argparse.Namespace) -> int:
         if result.apply_result.total_errors > 0:
             print(f"Errors: {result.apply_result.total_errors}")
             return 2
+
+    return 0
+
+
+# ── Eval command ────────────────────────────────────────────────────────────
+
+def _cmd_eval(args: argparse.Namespace) -> int:
+    """Handle eval subcommand group."""
+    sub = getattr(args, "eval_command", None)
+
+    if sub == "run":
+        return _cmd_eval_run(
+            corpus_dir=getattr(args, "corpus_dir", None),
+            fmt=getattr(args, "format", "markdown"),
+            output=getattr(args, "output", None),
+        )
+
+    if sub == "compare":
+        return _cmd_eval_compare(
+            baseline_path=getattr(args, "baseline", None),
+            current_path=getattr(args, "current", None),
+            fmt=getattr(args, "format", "markdown"),
+            output=getattr(args, "output", None),
+        )
+
+    print("Usage: oss-paper-ci eval {run|compare} ...", file=sys.stderr)
+    return 1
+
+
+def _cmd_eval_run(
+    *,
+    corpus_dir: str | None,
+    fmt: str,
+    output: str | None,
+) -> int:
+    """Run evaluation on a benchmark corpus."""
+    import json as json_mod
+
+    if not corpus_dir:
+        print("Error: corpus directory is required.", file=sys.stderr)
+        return 1
+
+    corpus_path = Path(corpus_dir).resolve()
+    if not corpus_path.is_dir():
+        print(f"Error: corpus directory not found: {corpus_dir}", file=sys.stderr)
+        return 2
+
+    from oss_paper_ci.eval_runner import (
+        format_html,
+        format_json,
+        format_markdown,
+        run_evaluation,
+    )
+
+    results = run_evaluation(corpus_path)
+
+    if fmt == "json":
+        text = format_json(results)
+    elif fmt == "html":
+        text = format_html(results)
+    else:
+        text = format_markdown(results)
+
+    if output:
+        Path(output).write_text(text, encoding="utf-8")
+        print(f"Evaluation written to {output}")
+    else:
+        print(text)
+
+    return 0
+
+
+def _cmd_eval_compare(
+    *,
+    baseline_path: str | None,
+    current_path: str | None,
+    fmt: str,
+    output: str | None,
+) -> int:
+    """Compare two evaluation results."""
+    import json as json_mod
+
+    if not baseline_path or not current_path:
+        print("Error: --baseline and --current are required.", file=sys.stderr)
+        return 1
+
+    baseline_file = Path(baseline_path)
+    current_file = Path(current_path)
+
+    if not baseline_file.exists():
+        print(f"Error: baseline file not found: {baseline_path}", file=sys.stderr)
+        return 2
+    if not current_file.exists():
+        print(f"Error: current file not found: {current_path}", file=sys.stderr)
+        return 2
+
+    try:
+        baseline = json_mod.loads(baseline_file.read_text(encoding="utf-8"))
+        current = json_mod.loads(current_file.read_text(encoding="utf-8"))
+    except Exception as exc:
+        print(f"Error reading evaluation files: {exc}", file=sys.stderr)
+        return 2
+
+    from oss_paper_ci.eval_runner import compare_results, format_compare_json, format_compare_markdown
+
+    comparison = compare_results(baseline, current)
+
+    if fmt == "json":
+        text = format_compare_json(comparison)
+    else:
+        text = format_compare_markdown(comparison)
+
+    if output:
+        Path(output).write_text(text, encoding="utf-8")
+        print(f"Comparison written to {output}")
+    else:
+        print(text)
 
     return 0

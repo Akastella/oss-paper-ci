@@ -42,6 +42,29 @@ oss-paper-ci scan .
 oss-paper-ci reproduce examples/demo-reproduce-repo --dry-run
 ```
 
+## 评估
+
+项目包含一个 **synthetic-but-realistic 评估语料库**，用于验证工具在不同科研仓库状态下的输出稳定性。
+
+```bash
+# 运行评估
+oss-paper-ci eval run examples/evaluation-corpus
+
+# 生成 JSON 报告
+oss-paper-ci eval run examples/evaluation-corpus --format json --output report.json
+
+# 与基线对比
+oss-paper-ci eval compare --baseline tests/golden/evaluation_summary.json --current report.json
+```
+
+评估语料库包含 12+ 个合成仓库，覆盖：
+- Python（良好复现、缺少数据、缺少环境、结果异常）
+- R、Julia、Node.js、Make、Snakemake、C++ 项目
+- 不安全脚本检测
+- 采纳前后对比
+
+**重要说明：** 这些是合成测试用例，不是真实世界仓库。基准测试展示的是工具稳定性，而非科学正确性。
+
 ## 功能一览
 
 | 功能 | 命令 | 说明 |

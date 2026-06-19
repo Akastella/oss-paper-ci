@@ -28,6 +28,21 @@ oss-paper-ci reproduce examples/demo-reproduce-repo --dry-run
 | Workspace batch | `oss-paper-ci batch scan --workspace ws.yml` | Multi-project scan |
 | Ecosystem detection | `oss-paper-ci ecosystems detect .` | Multi-language detection |
 | Terminal workbench | `oss-paper-ci workbench .` | Full pipeline with progress |
+| Evaluation | `oss-paper-ci eval run examples/evaluation-corpus` | Run benchmark evaluation |
+
+## Evaluation
+
+The project includes a **synthetic-but-realistic evaluation corpus** to verify output stability across different repository states.
+
+```bash
+# Run evaluation
+oss-paper-ci eval run examples/evaluation-corpus --format json --output report.json
+
+# Compare against baseline
+oss-paper-ci eval compare --baseline tests/golden/evaluation_summary.json --current report.json
+```
+
+See [Evaluation](evaluation.md) for details.
 
 ## Demo gallery
 

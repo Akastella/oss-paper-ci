@@ -1,0 +1,14 @@
+{
+  "name": "synthetic-analysis",
+  "version": "1.0.0",
+  "description": "Synthetic Node.js analysis project for oss-paper-ci evaluation",
+  "main": "scripts/analyze.js",
+  "scripts": {
+    "analyze": "node scripts/analyze.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "lodash": "^4.17.21"
+  },
+  "license": "MIT"
+}
