@@ -90,6 +90,11 @@ oss-paper-ci eval compare --baseline tests/golden/evaluation_summary.json --curr
 | エコシステム検出 | `oss-paper-ci ecosystems detect .` | Python、R、Julia、MATLABなどを検出 |
 | ターミナルワークベンチ | `oss-paper-ci workbench .` | 進行状況表示付きマルチステップパイプライン |
 | ウィザード | `oss-paper-ci wizard` | 新規ユーザー向けの安全な次のステップを提案 |
+| 信頼監査 | `oss-paper-ci trust audit .` | ローカル静的信頼・ワークフロー監査 |
+| セキュリティスキャン | `oss-paper-ci security scan .` | シークレット、危険パターン、Docker リスクをスキャン |
+| 依存関係インベントリ | `oss-paper-ci trust inventory .` | SBOM 風依存関係インベントリ |
+| プロベナンスマニフェスト | `oss-paper-ci trust provenance .` | ローカルプロベナンスマニフェストを生成 |
+| 成果物検証 | `oss-paper-ci trust verify-artifacts .` | SHA256 チェックサムを検証 |
 
 ## セキュリティモデル
 
@@ -117,6 +122,29 @@ oss-paper-ci scan . --format github --github-step-summary "$GITHUB_STEP_SUMMARY"
 ```
 
 ワークフローテンプレートは [examples/github-actions/](examples/github-actions/) を参照。
+
+## 信頼とセキュリティ
+
+OSS-Paper-CI は、ワークフロー権限、疑わしいシークレット、危険なスクリプトパターン、依存関係インベントリ、リリース成果物検物検証などのローカル静的チェックを行えます。ただし、これは安全認証ではなく、リポジトリが完全に安全であることを証明するものではありません。
+
+```bash
+# 信頼監査（ワークフローリスク、権限、アクションのピン留め）
+oss-paper-ci trust audit .
+
+# セキュリティスキャン（シークレット、危険パターン、Dockerリスク）
+oss-paper-ci security scan .
+
+# 依存関係インベントリ（SBOM風）
+oss-paper-ci trust inventory .
+
+# プロベナンスマニフェスト
+oss-paper-ci trust provenance .
+
+# リリース成果物の検証
+oss-paper-ci trust verify-artifacts release-artifacts/
+```
+
+**重要な注意：** これらはローカル静的解析チェックのみです。安全認証ではなく、サードパーティの整合性を検証するものでもなく、SLSA、Sigstore、SPDX 準拠を主張するものでもありません。完全な脅威モデルと制限事項は [SECURITY.md](SECURITY.md) を参照してください。
 
 ## ドキュメント
 

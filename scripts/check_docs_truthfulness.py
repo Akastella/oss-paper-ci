@@ -422,6 +422,103 @@ def check_no_docker_hub_claim(root: Path) -> list[dict]:
     return issues
 
 
+def check_trust_command_exists(root: Path) -> list[dict]:
+    """Check that trust CLI command is documented."""
+    issues = []
+    cli_path = root / "src" / "oss_paper_ci" / "cli.py"
+    if cli_path.exists():
+        content = cli_path.read_text(encoding="utf-8")
+        if "trust" not in content:
+            issues.append({
+                "file": "src/oss_paper_ci/cli.py",
+                "line": 0,
+                "severity": "major",
+                "rule": "trust-command-missing",
+                "message": "trust command not found in cli.py",
+            })
+    return issues
+
+
+def check_security_command_exists(root: Path) -> list[dict]:
+    """Check that security CLI command is documented."""
+    issues = []
+    cli_path = root / "src" / "oss_paper_ci" / "cli.py"
+    if cli_path.exists():
+        content = cli_path.read_text(encoding="utf-8")
+        if "security" not in content:
+            issues.append({
+                "file": "src/oss_paper_ci/cli.py",
+                "line": 0,
+                "severity": "major",
+                "rule": "security-command-missing",
+                "message": "security command not found in cli.py",
+            })
+    return issues
+
+
+def check_trust_examples_exist(root: Path) -> list[dict]:
+    """Check that trust examples exist."""
+    issues = []
+    examples_dir = root / "examples" / "trust"
+    if not examples_dir.exists():
+        issues.append({
+            "file": "examples/trust",
+            "line": 0,
+            "severity": "major",
+            "rule": "trust-examples-missing",
+            "message": "examples/trust/ not found",
+        })
+    else:
+        required = ["trust_report.json", "trust_report.md", "provenance.json"]
+        for f in required:
+            if not (examples_dir / f).exists():
+                issues.append({
+                    "file": f"examples/trust/{f}",
+                    "line": 0,
+                    "severity": "major",
+                    "rule": "trust-example-missing",
+                    "message": f"examples/trust/{f} not found",
+                })
+    return issues
+
+
+def check_security_docs_no_overclaim(root: Path) -> list[dict]:
+    """Check that security docs don't overclaim."""
+    issues = []
+    docs_to_check = [
+        "README.md", "README.zh-CN.md", "README.ja.md",
+        "SECURITY.md", "docs/trust.md", "docs/security-scan.md",
+        "docs/supply-chain.md",
+    ]
+
+    overclaim_patterns = [
+        "certified secure",
+        "completely secure",
+        "100% secure",
+        "security certification",
+        "fully slsa compliant",
+    ]
+
+    for doc_path in docs_to_check:
+        path = root / doc_path
+        if path.exists():
+            content = path.read_text(encoding="utf-8").lower()
+            for pattern in overclaim_patterns:
+                if pattern in content:
+                    # Check if it's in a "not" context
+                    lines_with_pattern = [l for l in content.splitlines() if pattern in l]
+                    for line in lines_with_pattern:
+                        if not any(neg in line for neg in ["not", "no ", "don't", "doesn't", "do not", "isn't"]):
+                            issues.append({
+                                "file": doc_path,
+                                "line": 0,
+                                "severity": "blocker",
+                                "rule": "security-overclaim",
+                                "message": f"{doc_path} contains overclaim: '{pattern}'",
+                            })
+    return issues
+
+
 # CLI commands that oss-paper-ci supports
 VALID_CLI_COMMANDS = {
     "scan", "init", "explain", "version", "list-checks",
@@ -431,6 +528,7 @@ VALID_CLI_COMMANDS = {
     "wizard", "workbench", "theme",
     "adopt", "scaffold", "fix", "eval",
     "quickstart", "try-demo",
+    "trust", "security",
 }
 
 # Files that exist in the project
@@ -736,6 +834,12 @@ def scan_project(root: Path) -> list[dict]:
     all_issues.extend(check_install_smoke_workflow(root))
     all_issues.extend(check_no_pypi_published_claim(root))
     all_issues.extend(check_no_docker_hub_claim(root))
+
+    # Trust & security checks
+    all_issues.extend(check_trust_command_exists(root))
+    all_issues.extend(check_security_command_exists(root))
+    all_issues.extend(check_trust_examples_exist(root))
+    all_issues.extend(check_security_docs_no_overclaim(root))
 
     return all_issues
 

@@ -1,0 +1,3346 @@
+{
+  "schema_version": "0.1",
+  "report_type": "oss-paper-ci-trust-report",
+  "repo": "E:\\Projects\\OSS-Paper-CI",
+  "summary": {
+    "status": "fail",
+    "high": 136,
+    "medium": 172,
+    "low": 2
+  },
+  "findings": [
+    {
+      "id": "curl-pipe-bash",
+      "severity": "high",
+      "category": "execution",
+      "path": ".local_trust_security_taskboard_v2_9.md",
+      "line": 17,
+      "title": "Curl pipe to shell",
+      "message": "Dangerous shell pattern detected: curl | bash",
+      "recommendation": "Download scripts first, review, then execute."
+    },
+    {
+      "id": "rm-rf-root",
+      "severity": "high",
+      "category": "execution",
+      "path": ".local_trust_security_taskboard_v2_9.md",
+      "line": 18,
+      "title": "Recursive force delete from root",
+      "message": "Dangerous shell pattern detected: rm -rf /",
+      "recommendation": "Never delete from root. Use explicit paths."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": ".local_trust_security_taskboard_v2_9.md",
+      "line": 18,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "chmod-777",
+      "severity": "medium",
+      "category": "execution",
+      "path": ".local_trust_security_taskboard_v2_9.md",
+      "line": 18,
+      "title": "World-writable permissions",
+      "message": "Dangerous shell pattern detected: chmod 777",
+      "recommendation": "Use more restrictive permissions (e.g., 755 or 644)."
+    },
+    {
+      "id": "unsafe-pickle",
+      "severity": "high",
+      "category": "execution",
+      "path": ".local_trust_security_taskboard_v2_9.md",
+      "line": 20,
+      "title": "Unsafe pickle load",
+      "message": "Dangerous shell pattern detected: pickle.load",
+      "recommendation": "Pickle can execute arbitrary code. Use safer formats like JSON."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "CHANGELOG.md",
+      "line": 13,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "chmod-777",
+      "severity": "medium",
+      "category": "execution",
+      "path": "CHANGELOG.md",
+      "line": 13,
+      "title": "World-writable permissions",
+      "message": "Dangerous shell pattern detected: chmod 777",
+      "recommendation": "Use more restrictive permissions (e.g., 755 or 644)."
+    },
+    {
+      "id": "rm-rf-root",
+      "severity": "high",
+      "category": "execution",
+      "path": "Dockerfile",
+      "line": 14,
+      "title": "Recursive force delete from root",
+      "message": "Dangerous shell pattern detected: rm -rf /",
+      "recommendation": "Never delete from root. Use explicit paths."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "README.ja.md",
+      "line": 104,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "README.md",
+      "line": 104,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "README.zh-CN.md",
+      "line": 104,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "dev-history/FINAL_DELIVERABLES_ROUND4.md",
+      "line": 73,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "dev-history/FINAL_DELIVERABLES_ROUND5.md",
+      "line": 75,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "docs/checks.md",
+      "line": 195,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "rm-rf-root",
+      "severity": "high",
+      "category": "execution",
+      "path": "docs/reproduce-security.md",
+      "line": 54,
+      "title": "Recursive force delete from root",
+      "message": "Dangerous shell pattern detected: rm -rf /",
+      "recommendation": "Never delete from root. Use explicit paths."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "docs/reproduce-security.md",
+      "line": 55,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "docs/reproduce.md",
+      "line": 27,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "curl-pipe-bash",
+      "severity": "high",
+      "category": "execution",
+      "path": "docs/security-model.md",
+      "line": 37,
+      "title": "Curl pipe to shell",
+      "message": "Dangerous shell pattern detected: curl | sh`, `wget | bash",
+      "recommendation": "Download scripts first, review, then execute."
+    },
+    {
+      "id": "wget-pipe-sh",
+      "severity": "high",
+      "category": "execution",
+      "path": "docs/security-model.md",
+      "line": 37,
+      "title": "Wget pipe to shell",
+      "message": "Dangerous shell pattern detected: wget | bash",
+      "recommendation": "Download scripts first, review, then execute."
+    },
+    {
+      "id": "rm-rf-root",
+      "severity": "high",
+      "category": "execution",
+      "path": "docs/security-model.md",
+      "line": 35,
+      "title": "Recursive force delete from root",
+      "message": "Dangerous shell pattern detected: rm -rf /",
+      "recommendation": "Never delete from root. Use explicit paths."
+    },
+    {
+      "id": "rm-rf-root",
+      "severity": "high",
+      "category": "execution",
+      "path": "docs/security-model.md",
+      "line": 35,
+      "title": "Recursive force delete from root",
+      "message": "Dangerous shell pattern detected: rm -rf /",
+      "recommendation": "Never delete from root. Use explicit paths."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "docs/security-model.md",
+      "line": 36,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "generic-bearer",
+      "severity": "medium",
+      "category": "secret",
+      "path": "docs/security-scan.md",
+      "line": 24,
+      "title": "Generic Bearer Token",
+      "message": "Possible Generic Bearer Token detected.",
+      "redacted_preview": "Bear...oken",
+      "redacted": true,
+      "recommendation": "Remove secret from code. Use environment variables or a secrets manager."
+    },
+    {
+      "id": "generic-bearer",
+      "severity": "medium",
+      "category": "secret",
+      "path": "docs/security-scan.md",
+      "line": 24,
+      "title": "Generic Bearer Token",
+      "message": "Possible Generic Bearer Token detected.",
+      "redacted_preview": "Bear... ...",
+      "redacted": true,
+      "recommendation": "Remove secret from code. Use environment variables or a secrets manager."
+    },
+    {
+      "id": "curl-pipe-bash",
+      "severity": "high",
+      "category": "execution",
+      "path": "docs/security-scan.md",
+      "line": 31,
+      "title": "Curl pipe to shell",
+      "message": "Dangerous shell pattern detected: curl pipe to bash | High | `curl ... \\| bash",
+      "recommendation": "Download scripts first, review, then execute."
+    },
+    {
+      "id": "wget-pipe-sh",
+      "severity": "high",
+      "category": "execution",
+      "path": "docs/security-scan.md",
+      "line": 32,
+      "title": "Wget pipe to shell",
+      "message": "Dangerous shell pattern detected: wget pipe to shell | High | `wget ... \\| sh",
+      "recommendation": "Download scripts first, review, then execute."
+    },
+    {
+      "id": "rm-rf-root",
+      "severity": "high",
+      "category": "execution",
+      "path": "docs/security-scan.md",
+      "line": 33,
+      "title": "Recursive force delete from root",
+      "message": "Dangerous shell pattern detected: rm -rf /",
+      "recommendation": "Never delete from root. Use explicit paths."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "docs/security-scan.md",
+      "line": 34,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: Sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "docs/security-scan.md",
+      "line": 34,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "chmod-777",
+      "severity": "medium",
+      "category": "execution",
+      "path": "docs/security-scan.md",
+      "line": 35,
+      "title": "World-writable permissions",
+      "message": "Dangerous shell pattern detected: chmod 777",
+      "recommendation": "Use more restrictive permissions (e.g., 755 or 644)."
+    },
+    {
+      "id": "eval-variable",
+      "severity": "high",
+      "category": "execution",
+      "path": "docs/security-scan.md",
+      "line": 36,
+      "title": "Eval with variable",
+      "message": "Dangerous shell pattern detected: eval $",
+      "recommendation": "Avoid eval with variables; use arrays or functions."
+    },
+    {
+      "id": "unsafe-pickle",
+      "severity": "high",
+      "category": "execution",
+      "path": "docs/security-scan.md",
+      "line": 37,
+      "title": "Unsafe pickle load",
+      "message": "Dangerous shell pattern detected: pickle.load",
+      "recommendation": "Pickle can execute arbitrary code. Use safer formats like JSON."
+    },
+    {
+      "id": "curl-pipe-bash",
+      "severity": "high",
+      "category": "execution",
+      "path": "docs/smoke-runs.md",
+      "line": 62,
+      "title": "Curl pipe to shell",
+      "message": "Dangerous shell pattern detected: curl | sh",
+      "recommendation": "Download scripts first, review, then execute."
+    },
+    {
+      "id": "rm-rf-root",
+      "severity": "high",
+      "category": "execution",
+      "path": "docs/smoke-runs.md",
+      "line": 62,
+      "title": "Recursive force delete from root",
+      "message": "Dangerous shell pattern detected: rm -rf /",
+      "recommendation": "Never delete from root. Use explicit paths."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "docs/smoke-runs.md",
+      "line": 62,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "docs/supply-chain.md",
+      "line": 28,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "curl-pipe-bash",
+      "severity": "high",
+      "category": "execution",
+      "path": "docs/troubleshooting.md",
+      "line": 37,
+      "title": "Curl pipe to shell",
+      "message": "Dangerous shell pattern detected: curl | sh`, `wget | sh",
+      "recommendation": "Download scripts first, review, then execute."
+    },
+    {
+      "id": "wget-pipe-sh",
+      "severity": "high",
+      "category": "execution",
+      "path": "docs/troubleshooting.md",
+      "line": 37,
+      "title": "Wget pipe to shell",
+      "message": "Dangerous shell pattern detected: wget | sh",
+      "recommendation": "Download scripts first, review, then execute."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "docs/troubleshooting.md",
+      "line": 37,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "docs/trust.md",
+      "line": 30,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "chmod-777",
+      "severity": "medium",
+      "category": "execution",
+      "path": "docs/trust.md",
+      "line": 30,
+      "title": "World-writable permissions",
+      "message": "Dangerous shell pattern detected: chmod 777",
+      "recommendation": "Use more restrictive permissions (e.g., 755 or 644)."
+    },
+    {
+      "id": "curl-pipe-bash",
+      "severity": "high",
+      "category": "execution",
+      "path": "examples/evaluation-corpus/expected_outcomes.yml",
+      "line": 157,
+      "title": "Curl pipe to shell",
+      "message": "Dangerous shell pattern detected: curl | bash",
+      "recommendation": "Download scripts first, review, then execute."
+    },
+    {
+      "id": "curl-pipe-bash",
+      "severity": "high",
+      "category": "execution",
+      "path": "examples/evaluation-corpus/expected_outcomes.yml",
+      "line": 161,
+      "title": "Curl pipe to shell",
+      "message": "Dangerous shell pattern detected: curl | bash",
+      "recommendation": "Download scripts first, review, then execute."
+    },
+    {
+      "id": "curl-pipe-bash",
+      "severity": "high",
+      "category": "execution",
+      "path": "examples/evaluation-corpus/expected_outcomes.yml",
+      "line": 165,
+      "title": "Curl pipe to shell",
+      "message": "Dangerous shell pattern detected: curl | bash",
+      "recommendation": "Download scripts first, review, then execute."
+    },
+    {
+      "id": "curl-pipe-bash",
+      "severity": "high",
+      "category": "execution",
+      "path": "examples/evaluation-corpus/README.md",
+      "line": 37,
+      "title": "Curl pipe to shell",
+      "message": "Dangerous shell pattern detected: curl | bash",
+      "recommendation": "Download scripts first, review, then execute."
+    },
+    {
+      "id": "curl-pipe-bash",
+      "severity": "high",
+      "category": "execution",
+      "path": "examples/evaluation-corpus/unsafe_script_project/README.md",
+      "line": 13,
+      "title": "Curl pipe to shell",
+      "message": "Dangerous shell pattern detected: curl | bash",
+      "recommendation": "Download scripts first, review, then execute."
+    },
+    {
+      "id": "curl-pipe-bash",
+      "severity": "high",
+      "category": "execution",
+      "path": "examples/evaluation-corpus/unsafe_script_project/README.md",
+      "line": 22,
+      "title": "Curl pipe to shell",
+      "message": "Dangerous shell pattern detected: curl | bash",
+      "recommendation": "Download scripts first, review, then execute."
+    },
+    {
+      "id": "curl-pipe-bash",
+      "severity": "high",
+      "category": "execution",
+      "path": "examples/evaluation-corpus/unsafe_script_project/scripts/download_and_run.sh",
+      "line": 6,
+      "title": "Curl pipe to shell",
+      "message": "Dangerous shell pattern detected: curl | bash",
+      "recommendation": "Download scripts first, review, then execute."
+    },
+    {
+      "id": "curl-pipe-bash",
+      "severity": "high",
+      "category": "execution",
+      "path": "examples/evaluation-corpus/unsafe_script_project/scripts/download_and_run.sh",
+      "line": 8,
+      "title": "Curl pipe to shell",
+      "message": "Dangerous shell pattern detected: curl -s https://example.com/install.sh | bash",
+      "recommendation": "Download scripts first, review, then execute."
+    },
+    {
+      "id": "wget-pipe-sh",
+      "severity": "high",
+      "category": "execution",
+      "path": "examples/evaluation-corpus/unsafe_script_project/scripts/download_and_run.sh",
+      "line": 11,
+      "title": "Wget pipe to shell",
+      "message": "Dangerous shell pattern detected: wget -qO- https://example.com/setup.sh | bash",
+      "recommendation": "Download scripts first, review, then execute."
+    },
+    {
+      "id": "curl-pipe-bash",
+      "severity": "high",
+      "category": "execution",
+      "path": "examples/reports/evaluation_summary.json",
+      "line": 8513,
+      "title": "Curl pipe to shell",
+      "message": "Dangerous shell pattern detected: curl | bash",
+      "recommendation": "Download scripts first, review, then execute."
+    },
+    {
+      "id": "curl-pipe-bash",
+      "severity": "high",
+      "category": "execution",
+      "path": "examples/reports/evaluation_summary.json",
+      "line": 8521,
+      "title": "Curl pipe to shell",
+      "message": "Dangerous shell pattern detected: curl | bash",
+      "recommendation": "Download scripts first, review, then execute."
+    },
+    {
+      "id": "curl-pipe-bash",
+      "severity": "high",
+      "category": "execution",
+      "path": "examples/reports/evaluation_summary.json",
+      "line": 8526,
+      "title": "Curl pipe to shell",
+      "message": "Dangerous shell pattern detected: curl | bash",
+      "recommendation": "Download scripts first, review, then execute."
+    },
+    {
+      "id": "rm-rf-root",
+      "severity": "high",
+      "category": "execution",
+      "path": "examples/terminal/README.md",
+      "line": 23,
+      "title": "Recursive force delete from root",
+      "message": "Dangerous shell pattern detected: rm -rf /",
+      "recommendation": "Never delete from root. Use explicit paths."
+    },
+    {
+      "id": "generic-bearer",
+      "severity": "medium",
+      "category": "secret",
+      "path": "examples/trust/trust_report.md",
+      "line": 238,
+      "title": "Generic Bearer Token",
+      "message": "Possible Generic Bearer Token detected.",
+      "redacted_preview": "Bear...oken",
+      "redacted": true,
+      "recommendation": "Remove secret from code. Use environment variables or a secrets manager."
+    },
+    {
+      "id": "generic-bearer",
+      "severity": "medium",
+      "category": "secret",
+      "path": "examples/trust/trust_report.md",
+      "line": 245,
+      "title": "Generic Bearer Token",
+      "message": "Possible Generic Bearer Token detected.",
+      "redacted_preview": "Bear...oken",
+      "redacted": true,
+      "recommendation": "Remove secret from code. Use environment variables or a secrets manager."
+    },
+    {
+      "id": "generic-bearer",
+      "severity": "medium",
+      "category": "secret",
+      "path": "examples/trust/trust_report.md",
+      "line": 248,
+      "title": "Generic Bearer Token",
+      "message": "Possible Generic Bearer Token detected.",
+      "redacted_preview": "Bear...oken",
+      "redacted": true,
+      "recommendation": "Remove secret from code. Use environment variables or a secrets manager."
+    },
+    {
+      "id": "generic-bearer",
+      "severity": "medium",
+      "category": "secret",
+      "path": "examples/trust/trust_report.md",
+      "line": 255,
+      "title": "Generic Bearer Token",
+      "message": "Possible Generic Bearer Token detected.",
+      "redacted_preview": "Bear...oken",
+      "redacted": true,
+      "recommendation": "Remove secret from code. Use environment variables or a secrets manager."
+    },
+    {
+      "id": "generic-bearer",
+      "severity": "medium",
+      "category": "secret",
+      "path": "examples/trust/trust_report.md",
+      "line": 628,
+      "title": "Generic Bearer Token",
+      "message": "Possible Generic Bearer Token detected.",
+      "redacted_preview": "Bear...oken",
+      "redacted": true,
+      "recommendation": "Remove secret from code. Use environment variables or a secrets manager."
+    },
+    {
+      "id": "generic-bearer",
+      "severity": "medium",
+      "category": "secret",
+      "path": "examples/trust/trust_report.md",
+      "line": 635,
+      "title": "Generic Bearer Token",
+      "message": "Possible Generic Bearer Token detected.",
+      "redacted_preview": "Bear...oken",
+      "redacted": true,
+      "recommendation": "Remove secret from code. Use environment variables or a secrets manager."
+    },
+    {
+      "id": "curl-pipe-bash",
+      "severity": "high",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 25,
+      "title": "Curl pipe to shell",
+      "message": "Dangerous shell pattern detected: curl | bash",
+      "recommendation": "Download scripts first, review, then execute."
+    },
+    {
+      "id": "curl-pipe-bash",
+      "severity": "high",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 195,
+      "title": "Curl pipe to shell",
+      "message": "Dangerous shell pattern detected: curl | sh`, `wget | bash",
+      "recommendation": "Download scripts first, review, then execute."
+    },
+    {
+      "id": "curl-pipe-bash",
+      "severity": "high",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 265,
+      "title": "Curl pipe to shell",
+      "message": "Dangerous shell pattern detected: curl pipe to bash | High | `curl ... \\| bash",
+      "recommendation": "Download scripts first, review, then execute."
+    },
+    {
+      "id": "curl-pipe-bash",
+      "severity": "high",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 345,
+      "title": "Curl pipe to shell",
+      "message": "Dangerous shell pattern detected: curl | sh",
+      "recommendation": "Download scripts first, review, then execute."
+    },
+    {
+      "id": "curl-pipe-bash",
+      "severity": "high",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 385,
+      "title": "Curl pipe to shell",
+      "message": "Dangerous shell pattern detected: curl | sh`, `wget | sh",
+      "recommendation": "Download scripts first, review, then execute."
+    },
+    {
+      "id": "curl-pipe-bash",
+      "severity": "high",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 435,
+      "title": "Curl pipe to shell",
+      "message": "Dangerous shell pattern detected: curl | bash",
+      "recommendation": "Download scripts first, review, then execute."
+    },
+    {
+      "id": "curl-pipe-bash",
+      "severity": "high",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 445,
+      "title": "Curl pipe to shell",
+      "message": "Dangerous shell pattern detected: curl | bash",
+      "recommendation": "Download scripts first, review, then execute."
+    },
+    {
+      "id": "curl-pipe-bash",
+      "severity": "high",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 455,
+      "title": "Curl pipe to shell",
+      "message": "Dangerous shell pattern detected: curl | bash",
+      "recommendation": "Download scripts first, review, then execute."
+    },
+    {
+      "id": "curl-pipe-bash",
+      "severity": "high",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 465,
+      "title": "Curl pipe to shell",
+      "message": "Dangerous shell pattern detected: curl | bash",
+      "recommendation": "Download scripts first, review, then execute."
+    },
+    {
+      "id": "curl-pipe-bash",
+      "severity": "high",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 475,
+      "title": "Curl pipe to shell",
+      "message": "Dangerous shell pattern detected: curl | bash",
+      "recommendation": "Download scripts first, review, then execute."
+    },
+    {
+      "id": "curl-pipe-bash",
+      "severity": "high",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 485,
+      "title": "Curl pipe to shell",
+      "message": "Dangerous shell pattern detected: curl | bash",
+      "recommendation": "Download scripts first, review, then execute."
+    },
+    {
+      "id": "curl-pipe-bash",
+      "severity": "high",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 495,
+      "title": "Curl pipe to shell",
+      "message": "Dangerous shell pattern detected: curl | bash",
+      "recommendation": "Download scripts first, review, then execute."
+    },
+    {
+      "id": "curl-pipe-bash",
+      "severity": "high",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 505,
+      "title": "Curl pipe to shell",
+      "message": "Dangerous shell pattern detected: curl -s https://example.com/install.sh | bash",
+      "recommendation": "Download scripts first, review, then execute."
+    },
+    {
+      "id": "curl-pipe-bash",
+      "severity": "high",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 525,
+      "title": "Curl pipe to shell",
+      "message": "Dangerous shell pattern detected: curl | bash",
+      "recommendation": "Download scripts first, review, then execute."
+    },
+    {
+      "id": "curl-pipe-bash",
+      "severity": "high",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 535,
+      "title": "Curl pipe to shell",
+      "message": "Dangerous shell pattern detected: curl | bash",
+      "recommendation": "Download scripts first, review, then execute."
+    },
+    {
+      "id": "curl-pipe-bash",
+      "severity": "high",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 545,
+      "title": "Curl pipe to shell",
+      "message": "Dangerous shell pattern detected: curl | bash",
+      "recommendation": "Download scripts first, review, then execute."
+    },
+    {
+      "id": "curl-pipe-bash",
+      "severity": "high",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 565,
+      "title": "Curl pipe to shell",
+      "message": "Dangerous shell pattern detected: curl | sh",
+      "recommendation": "Download scripts first, review, then execute."
+    },
+    {
+      "id": "curl-pipe-bash",
+      "severity": "high",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 575,
+      "title": "Curl pipe to shell",
+      "message": "Dangerous shell pattern detected: curl |bash",
+      "recommendation": "Download scripts first, review, then execute."
+    },
+    {
+      "id": "curl-pipe-bash",
+      "severity": "high",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 695,
+      "title": "Curl pipe to shell",
+      "message": "Dangerous shell pattern detected: curl | sh",
+      "recommendation": "Download scripts first, review, then execute."
+    },
+    {
+      "id": "curl-pipe-bash",
+      "severity": "high",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 705,
+      "title": "Curl pipe to shell",
+      "message": "Dangerous shell pattern detected: curl | sh",
+      "recommendation": "Download scripts first, review, then execute."
+    },
+    {
+      "id": "curl-pipe-bash",
+      "severity": "high",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 825,
+      "title": "Curl pipe to shell",
+      "message": "Dangerous shell pattern detected: curl https://example.com/setup.sh | bash",
+      "recommendation": "Download scripts first, review, then execute."
+    },
+    {
+      "id": "curl-pipe-bash",
+      "severity": "high",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 925,
+      "title": "Curl pipe to shell",
+      "message": "Dangerous shell pattern detected: curl https://example.com/install.sh | bash",
+      "recommendation": "Download scripts first, review, then execute."
+    },
+    {
+      "id": "curl-pipe-bash",
+      "severity": "high",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 935,
+      "title": "Curl pipe to shell",
+      "message": "Dangerous shell pattern detected: curl | sh",
+      "recommendation": "Download scripts first, review, then execute."
+    },
+    {
+      "id": "curl-pipe-bash",
+      "severity": "high",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 945,
+      "title": "Curl pipe to shell",
+      "message": "Dangerous shell pattern detected: curl |bash",
+      "recommendation": "Download scripts first, review, then execute."
+    },
+    {
+      "id": "curl-pipe-bash",
+      "severity": "high",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 955,
+      "title": "Curl pipe to shell",
+      "message": "Dangerous shell pattern detected: Curl | sh",
+      "recommendation": "Download scripts first, review, then execute."
+    },
+    {
+      "id": "curl-pipe-bash",
+      "severity": "high",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 1095,
+      "title": "Curl pipe to shell",
+      "message": "Dangerous shell pattern detected: curl https://example.com/install.sh | bash",
+      "recommendation": "Download scripts first, review, then execute."
+    },
+    {
+      "id": "curl-pipe-bash",
+      "severity": "high",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 1105,
+      "title": "Curl pipe to shell",
+      "message": "Dangerous shell pattern detected: curl | bash",
+      "recommendation": "Download scripts first, review, then execute."
+    },
+    {
+      "id": "curl-pipe-bash",
+      "severity": "high",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 1115,
+      "title": "Curl pipe to shell",
+      "message": "Dangerous shell pattern detected: curl | bash",
+      "recommendation": "Download scripts first, review, then execute."
+    },
+    {
+      "id": "curl-pipe-bash",
+      "severity": "high",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 1125,
+      "title": "Curl pipe to shell",
+      "message": "Dangerous shell pattern detected: curl | bash",
+      "recommendation": "Download scripts first, review, then execute."
+    },
+    {
+      "id": "wget-pipe-sh",
+      "severity": "high",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 195,
+      "title": "Wget pipe to shell",
+      "message": "Dangerous shell pattern detected: wget | bash",
+      "recommendation": "Download scripts first, review, then execute."
+    },
+    {
+      "id": "wget-pipe-sh",
+      "severity": "high",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 205,
+      "title": "Wget pipe to shell",
+      "message": "Dangerous shell pattern detected: wget | bash",
+      "recommendation": "Download scripts first, review, then execute."
+    },
+    {
+      "id": "wget-pipe-sh",
+      "severity": "high",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 275,
+      "title": "Wget pipe to shell",
+      "message": "Dangerous shell pattern detected: wget pipe to shell | High | `wget ... \\| sh",
+      "recommendation": "Download scripts first, review, then execute."
+    },
+    {
+      "id": "wget-pipe-sh",
+      "severity": "high",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 385,
+      "title": "Wget pipe to shell",
+      "message": "Dangerous shell pattern detected: wget | sh",
+      "recommendation": "Download scripts first, review, then execute."
+    },
+    {
+      "id": "wget-pipe-sh",
+      "severity": "high",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 395,
+      "title": "Wget pipe to shell",
+      "message": "Dangerous shell pattern detected: wget | sh",
+      "recommendation": "Download scripts first, review, then execute."
+    },
+    {
+      "id": "wget-pipe-sh",
+      "severity": "high",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 515,
+      "title": "Wget pipe to shell",
+      "message": "Dangerous shell pattern detected: wget -qO- https://example.com/setup.sh | bash",
+      "recommendation": "Download scripts first, review, then execute."
+    },
+    {
+      "id": "wget-pipe-sh",
+      "severity": "high",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 585,
+      "title": "Wget pipe to shell",
+      "message": "Dangerous shell pattern detected: wget | sh",
+      "recommendation": "Download scripts first, review, then execute."
+    },
+    {
+      "id": "wget-pipe-sh",
+      "severity": "high",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 595,
+      "title": "Wget pipe to shell",
+      "message": "Dangerous shell pattern detected: wget | bash",
+      "recommendation": "Download scripts first, review, then execute."
+    },
+    {
+      "id": "wget-pipe-sh",
+      "severity": "high",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 965,
+      "title": "Wget pipe to shell",
+      "message": "Dangerous shell pattern detected: wget | sh",
+      "recommendation": "Download scripts first, review, then execute."
+    },
+    {
+      "id": "wget-pipe-sh",
+      "severity": "high",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 975,
+      "title": "Wget pipe to shell",
+      "message": "Dangerous shell pattern detected: wget | bash",
+      "recommendation": "Download scripts first, review, then execute."
+    },
+    {
+      "id": "rm-rf-root",
+      "severity": "high",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 35,
+      "title": "Recursive force delete from root",
+      "message": "Dangerous shell pattern detected: rm -rf /",
+      "recommendation": "Never delete from root. Use explicit paths."
+    },
+    {
+      "id": "rm-rf-root",
+      "severity": "high",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 95,
+      "title": "Recursive force delete from root",
+      "message": "Dangerous shell pattern detected: rm -rf /",
+      "recommendation": "Never delete from root. Use explicit paths."
+    },
+    {
+      "id": "rm-rf-root",
+      "severity": "high",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 165,
+      "title": "Recursive force delete from root",
+      "message": "Dangerous shell pattern detected: rm -rf /",
+      "recommendation": "Never delete from root. Use explicit paths."
+    },
+    {
+      "id": "rm-rf-root",
+      "severity": "high",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 215,
+      "title": "Recursive force delete from root",
+      "message": "Dangerous shell pattern detected: rm -rf /",
+      "recommendation": "Never delete from root. Use explicit paths."
+    },
+    {
+      "id": "rm-rf-root",
+      "severity": "high",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 225,
+      "title": "Recursive force delete from root",
+      "message": "Dangerous shell pattern detected: rm -rf /",
+      "recommendation": "Never delete from root. Use explicit paths."
+    },
+    {
+      "id": "rm-rf-root",
+      "severity": "high",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 285,
+      "title": "Recursive force delete from root",
+      "message": "Dangerous shell pattern detected: rm -rf /",
+      "recommendation": "Never delete from root. Use explicit paths."
+    },
+    {
+      "id": "rm-rf-root",
+      "severity": "high",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 355,
+      "title": "Recursive force delete from root",
+      "message": "Dangerous shell pattern detected: rm -rf /",
+      "recommendation": "Never delete from root. Use explicit paths."
+    },
+    {
+      "id": "rm-rf-root",
+      "severity": "high",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 555,
+      "title": "Recursive force delete from root",
+      "message": "Dangerous shell pattern detected: rm -rf /",
+      "recommendation": "Never delete from root. Use explicit paths."
+    },
+    {
+      "id": "rm-rf-root",
+      "severity": "high",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 605,
+      "title": "Recursive force delete from root",
+      "message": "Dangerous shell pattern detected: rm -rf /",
+      "recommendation": "Never delete from root. Use explicit paths."
+    },
+    {
+      "id": "rm-rf-root",
+      "severity": "high",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 615,
+      "title": "Recursive force delete from root",
+      "message": "Dangerous shell pattern detected: rm -rf /",
+      "recommendation": "Never delete from root. Use explicit paths."
+    },
+    {
+      "id": "rm-rf-root",
+      "severity": "high",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 675,
+      "title": "Recursive force delete from root",
+      "message": "Dangerous shell pattern detected: rm -rf /",
+      "recommendation": "Never delete from root. Use explicit paths."
+    },
+    {
+      "id": "rm-rf-root",
+      "severity": "high",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 715,
+      "title": "Recursive force delete from root",
+      "message": "Dangerous shell pattern detected: rm -rf /",
+      "recommendation": "Never delete from root. Use explicit paths."
+    },
+    {
+      "id": "rm-rf-root",
+      "severity": "high",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 725,
+      "title": "Recursive force delete from root",
+      "message": "Dangerous shell pattern detected: rm -rf /",
+      "recommendation": "Never delete from root. Use explicit paths."
+    },
+    {
+      "id": "rm-rf-root",
+      "severity": "high",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 735,
+      "title": "Recursive force delete from root",
+      "message": "Dangerous shell pattern detected: rm -rf /",
+      "recommendation": "Never delete from root. Use explicit paths."
+    },
+    {
+      "id": "rm-rf-root",
+      "severity": "high",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 745,
+      "title": "Recursive force delete from root",
+      "message": "Dangerous shell pattern detected: rm -rf /",
+      "recommendation": "Never delete from root. Use explicit paths."
+    },
+    {
+      "id": "rm-rf-root",
+      "severity": "high",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 785,
+      "title": "Recursive force delete from root",
+      "message": "Dangerous shell pattern detected: rm -rf /",
+      "recommendation": "Never delete from root. Use explicit paths."
+    },
+    {
+      "id": "rm-rf-root",
+      "severity": "high",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 985,
+      "title": "Recursive force delete from root",
+      "message": "Dangerous shell pattern detected: rm -rf /",
+      "recommendation": "Never delete from root. Use explicit paths."
+    },
+    {
+      "id": "rm-rf-root",
+      "severity": "high",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 995,
+      "title": "Recursive force delete from root",
+      "message": "Dangerous shell pattern detected: rm -rf /",
+      "recommendation": "Never delete from root. Use explicit paths."
+    },
+    {
+      "id": "rm-rf-root",
+      "severity": "high",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 1005,
+      "title": "Recursive force delete from root",
+      "message": "Dangerous shell pattern detected: rm -rf /",
+      "recommendation": "Never delete from root. Use explicit paths."
+    },
+    {
+      "id": "rm-rf-root",
+      "severity": "high",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 1015,
+      "title": "Recursive force delete from root",
+      "message": "Dangerous shell pattern detected: rm -rf /",
+      "recommendation": "Never delete from root. Use explicit paths."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 38,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: Sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 40,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 45,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 46,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 68,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: Sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 70,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 75,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 76,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 98,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: Sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 100,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 105,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 106,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 108,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: Sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 110,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 115,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 116,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 118,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: Sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 120,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 125,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 126,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 128,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: Sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 130,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 135,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 136,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 138,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: Sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 140,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 145,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 146,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 148,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: Sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 150,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 155,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 156,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 168,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: Sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 170,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 175,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 176,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 178,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: Sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 180,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 185,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 186,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 228,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: Sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 230,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 235,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 236,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 288,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: Sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 290,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 295,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: Sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 296,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 298,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: Sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 300,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 305,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 306,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 358,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: Sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 360,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 365,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 366,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 368,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: Sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 370,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 375,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 376,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 398,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: Sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 400,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 405,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 406,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 408,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: Sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 410,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 415,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 416,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 618,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: Sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 620,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 625,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 626,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 638,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: Sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 640,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 645,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 646,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 648,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: Sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 650,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 655,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: Sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 656,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 658,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: Sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 660,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 665,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 666,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 678,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: Sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 680,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 685,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 686,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 748,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: Sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 750,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 755,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 756,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 758,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: Sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 760,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 765,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 766,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 768,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: Sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 770,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 775,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 776,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 828,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: Sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 830,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 835,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 836,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 838,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: Sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 840,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 845,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 846,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 1018,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: Sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 1020,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 1025,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 1026,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 1028,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: Sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 1030,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 1035,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: SUDO",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 1036,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "chmod-777",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 55,
+      "title": "World-writable permissions",
+      "message": "Dangerous shell pattern detected: chmod 777",
+      "recommendation": "Use more restrictive permissions (e.g., 755 or 644)."
+    },
+    {
+      "id": "chmod-777",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 85,
+      "title": "World-writable permissions",
+      "message": "Dangerous shell pattern detected: chmod 777",
+      "recommendation": "Use more restrictive permissions (e.g., 755 or 644)."
+    },
+    {
+      "id": "chmod-777",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 315,
+      "title": "World-writable permissions",
+      "message": "Dangerous shell pattern detected: chmod 777",
+      "recommendation": "Use more restrictive permissions (e.g., 755 or 644)."
+    },
+    {
+      "id": "chmod-777",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 425,
+      "title": "World-writable permissions",
+      "message": "Dangerous shell pattern detected: chmod 777",
+      "recommendation": "Use more restrictive permissions (e.g., 755 or 644)."
+    },
+    {
+      "id": "chmod-777",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 855,
+      "title": "World-writable permissions",
+      "message": "Dangerous shell pattern detected: chmod 777",
+      "recommendation": "Use more restrictive permissions (e.g., 755 or 644)."
+    },
+    {
+      "id": "chmod-777",
+      "severity": "medium",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 865,
+      "title": "World-writable permissions",
+      "message": "Dangerous shell pattern detected: chmod 777",
+      "recommendation": "Use more restrictive permissions (e.g., 755 or 644)."
+    },
+    {
+      "id": "eval-variable",
+      "severity": "high",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 325,
+      "title": "Eval with variable",
+      "message": "Dangerous shell pattern detected: eval $",
+      "recommendation": "Avoid eval with variables; use arrays or functions."
+    },
+    {
+      "id": "eval-variable",
+      "severity": "high",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 875,
+      "title": "Eval with variable",
+      "message": "Dangerous shell pattern detected: eval $",
+      "recommendation": "Avoid eval with variables; use arrays or functions."
+    },
+    {
+      "id": "unsafe-pickle",
+      "severity": "high",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 65,
+      "title": "Unsafe pickle load",
+      "message": "Dangerous shell pattern detected: pickle.load",
+      "recommendation": "Pickle can execute arbitrary code. Use safer formats like JSON."
+    },
+    {
+      "id": "unsafe-pickle",
+      "severity": "high",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 335,
+      "title": "Unsafe pickle load",
+      "message": "Dangerous shell pattern detected: pickle.load",
+      "recommendation": "Pickle can execute arbitrary code. Use safer formats like JSON."
+    },
+    {
+      "id": "unsafe-pickle",
+      "severity": "high",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 885,
+      "title": "Unsafe pickle load",
+      "message": "Dangerous shell pattern detected: pickle.load",
+      "recommendation": "Pickle can execute arbitrary code. Use safer formats like JSON."
+    },
+    {
+      "id": "unsafe-pickle",
+      "severity": "high",
+      "category": "execution",
+      "path": "examples/trust/trust_report.md",
+      "line": 895,
+      "title": "Unsafe pickle load",
+      "message": "Dangerous shell pattern detected: pickle.load",
+      "recommendation": "Pickle can execute arbitrary code. Use safer formats like JSON."
+    },
+    {
+      "id": "curl-pipe-bash",
+      "severity": "high",
+      "category": "execution",
+      "path": "src/oss_paper_ci/runner.py",
+      "line": 28,
+      "title": "Curl pipe to shell",
+      "message": "Dangerous shell pattern detected: curl | sh",
+      "recommendation": "Download scripts first, review, then execute."
+    },
+    {
+      "id": "curl-pipe-bash",
+      "severity": "high",
+      "category": "execution",
+      "path": "src/oss_paper_ci/runner.py",
+      "line": 29,
+      "title": "Curl pipe to shell",
+      "message": "Dangerous shell pattern detected: curl |bash",
+      "recommendation": "Download scripts first, review, then execute."
+    },
+    {
+      "id": "wget-pipe-sh",
+      "severity": "high",
+      "category": "execution",
+      "path": "src/oss_paper_ci/runner.py",
+      "line": 30,
+      "title": "Wget pipe to shell",
+      "message": "Dangerous shell pattern detected: wget | sh",
+      "recommendation": "Download scripts first, review, then execute."
+    },
+    {
+      "id": "wget-pipe-sh",
+      "severity": "high",
+      "category": "execution",
+      "path": "src/oss_paper_ci/runner.py",
+      "line": 31,
+      "title": "Wget pipe to shell",
+      "message": "Dangerous shell pattern detected: wget | bash",
+      "recommendation": "Download scripts first, review, then execute."
+    },
+    {
+      "id": "rm-rf-root",
+      "severity": "high",
+      "category": "execution",
+      "path": "src/oss_paper_ci/runner.py",
+      "line": 22,
+      "title": "Recursive force delete from root",
+      "message": "Dangerous shell pattern detected: rm -rf /",
+      "recommendation": "Never delete from root. Use explicit paths."
+    },
+    {
+      "id": "rm-rf-root",
+      "severity": "high",
+      "category": "execution",
+      "path": "src/oss_paper_ci/runner.py",
+      "line": 23,
+      "title": "Recursive force delete from root",
+      "message": "Dangerous shell pattern detected: rm -rf /",
+      "recommendation": "Never delete from root. Use explicit paths."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "src/oss_paper_ci/runner.py",
+      "line": 26,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "generic-bearer",
+      "severity": "medium",
+      "category": "secret",
+      "path": "src/oss_paper_ci/security.py",
+      "line": 39,
+      "title": "Generic Bearer Token",
+      "message": "Possible Generic Bearer Token detected.",
+      "redacted_preview": "Bear...oken",
+      "redacted": true,
+      "recommendation": "Remove secret from code. Use environment variables or a secrets manager."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "src/oss_paper_ci/security.py",
+      "line": 74,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "src/oss_paper_ci/security.py",
+      "line": 76,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: Sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "src/oss_paper_ci/security.py",
+      "line": 78,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "rm-rf-root",
+      "severity": "high",
+      "category": "execution",
+      "path": "tests/test_reproduce_runner.py",
+      "line": 162,
+      "title": "Recursive force delete from root",
+      "message": "Dangerous shell pattern detected: rm -rf /",
+      "recommendation": "Never delete from root. Use explicit paths."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "tests/test_reproduce_runner.py",
+      "line": 162,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "curl-pipe-bash",
+      "severity": "high",
+      "category": "execution",
+      "path": "tests/test_reproduce_security.py",
+      "line": 28,
+      "title": "Curl pipe to shell",
+      "message": "Dangerous shell pattern detected: curl | sh",
+      "recommendation": "Download scripts first, review, then execute."
+    },
+    {
+      "id": "curl-pipe-bash",
+      "severity": "high",
+      "category": "execution",
+      "path": "tests/test_reproduce_security.py",
+      "line": 29,
+      "title": "Curl pipe to shell",
+      "message": "Dangerous shell pattern detected: curl | sh",
+      "recommendation": "Download scripts first, review, then execute."
+    },
+    {
+      "id": "rm-rf-root",
+      "severity": "high",
+      "category": "execution",
+      "path": "tests/test_reproduce_security.py",
+      "line": 22,
+      "title": "Recursive force delete from root",
+      "message": "Dangerous shell pattern detected: rm -rf /",
+      "recommendation": "Never delete from root. Use explicit paths."
+    },
+    {
+      "id": "rm-rf-root",
+      "severity": "high",
+      "category": "execution",
+      "path": "tests/test_reproduce_security.py",
+      "line": 69,
+      "title": "Recursive force delete from root",
+      "message": "Dangerous shell pattern detected: rm -rf /",
+      "recommendation": "Never delete from root. Use explicit paths."
+    },
+    {
+      "id": "rm-rf-root",
+      "severity": "high",
+      "category": "execution",
+      "path": "tests/test_reproduce_security.py",
+      "line": 81,
+      "title": "Recursive force delete from root",
+      "message": "Dangerous shell pattern detected: rm -rf /",
+      "recommendation": "Never delete from root. Use explicit paths."
+    },
+    {
+      "id": "rm-rf-root",
+      "severity": "high",
+      "category": "execution",
+      "path": "tests/test_reproduce_security.py",
+      "line": 89,
+      "title": "Recursive force delete from root",
+      "message": "Dangerous shell pattern detected: rm -rf /",
+      "recommendation": "Never delete from root. Use explicit paths."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "tests/test_reproduce_security.py",
+      "line": 25,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "tests/test_reproduce_security.py",
+      "line": 69,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "tests/test_reproduce_security.py",
+      "line": 81,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "rm-rf-root",
+      "severity": "high",
+      "category": "execution",
+      "path": "tests/test_round4_features.py",
+      "line": 192,
+      "title": "Recursive force delete from root",
+      "message": "Dangerous shell pattern detected: rm -rf /",
+      "recommendation": "Never delete from root. Use explicit paths."
+    },
+    {
+      "id": "openai-api-key",
+      "severity": "high",
+      "category": "secret",
+      "path": "tests/test_secret_scan.py",
+      "line": 13,
+      "title": "OpenAI API Key",
+      "message": "Possible OpenAI API Key detected.",
+      "redacted_preview": "sk-a...2345",
+      "redacted": true,
+      "recommendation": "Remove secret from code. Use environment variables or a secrets manager."
+    },
+    {
+      "id": "aws-access-key",
+      "severity": "high",
+      "category": "secret",
+      "path": "tests/test_secret_scan.py",
+      "line": 29,
+      "title": "AWS Access Key ID",
+      "message": "Possible AWS Access Key ID detected.",
+      "redacted_preview": "AKIA...MPLE",
+      "redacted": true,
+      "recommendation": "Remove secret from code. Use environment variables or a secrets manager."
+    },
+    {
+      "id": "private-key-block",
+      "severity": "high",
+      "category": "secret",
+      "path": "tests/test_secret_scan.py",
+      "line": 37,
+      "title": "Private Key Block",
+      "message": "Possible Private Key Block detected.",
+      "redacted_preview": "----...----",
+      "redacted": true,
+      "recommendation": "Remove secret from code. Use environment variables or a secrets manager."
+    },
+    {
+      "id": "curl-pipe-bash",
+      "severity": "high",
+      "category": "execution",
+      "path": "tests/test_secret_scan.py",
+      "line": 45,
+      "title": "Curl pipe to shell",
+      "message": "Dangerous shell pattern detected: curl https://example.com/setup.sh | bash",
+      "recommendation": "Download scripts first, review, then execute."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "tests/test_secret_scan.py",
+      "line": 51,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "tests/test_secret_scan.py",
+      "line": 55,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "chmod-777",
+      "severity": "medium",
+      "category": "execution",
+      "path": "tests/test_secret_scan.py",
+      "line": 59,
+      "title": "World-writable permissions",
+      "message": "Dangerous shell pattern detected: chmod 777",
+      "recommendation": "Use more restrictive permissions (e.g., 755 or 644)."
+    },
+    {
+      "id": "chmod-777",
+      "severity": "medium",
+      "category": "execution",
+      "path": "tests/test_secret_scan.py",
+      "line": 61,
+      "title": "World-writable permissions",
+      "message": "Dangerous shell pattern detected: chmod 777",
+      "recommendation": "Use more restrictive permissions (e.g., 755 or 644)."
+    },
+    {
+      "id": "eval-variable",
+      "severity": "high",
+      "category": "execution",
+      "path": "tests/test_secret_scan.py",
+      "line": 69,
+      "title": "Eval with variable",
+      "message": "Dangerous shell pattern detected: eval $",
+      "recommendation": "Avoid eval with variables; use arrays or functions."
+    },
+    {
+      "id": "unsafe-pickle",
+      "severity": "high",
+      "category": "execution",
+      "path": "tests/test_secret_scan.py",
+      "line": 75,
+      "title": "Unsafe pickle load",
+      "message": "Dangerous shell pattern detected: pickle.load",
+      "recommendation": "Pickle can execute arbitrary code. Use safer formats like JSON."
+    },
+    {
+      "id": "unsafe-pickle",
+      "severity": "high",
+      "category": "execution",
+      "path": "tests/test_secret_scan.py",
+      "line": 77,
+      "title": "Unsafe pickle load",
+      "message": "Dangerous shell pattern detected: pickle.load",
+      "recommendation": "Pickle can execute arbitrary code. Use safer formats like JSON."
+    },
+    {
+      "id": "openai-api-key",
+      "severity": "high",
+      "category": "secret",
+      "path": "tests/test_security_scan_cli.py",
+      "line": 28,
+      "title": "OpenAI API Key",
+      "message": "Possible OpenAI API Key detected.",
+      "redacted_preview": "sk-a...2345",
+      "redacted": true,
+      "recommendation": "Remove secret from code. Use environment variables or a secrets manager."
+    },
+    {
+      "id": "private-key-block",
+      "severity": "high",
+      "category": "secret",
+      "path": "tests/test_security_scan_cli.py",
+      "line": 49,
+      "title": "Private Key Block",
+      "message": "Possible Private Key Block detected.",
+      "redacted_preview": "----...----",
+      "redacted": true,
+      "recommendation": "Remove secret from code. Use environment variables or a secrets manager."
+    },
+    {
+      "id": "curl-pipe-bash",
+      "severity": "high",
+      "category": "execution",
+      "path": "tests/test_security_scan_cli.py",
+      "line": 83,
+      "title": "Curl pipe to shell",
+      "message": "Dangerous shell pattern detected: curl https://example.com/install.sh | bash",
+      "recommendation": "Download scripts first, review, then execute."
+    },
+    {
+      "id": "curl-pipe-bash",
+      "severity": "high",
+      "category": "execution",
+      "path": "tests/test_smoke_security.py",
+      "line": 23,
+      "title": "Curl pipe to shell",
+      "message": "Dangerous shell pattern detected: curl | sh",
+      "recommendation": "Download scripts first, review, then execute."
+    },
+    {
+      "id": "curl-pipe-bash",
+      "severity": "high",
+      "category": "execution",
+      "path": "tests/test_smoke_security.py",
+      "line": 27,
+      "title": "Curl pipe to shell",
+      "message": "Dangerous shell pattern detected: curl |bash",
+      "recommendation": "Download scripts first, review, then execute."
+    },
+    {
+      "id": "curl-pipe-bash",
+      "severity": "high",
+      "category": "execution",
+      "path": "tests/test_smoke_security.py",
+      "line": 64,
+      "title": "Curl pipe to shell",
+      "message": "Dangerous shell pattern detected: Curl | sh",
+      "recommendation": "Download scripts first, review, then execute."
+    },
+    {
+      "id": "wget-pipe-sh",
+      "severity": "high",
+      "category": "execution",
+      "path": "tests/test_smoke_security.py",
+      "line": 31,
+      "title": "Wget pipe to shell",
+      "message": "Dangerous shell pattern detected: wget | sh",
+      "recommendation": "Download scripts first, review, then execute."
+    },
+    {
+      "id": "wget-pipe-sh",
+      "severity": "high",
+      "category": "execution",
+      "path": "tests/test_smoke_security.py",
+      "line": 35,
+      "title": "Wget pipe to shell",
+      "message": "Dangerous shell pattern detected: wget | bash",
+      "recommendation": "Download scripts first, review, then execute."
+    },
+    {
+      "id": "rm-rf-root",
+      "severity": "high",
+      "category": "execution",
+      "path": "tests/test_smoke_security.py",
+      "line": 11,
+      "title": "Recursive force delete from root",
+      "message": "Dangerous shell pattern detected: rm -rf /",
+      "recommendation": "Never delete from root. Use explicit paths."
+    },
+    {
+      "id": "rm-rf-root",
+      "severity": "high",
+      "category": "execution",
+      "path": "tests/test_smoke_security.py",
+      "line": 15,
+      "title": "Recursive force delete from root",
+      "message": "Dangerous shell pattern detected: rm -rf /",
+      "recommendation": "Never delete from root. Use explicit paths."
+    },
+    {
+      "id": "rm-rf-root",
+      "severity": "high",
+      "category": "execution",
+      "path": "tests/test_smoke_security.py",
+      "line": 63,
+      "title": "Recursive force delete from root",
+      "message": "Dangerous shell pattern detected: rm -rf /",
+      "recommendation": "Never delete from root. Use explicit paths."
+    },
+    {
+      "id": "rm-rf-root",
+      "severity": "high",
+      "category": "execution",
+      "path": "tests/test_smoke_security.py",
+      "line": 151,
+      "title": "Recursive force delete from root",
+      "message": "Dangerous shell pattern detected: rm -rf /",
+      "recommendation": "Never delete from root. Use explicit paths."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "tests/test_smoke_security.py",
+      "line": 19,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: sudo",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "sudo-in-ci",
+      "severity": "medium",
+      "category": "execution",
+      "path": "tests/test_smoke_security.py",
+      "line": 63,
+      "title": "Sudo usage",
+      "message": "Dangerous shell pattern detected: SUDO",
+      "recommendation": "Avoid sudo in CI; use containers or explicit permissions."
+    },
+    {
+      "id": "generic-api-key",
+      "severity": "medium",
+      "category": "secret",
+      "path": "tests/fixtures/security_secret_repo/.env",
+      "line": 4,
+      "title": "Generic API Key",
+      "message": "Possible Generic API Key detected.",
+      "redacted_preview": "API_...7890",
+      "redacted": true,
+      "recommendation": "Remove secret from code. Use environment variables or a secrets manager."
+    },
+    {
+      "id": "openai-api-key",
+      "severity": "high",
+      "category": "secret",
+      "path": "tests/fixtures/security_secret_repo/config.py",
+      "line": 4,
+      "title": "OpenAI API Key",
+      "message": "Possible OpenAI API Key detected.",
+      "redacted_preview": "sk-a...2345",
+      "redacted": true,
+      "recommendation": "Remove secret from code. Use environment variables or a secrets manager."
+    },
+    {
+      "id": "aws-access-key",
+      "severity": "high",
+      "category": "secret",
+      "path": "tests/fixtures/security_secret_repo/config.py",
+      "line": 6,
+      "title": "AWS Access Key ID",
+      "message": "Possible AWS Access Key ID detected.",
+      "redacted_preview": "AKIA...MPLE",
+      "redacted": true,
+      "recommendation": "Remove secret from code. Use environment variables or a secrets manager."
+    },
+    {
+      "id": "private-key-block",
+      "severity": "high",
+      "category": "secret",
+      "path": "tests/fixtures/security_secret_repo/config.py",
+      "line": 10,
+      "title": "Private Key Block",
+      "message": "Possible Private Key Block detected.",
+      "redacted_preview": "----...----",
+      "redacted": true,
+      "recommendation": "Remove secret from code. Use environment variables or a secrets manager."
+    },
+    {
+      "id": "generic-api-key",
+      "severity": "medium",
+      "category": "secret",
+      "path": "tests/fixtures/security_secret_repo/config.py",
+      "line": 4,
+      "title": "Generic API Key",
+      "message": "Possible Generic API Key detected.",
+      "redacted_preview": "API_...2345",
+      "redacted": true,
+      "recommendation": "Remove secret from code. Use environment variables or a secrets manager."
+    },
+    {
+      "id": "curl-pipe-bash",
+      "severity": "high",
+      "category": "execution",
+      "path": "tests/fixtures/security_secret_repo/config.py",
+      "line": 17,
+      "title": "Curl pipe to shell",
+      "message": "Dangerous shell pattern detected: curl https://example.com/install.sh | bash",
+      "recommendation": "Download scripts first, review, then execute."
+    },
+    {
+      "id": "curl-pipe-bash",
+      "severity": "high",
+      "category": "execution",
+      "path": "tests/golden/evaluation_summary.json",
+      "line": 8513,
+      "title": "Curl pipe to shell",
+      "message": "Dangerous shell pattern detected: curl | bash",
+      "recommendation": "Download scripts first, review, then execute."
+    },
+    {
+      "id": "curl-pipe-bash",
+      "severity": "high",
+      "category": "execution",
+      "path": "tests/golden/evaluation_summary.json",
+      "line": 8521,
+      "title": "Curl pipe to shell",
+      "message": "Dangerous shell pattern detected: curl | bash",
+      "recommendation": "Download scripts first, review, then execute."
+    },
+    {
+      "id": "curl-pipe-bash",
+      "severity": "high",
+      "category": "execution",
+      "path": "tests/golden/evaluation_summary.json",
+      "line": 8526,
+      "title": "Curl pipe to shell",
+      "message": "Dangerous shell pattern detected: curl | bash",
+      "recommendation": "Download scripts first, review, then execute."
+    },
+    {
+      "id": "env-file-committed",
+      "severity": "medium",
+      "category": "secret",
+      "path": "tests/fixtures/security_secret_repo/.env",
+      "title": "Environment file committed",
+      "message": "File '.env' appears to be an environment file. It may contain secrets.",
+      "recommendation": "Add .env files to .gitignore and remove from history if secrets were committed."
+    },
+    {
+      "id": "workflow-missing-permissions",
+      "severity": "medium",
+      "category": "workflow",
+      "path": ".github/workflows/ci.yml",
+      "title": "Missing explicit permissions",
+      "message": "Workflow does not declare explicit permissions. Default token permissions may be overly broad.",
+      "recommendation": "Add 'permissions: contents: read' or more specific permissions."
+    },
+    {
+      "id": "workflow-trigger-workflow_dispatch",
+      "severity": "medium",
+      "category": "workflow",
+      "path": ".github/workflows/docs.yml",
+      "title": "High-risk trigger: workflow_dispatch",
+      "message": "Workflow uses 'workflow_dispatch' which can be exploited if it checks out PR code.",
+      "recommendation": "Avoid pull_request_target with PR code checkout. Use pull_request instead."
+    },
+    {
+      "id": "workflow-third-party-action",
+      "severity": "low",
+      "category": "workflow",
+      "path": ".github/workflows/docs.yml",
+      "line": 32,
+      "title": "Third-party action: actions/upload-pages-artifact",
+      "message": "Action 'actions/upload-pages-artifact@v5' is not from a known official source and is not SHA-pinned.",
+      "recommendation": "Pin third-party actions to SHA for supply-chain security."
+    },
+    {
+      "id": "workflow-third-party-action",
+      "severity": "low",
+      "category": "workflow",
+      "path": ".github/workflows/docs.yml",
+      "line": 45,
+      "title": "Third-party action: actions/deploy-pages",
+      "message": "Action 'actions/deploy-pages@v5' is not from a known official source and is not SHA-pinned.",
+      "recommendation": "Pin third-party actions to SHA for supply-chain security."
+    },
+    {
+      "id": "workflow-missing-permissions",
+      "severity": "medium",
+      "category": "workflow",
+      "path": ".github/workflows/install-smoke.yml",
+      "title": "Missing explicit permissions",
+      "message": "Workflow does not declare explicit permissions. Default token permissions may be overly broad.",
+      "recommendation": "Add 'permissions: contents: read' or more specific permissions."
+    }
+  ],
+  "inventory": {
+    "schema_version": "0.1",
+    "report_type": "oss-paper-ci-dependency-inventory",
+    "repo": "E:\\Projects\\OSS-Paper-CI",
+    "project": {
+      "name": "oss-paper-ci",
+      "version": "2.9.0rc1",
+      "python_requires": ">=3.10",
+      "license": "MIT",
+      "urls": {
+        "Homepage": "https://github.com/Akastella/oss-paper-ci",
+        "Documentation": "https://akastella.github.io/oss-paper-ci/",
+        "Repository": "https://github.com/Akastella/oss-paper-ci",
+        "Issues": "https://github.com/Akastella/oss-paper-ci/issues",
+        "Changelog": "https://github.com/Akastella/oss-paper-ci/blob/main/CHANGELOG.md"
+      }
+    },
+    "dependencies": {
+      "runtime": [
+        "pyyaml>=6.0",
+        "rich>=13.0"
+      ],
+      "optional": {
+        "dev": [
+          "pytest>=7.0",
+          "pytest-cov>=4.0",
+          "build>=1.0",
+          "twine>=5.0"
+        ]
+      },
+      "dev": [
+        "pytest>=7.0",
+        "pytest-cov>=4.0",
+        "build>=1.0",
+        "twine>=5.0"
+      ]
+    },
+    "scripts": {
+      "oss-paper-ci": "oss_paper_ci.cli:main"
+    },
+    "lockfiles_detected": [],
+    "github_actions_used": [
+      {
+        "action": "actions/checkout@v6",
+        "workflow": "ci.yml"
+      },
+      {
+        "action": "actions/setup-python@v6",
+        "workflow": "ci.yml"
+      },
+      {
+        "action": "actions/checkout@v6",
+        "workflow": "ci.yml"
+      },
+      {
+        "action": "actions/setup-python@v6",
+        "workflow": "ci.yml"
+      },
+      {
+        "action": "actions/checkout@v6",
+        "workflow": "docs.yml"
+      },
+      {
+        "action": "actions/setup-python@v6",
+        "workflow": "docs.yml"
+      },
+      {
+        "action": "actions/upload-pages-artifact@v5",
+        "workflow": "docs.yml"
+      },
+      {
+        "action": "actions/deploy-pages@v5",
+        "workflow": "docs.yml"
+      },
+      {
+        "action": "actions/checkout@v4",
+        "workflow": "install-smoke.yml"
+      },
+      {
+        "action": "actions/setup-python@v5",
+        "workflow": "install-smoke.yml"
+      },
+      {
+        "action": "actions/checkout@v6",
+        "workflow": "release.yml"
+      },
+      {
+        "action": "actions/setup-python@v6",
+        "workflow": "release.yml"
+      },
+      {
+        "action": "actions/upload-artifact@v7",
+        "workflow": "release.yml"
+      }
+    ],
+    "docker_base_images": [
+      "python:3.12-slim"
+    ],
+    "ecosystems_detected": [
+      "python",
+      "github-actions",
+      "docker"
+    ],
+    "limitations": [
+      "Lightweight local inventory; not an official SPDX or CycloneDX SBOM.",
+      "Based on declared metadata, not resolved dependency tree.",
+      "Does not include transitive dependencies.",
+      "GitHub Actions versions are as declared in workflow files."
+    ]
+  },
+  "workflow_audit": {
+    "findings": [
+      {
+        "id": "workflow-missing-permissions",
+        "severity": "medium",
+        "category": "workflow",
+        "path": ".github/workflows/ci.yml",
+        "title": "Missing explicit permissions",
+        "message": "Workflow does not declare explicit permissions. Default token permissions may be overly broad.",
+        "recommendation": "Add 'permissions: contents: read' or more specific permissions."
+      },
+      {
+        "id": "workflow-trigger-workflow_dispatch",
+        "severity": "medium",
+        "category": "workflow",
+        "path": ".github/workflows/docs.yml",
+        "title": "High-risk trigger: workflow_dispatch",
+        "message": "Workflow uses 'workflow_dispatch' which can be exploited if it checks out PR code.",
+        "recommendation": "Avoid pull_request_target with PR code checkout. Use pull_request instead."
+      },
+      {
+        "id": "workflow-third-party-action",
+        "severity": "low",
+        "category": "workflow",
+        "path": ".github/workflows/docs.yml",
+        "line": 32,
+        "title": "Third-party action: actions/upload-pages-artifact",
+        "message": "Action 'actions/upload-pages-artifact@v5' is not from a known official source and is not SHA-pinned.",
+        "recommendation": "Pin third-party actions to SHA for supply-chain security."
+      },
+      {
+        "id": "workflow-third-party-action",
+        "severity": "low",
+        "category": "workflow",
+        "path": ".github/workflows/docs.yml",
+        "line": 45,
+        "title": "Third-party action: actions/deploy-pages",
+        "message": "Action 'actions/deploy-pages@v5' is not from a known official source and is not SHA-pinned.",
+        "recommendation": "Pin third-party actions to SHA for supply-chain security."
+      },
+      {
+        "id": "workflow-missing-permissions",
+        "severity": "medium",
+        "category": "workflow",
+        "path": ".github/workflows/install-smoke.yml",
+        "title": "Missing explicit permissions",
+        "message": "Workflow does not declare explicit permissions. Default token permissions may be overly broad.",
+        "recommendation": "Add 'permissions: contents: read' or more specific permissions."
+      }
+    ],
+    "workflows_scanned": 4,
+    "limitations": [
+      "Static analysis of workflow YAML files only.",
+      "Does not verify action integrity or existence.",
+      "Official action list may be incomplete.",
+      "Does not check for secrets exposure in workflow logs.",
+      "Major version pinning (e.g., @v4) is accepted for official actions."
+    ]
+  },
+  "provenance": {
+    "schema_version": "0.1",
+    "tool": "oss-paper-ci",
+    "tool_version": "2.9.0rc1",
+    "source": {
+      "repo": "OSS-Paper-CI",
+      "commit": "e602a89fad63e8f557be5c446e442bff348f47ab",
+      "dirty": true
+    },
+    "build": {
+      "python_version": "3.12.9",
+      "platform": "Windows AMD64"
+    },
+    "artifacts": [],
+    "limitations": [
+      "Local provenance manifest; not a signed attestation.",
+      "Not SLSA compliant.",
+      "Does not verify third-party dependency integrity.",
+      "Source repository path is relative to build directory."
+    ]
+  },
+  "limitations": [
+    "Local static analysis only; no runtime verification.",
+    "No cryptographic signing or attestation.",
+    "Secret detection uses pattern matching; may produce false positives/negatives.",
+    "Workflow audit is static; does not verify runtime behavior.",
+    "Dependency inventory is based on declared metadata, not resolved lockfiles.",
+    "Provenance manifest is locally generated; not a signed SLSA attestation.",
+    "Does not verify the integrity of third-party dependencies."
+  ]
+}

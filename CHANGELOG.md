@@ -1,5 +1,31 @@
 # Changelog
 
+## [2.9.0rc1] - 2026-06-20
+
+### Added
+- Trust & Supply-Chain Security Pack
+- `oss-paper-ci trust audit .` — local static trust audit (secrets, workflow risks, package risks)
+- `oss-paper-ci security scan .` — local security scan (secrets, dangerous patterns, Docker risks)
+- `oss-paper-ci trust inventory .` — SBOM-like dependency inventory
+- `oss-paper-ci trust provenance .` — local provenance manifest generation
+- `oss-paper-ci trust verify-artifacts .` — SHA256SUMS verification for release artifacts
+- Secret pattern scanning (OpenAI, GitHub, AWS, private keys, bearer tokens)
+- Dangerous shell pattern scanning (curl|bash, sudo, chmod 777, unsafe pickle)
+- GitHub Actions workflow audit (permissions, triggers, action pinning)
+- Docker/devcontainer risk scanning
+- HTML, JSON, and Markdown report formats for all trust/security commands
+- Workbench integration: `--with-trust` flag
+- Security documentation: threat model, security limitations, supply-chain boundaries
+- Truthfulness safeguards for security claims
+
+### Changed
+- Version bumped to 2.9.0rc1
+
+### Notes
+- Trust checks are local static analysis only; not a security certification
+- No external APIs, signing, or SLSA/Sigstore integration
+- Secret detection is heuristic; may produce false positives/negatives
+
 ## [2.8.0rc1] - 2026-06-19
 
 ### Added

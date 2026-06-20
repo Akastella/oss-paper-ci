@@ -1,0 +1,21 @@
+{
+  "schema_version": "0.1",
+  "tool": "oss-paper-ci",
+  "tool_version": "2.9.0rc1",
+  "source": {
+    "repo": "OSS-Paper-CI",
+    "commit": "e602a89fad63e8f557be5c446e442bff348f47ab",
+    "dirty": true
+  },
+  "build": {
+    "python_version": "3.12.9",
+    "platform": "Windows AMD64"
+  },
+  "artifacts": [],
+  "limitations": [
+    "Local provenance manifest; not a signed attestation.",
+    "Not SLSA compliant.",
+    "Does not verify third-party dependency integrity.",
+    "Source repository path is relative to build directory."
+  ]
+}

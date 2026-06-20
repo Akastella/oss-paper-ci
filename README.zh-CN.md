@@ -90,6 +90,11 @@ oss-paper-ci eval compare --baseline tests/golden/evaluation_summary.json --curr
 | 生态检测 | `oss-paper-ci ecosystems detect .` | 检测 Python、R、Julia、MATLAB 等 |
 | 终端工作台 | `oss-paper-ci workbench .` | 多步流水线带进度显示 |
 | 向导 | `oss-paper-ci wizard` | 为新用户提供安全的下一步建议 |
+| 信任审计 | `oss-paper-ci trust audit .` | 本地静态信任和工作流审计 |
+| 安全扫描 | `oss-paper-ci security scan .` | 扫描密钥、危险模式、Docker 风险 |
+| 依赖清单 | `oss-paper-ci trust inventory .` | 类 SBOM 依赖清单 |
+| 来源证明 | `oss-paper-ci trust provenance .` | 生成本地来源证明清单 |
+| 产物验证 | `oss-paper-ci trust verify-artifacts .` | 验证 SHA256 校验和 |
 
 ## 安全模型
 
@@ -117,6 +122,29 @@ oss-paper-ci scan . --format github --github-step-summary "$GITHUB_STEP_SUMMARY"
 ```
 
 工作流模板见 [examples/github-actions/](examples/github-actions/)。
+
+## 信任与安全
+
+OSS-Paper-CI 可以做本地静态信任检查，例如工作流权限、疑似密钥、危险脚本模式、依赖清单和发布产物校验。它不是安全认证，也不会证明仓库绝对安全。
+
+```bash
+# 信任审计（工作流风险、权限、action 版本）
+oss-paper-ci trust audit .
+
+# 安全扫描（密钥、危险模式、Docker 风险）
+oss-paper-ci security scan .
+
+# 依赖清单（类 SBOM）
+oss-paper-ci trust inventory .
+
+# 来源证明清单
+oss-paper-ci trust provenance .
+
+# 验证发布产物
+oss-paper-ci trust verify-artifacts release-artifacts/
+```
+
+**重要说明：** 这些只是本地静态分析检查，不是安全认证，不验证第三方完整性，也不声称符合 SLSA、Sigstore 或 SPDX 标准。完整威胁模型和限制见 [SECURITY.md](SECURITY.md)。
 
 ## 文档
 

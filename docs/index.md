@@ -31,6 +31,11 @@ oss-paper-ci reproduce examples/demo-reproduce-repo --dry-run
 | Evaluation | `oss-paper-ci eval run examples/evaluation-corpus` | Run benchmark evaluation |
 | Quickstart | `oss-paper-ci quickstart` | Show first steps |
 | Try demo | `oss-paper-ci try-demo` | Run built-in demo |
+| Trust audit | `oss-paper-ci trust audit .` | Local static trust audit |
+| Security scan | `oss-paper-ci security scan .` | Scan for secrets and dangerous patterns |
+| Dependency inventory | `oss-paper-ci trust inventory .` | SBOM-like dependency inventory |
+| Provenance manifest | `oss-paper-ci trust provenance .` | Generate provenance manifest |
+| Artifact verification | `oss-paper-ci trust verify-artifacts .` | Verify SHA256 checksums |
 
 ## Evaluation
 
@@ -93,6 +98,17 @@ See [Evaluation](evaluation.md) for details.
 - [Roles](roles.md) — guidance for authors, reviewers, maintainers
 - [Reproducibility dossier](dossier.md) — structured reproducibility assessment
 - [Glossary](glossary.md) — terminology definitions
+
+### Trust & Security
+
+- [Trust & Security](trust.md) — overview of trust and security commands
+- [Security scan](security-scan.md) — secret and dangerous pattern detection
+- [Workflow audit](workflow-audit.md) — GitHub Actions workflow analysis
+- [Dependency inventory](dependency-inventory.md) — SBOM-like inventory
+- [Provenance manifest](provenance.md) — local provenance generation
+- [Release verification](release-verification.md) — SHA256SUMS verification
+- [Supply-chain security](supply-chain.md) — supply-chain considerations
+- [Security limitations](security-limitations.md) — what checks can and cannot do
 
 ### Reference
 
