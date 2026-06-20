@@ -212,6 +212,8 @@ def scan_file(path: Path, root: Path) -> list[dict[str, Any]]:
 
 def run_security_scan(repo_path: str | Path) -> SecurityScanResult:
     """Run a full security scan on the repository."""
+    import os
+
     root = Path(repo_path).resolve()
     result = SecurityScanResult(
         limitations=[
@@ -222,12 +224,13 @@ def run_security_scan(repo_path: str | Path) -> SecurityScanResult:
         ]
     )
 
-    for current_dir, dirnames, filenames in root.walk():
+    for current_dir, dirnames, filenames in os.walk(root):
+        current_path = Path(current_dir)
         # Filter out skip directories in-place
         dirnames[:] = [d for d in dirnames if not _should_skip_dir(d)]
 
         for filename in filenames:
-            filepath = current_dir / filename
+            filepath = current_path / filename
             if not filepath.is_file():
                 continue
             if not _is_text_file(filepath):
@@ -238,11 +241,12 @@ def run_security_scan(repo_path: str | Path) -> SecurityScanResult:
             result.findings.extend(file_findings)
 
     # Check for .env committed
-    for current_dir, dirnames, filenames in root.walk():
+    for current_dir, dirnames, filenames in os.walk(root):
+        current_path = Path(current_dir)
         dirnames[:] = [d for d in dirnames if not _should_skip_dir(d)]
         for filename in filenames:
             if ENV_FILE_PATTERN.match(filename):
-                rel_path = str((current_dir / filename).relative_to(root)).replace("\\", "/")
+                rel_path = str((current_path / filename).relative_to(root)).replace("\\", "/")
                 result.findings.append({
                     "id": "env-file-committed",
                     "severity": "medium",
