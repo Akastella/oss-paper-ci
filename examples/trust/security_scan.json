@@ -1,0 +1,90 @@
+{
+  "findings": [
+    {
+      "id": "generic-api-key",
+      "severity": "medium",
+      "category": "secret",
+      "path": ".env",
+      "line": 4,
+      "title": "Generic API Key",
+      "message": "Possible Generic API Key detected.",
+      "redacted_preview": "API_...7890",
+      "redacted": true,
+      "recommendation": "Remove secret from code. Use environment variables or a secrets manager."
+    },
+    {
+      "id": "openai-api-key",
+      "severity": "high",
+      "category": "secret",
+      "path": "config.py",
+      "line": 4,
+      "title": "OpenAI API Key",
+      "message": "Possible OpenAI API Key detected.",
+      "redacted_preview": "sk-a...2345",
+      "redacted": true,
+      "recommendation": "Remove secret from code. Use environment variables or a secrets manager."
+    },
+    {
+      "id": "aws-access-key",
+      "severity": "high",
+      "category": "secret",
+      "path": "config.py",
+      "line": 6,
+      "title": "AWS Access Key ID",
+      "message": "Possible AWS Access Key ID detected.",
+      "redacted_preview": "AKIA...MPLE",
+      "redacted": true,
+      "recommendation": "Remove secret from code. Use environment variables or a secrets manager."
+    },
+    {
+      "id": "private-key-block",
+      "severity": "high",
+      "category": "secret",
+      "path": "config.py",
+      "line": 10,
+      "title": "Private Key Block",
+      "message": "Possible Private Key Block detected.",
+      "redacted_preview": "----...----",
+      "redacted": true,
+      "recommendation": "Remove secret from code. Use environment variables or a secrets manager."
+    },
+    {
+      "id": "generic-api-key",
+      "severity": "medium",
+      "category": "secret",
+      "path": "config.py",
+      "line": 4,
+      "title": "Generic API Key",
+      "message": "Possible Generic API Key detected.",
+      "redacted_preview": "API_...2345",
+      "redacted": true,
+      "recommendation": "Remove secret from code. Use environment variables or a secrets manager."
+    },
+    {
+      "id": "curl-pipe-bash",
+      "severity": "high",
+      "category": "execution",
+      "path": "config.py",
+      "line": 17,
+      "title": "Curl pipe to shell",
+      "message": "Dangerous shell pattern detected: curl https://example.com/install.sh | bash",
+      "recommendation": "Download scripts first, review, then execute."
+    },
+    {
+      "id": "env-file-committed",
+      "severity": "medium",
+      "category": "secret",
+      "path": ".env",
+      "title": "Environment file committed",
+      "message": "File '.env' appears to be an environment file. It may contain secrets.",
+      "recommendation": "Add .env files to .gitignore and remove from history if secrets were committed."
+    }
+  ],
+  "files_scanned": 3,
+  "limitations": [
+    "Pattern-based detection; may produce false positives.",
+    "Does not scan binary files or archives.",
+    "Secret detection is heuristic; not all secret types are covered.",
+    "Does not execute code; static analysis only."
+  ]
+}

@@ -436,6 +436,46 @@ def main(argv: list[str] | None = None) -> int:
         help="Plain text output (no colors).",
     )
 
+    # trust command group
+    trust_parser = subparsers.add_parser("trust", help="Trust & supply-chain security.")
+    trust_sub = trust_parser.add_subparsers(dest="trust_command")
+
+    # trust audit
+    ta = trust_sub.add_parser("audit", help="Run trust audit.")
+    ta.add_argument("path", nargs="?", default=".", help="Path to repository root (default: .)")
+    ta.add_argument("--format", choices=["json", "markdown", "html"], default="markdown", help="Output format.")
+    ta.add_argument("--output", "-o", help="Write report to file instead of stdout.")
+
+    # trust inventory
+    ti = trust_sub.add_parser("inventory", help="Build dependency inventory.")
+    ti.add_argument("path", nargs="?", default=".", help="Path to repository root (default: .)")
+    ti.add_argument("--format", choices=["json", "markdown"], default="markdown", help="Output format.")
+    ti.add_argument("--output", "-o", help="Write report to file instead of stdout.")
+
+    # trust provenance
+    tp = trust_sub.add_parser("provenance", help="Generate provenance manifest.")
+    tp.add_argument("path", nargs="?", default=".", help="Path to repository root (default: .)")
+    tp.add_argument("--format", choices=["json", "markdown"], default="json", help="Output format.")
+    tp.add_argument("--output", "-o", help="Write manifest to file instead of stdout.")
+    tp.add_argument("--include-timestamp", action="store_true", help="Include UTC timestamp.")
+
+    # trust verify-artifacts
+    tv = trust_sub.add_parser("verify-artifacts", help="Verify artifacts against SHA256SUMS.")
+    tv.add_argument("artifact_dir", help="Path to artifact directory.")
+    tv.add_argument("--checksums", help="Path to SHA256SUMS file (default: auto-detect).")
+    tv.add_argument("--format", choices=["json", "markdown"], default="markdown", help="Output format.")
+    tv.add_argument("--output", "-o", help="Write report to file instead of stdout.")
+
+    # security command group
+    security_parser = subparsers.add_parser("security", help="Security scanning.")
+    security_sub = security_parser.add_subparsers(dest="security_command")
+
+    # security scan
+    ss = security_sub.add_parser("scan", help="Run security scan.")
+    ss.add_argument("path", nargs="?", default=".", help="Path to repository root (default: .)")
+    ss.add_argument("--format", choices=["json", "markdown"], default="markdown", help="Output format.")
+    ss.add_argument("--output", "-o", help="Write report to file instead of stdout.")
+
     args, remaining = parser.parse_known_args(argv)
 
     # Resolve output mode from global flags
@@ -584,6 +624,12 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.command == "try-demo":
         return _cmd_try_demo(args)
+
+    if args.command == "trust":
+        return _cmd_trust(args)
+
+    if args.command == "security":
+        return _cmd_security(args)
 
     parser.print_help()
     return 0
@@ -3378,4 +3424,195 @@ def _cmd_try_demo(args: argparse.Namespace) -> int:
     else:
         print(output_text)
 
+    return 0
+
+
+# ── Trust command ─────────────────────────────────────────────────────────
+
+def _cmd_trust(args: argparse.Namespace) -> int:
+    """Handle trust subcommand group."""
+    sub = getattr(args, "trust_command", None)
+
+    if sub == "audit":
+        return _cmd_trust_audit(args)
+
+    if sub == "inventory":
+        return _cmd_trust_inventory(args)
+
+    if sub == "provenance":
+        return _cmd_trust_provenance(args)
+
+    if sub == "verify-artifacts":
+        return _cmd_trust_verify_artifacts(args)
+
+    print("Usage: oss-paper-ci trust {audit|inventory|provenance|verify-artifacts}", file=sys.stderr)
+    return 1
+
+
+def _cmd_trust_audit(args: argparse.Namespace) -> int:
+    """Run trust audit."""
+    import json as json_mod
+
+    from oss_paper_ci.trust import build_trust_report, format_trust_report_html, format_trust_report_markdown
+
+    path = Path(getattr(args, "path", ".")).resolve()
+    if not path.exists():
+        print(f"Error: path does not exist: {path}", file=sys.stderr)
+        return 2
+
+    fmt = getattr(args, "format", "markdown")
+    output = getattr(args, "output", None)
+
+    report = build_trust_report(path)
+
+    if fmt == "json":
+        text = json_mod.dumps(report.to_dict(), indent=2, ensure_ascii=False)
+    elif fmt == "html":
+        text = format_trust_report_html(report)
+    else:
+        text = format_trust_report_markdown(report)
+
+    if output:
+        Path(output).write_text(text, encoding="utf-8")
+        print(f"Trust report written to {output}")
+    else:
+        print(text)
+    sys.stdout.flush()
+
+    return 0
+
+
+def _cmd_trust_inventory(args: argparse.Namespace) -> int:
+    """Build dependency inventory."""
+    import json as json_mod
+
+    from oss_paper_ci.inventory import build_inventory, format_inventory_markdown
+
+    path = Path(getattr(args, "path", ".")).resolve()
+    if not path.exists():
+        print(f"Error: path does not exist: {path}", file=sys.stderr)
+        return 2
+
+    fmt = getattr(args, "format", "markdown")
+    output = getattr(args, "output", None)
+
+    inv = build_inventory(path)
+
+    if fmt == "json":
+        text = json_mod.dumps(inv.to_dict(), indent=2, ensure_ascii=False)
+    else:
+        text = format_inventory_markdown(inv)
+
+    if output:
+        Path(output).write_text(text, encoding="utf-8")
+        print(f"Inventory written to {output}")
+    else:
+        print(text)
+
+    return 0
+
+
+def _cmd_trust_provenance(args: argparse.Namespace) -> int:
+    """Generate provenance manifest."""
+    import json as json_mod
+
+    from oss_paper_ci.provenance import build_provenance, format_provenance_markdown
+
+    path = Path(getattr(args, "path", ".")).resolve()
+    if not path.exists():
+        print(f"Error: path does not exist: {path}", file=sys.stderr)
+        return 2
+
+    fmt = getattr(args, "format", "json")
+    output = getattr(args, "output", None)
+    include_timestamp = getattr(args, "include_timestamp", False)
+
+    manifest = build_provenance(path, include_timestamp=include_timestamp)
+
+    if fmt == "json":
+        text = json_mod.dumps(manifest.to_dict(), indent=2, ensure_ascii=False)
+    else:
+        text = format_provenance_markdown(manifest)
+
+    if output:
+        Path(output).write_text(text, encoding="utf-8")
+        print(f"Provenance manifest written to {output}")
+    else:
+        print(text)
+
+    return 0
+
+
+def _cmd_trust_verify_artifacts(args: argparse.Namespace) -> int:
+    """Verify artifacts against SHA256SUMS."""
+    import json as json_mod
+
+    from oss_paper_ci.provenance import format_verification_markdown, verify_artifacts
+
+    artifact_dir = Path(getattr(args, "artifact_dir", "")).resolve()
+    if not artifact_dir.exists():
+        print(f"Error: artifact directory not found: {artifact_dir}", file=sys.stderr)
+        return 2
+
+    checksums = getattr(args, "checksums", None)
+    fmt = getattr(args, "format", "markdown")
+    output = getattr(args, "output", None)
+
+    result = verify_artifacts(artifact_dir, checksums_file=checksums)
+
+    if fmt == "json":
+        text = json_mod.dumps(result, indent=2, ensure_ascii=False)
+    else:
+        text = format_verification_markdown(result)
+
+    if output:
+        Path(output).write_text(text, encoding="utf-8")
+        print(f"Verification written to {output}")
+    else:
+        print(text)
+
+    return 0 if result["ok"] else 1
+
+
+# ── Security command ─────────────────────────────────────────────────────
+
+def _cmd_security(args: argparse.Namespace) -> int:
+    """Handle security subcommand group."""
+    sub = getattr(args, "security_command", None)
+
+    if sub == "scan":
+        return _cmd_security_scan(args)
+
+    print("Usage: oss-paper-ci security scan [PATH]", file=sys.stderr)
+    return 1
+
+
+def _cmd_security_scan(args: argparse.Namespace) -> int:
+    """Run security scan."""
+    import json as json_mod
+
+    from oss_paper_ci.security import format_security_scan_markdown, run_security_scan
+
+    path = Path(getattr(args, "path", ".")).resolve()
+    if not path.exists():
+        print(f"Error: path does not exist: {path}", file=sys.stderr)
+        return 2
+
+    fmt = getattr(args, "format", "markdown")
+    output = getattr(args, "output", None)
+
+    result = run_security_scan(path)
+
+    if fmt == "json":
+        text = json_mod.dumps(result.to_dict(), indent=2, ensure_ascii=False)
+    else:
+        text = format_security_scan_markdown(result)
+
+    if output:
+        Path(output).write_text(text, encoding="utf-8")
+        print(f"Security scan written to {output}")
+    else:
+        print(text)
+
+    # Finding security issues is not a program error
     return 0

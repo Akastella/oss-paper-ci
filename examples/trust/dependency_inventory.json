@@ -1,0 +1,110 @@
+{
+  "schema_version": "0.1",
+  "report_type": "oss-paper-ci-dependency-inventory",
+  "repo": "E:\\Projects\\OSS-Paper-CI",
+  "project": {
+    "name": "oss-paper-ci",
+    "version": "2.9.0rc1",
+    "python_requires": ">=3.10",
+    "license": "MIT",
+    "urls": {
+      "Homepage": "https://github.com/Akastella/oss-paper-ci",
+      "Documentation": "https://akastella.github.io/oss-paper-ci/",
+      "Repository": "https://github.com/Akastella/oss-paper-ci",
+      "Issues": "https://github.com/Akastella/oss-paper-ci/issues",
+      "Changelog": "https://github.com/Akastella/oss-paper-ci/blob/main/CHANGELOG.md"
+    }
+  },
+  "dependencies": {
+    "runtime": [
+      "pyyaml>=6.0",
+      "rich>=13.0"
+    ],
+    "optional": {
+      "dev": [
+        "pytest>=7.0",
+        "pytest-cov>=4.0",
+        "build>=1.0",
+        "twine>=5.0"
+      ]
+    },
+    "dev": [
+      "pytest>=7.0",
+      "pytest-cov>=4.0",
+      "build>=1.0",
+      "twine>=5.0"
+    ]
+  },
+  "scripts": {
+    "oss-paper-ci": "oss_paper_ci.cli:main"
+  },
+  "lockfiles_detected": [],
+  "github_actions_used": [
+    {
+      "action": "actions/checkout@v6",
+      "workflow": "ci.yml"
+    },
+    {
+      "action": "actions/setup-python@v6",
+      "workflow": "ci.yml"
+    },
+    {
+      "action": "actions/checkout@v6",
+      "workflow": "ci.yml"
+    },
+    {
+      "action": "actions/setup-python@v6",
+      "workflow": "ci.yml"
+    },
+    {
+      "action": "actions/checkout@v6",
+      "workflow": "docs.yml"
+    },
+    {
+      "action": "actions/setup-python@v6",
+      "workflow": "docs.yml"
+    },
+    {
+      "action": "actions/upload-pages-artifact@v5",
+      "workflow": "docs.yml"
+    },
+    {
+      "action": "actions/deploy-pages@v5",
+      "workflow": "docs.yml"
+    },
+    {
+      "action": "actions/checkout@v4",
+      "workflow": "install-smoke.yml"
+    },
+    {
+      "action": "actions/setup-python@v5",
+      "workflow": "install-smoke.yml"
+    },
+    {
+      "action": "actions/checkout@v6",
+      "workflow": "release.yml"
+    },
+    {
+      "action": "actions/setup-python@v6",
+      "workflow": "release.yml"
+    },
+    {
+      "action": "actions/upload-artifact@v7",
+      "workflow": "release.yml"
+    }
+  ],
+  "docker_base_images": [
+    "python:3.12-slim"
+  ],
+  "ecosystems_detected": [
+    "python",
+    "github-actions",
+    "docker"
+  ],
+  "limitations": [
+    "Lightweight local inventory; not an official SPDX or CycloneDX SBOM.",
+    "Based on declared metadata, not resolved dependency tree.",
+    "Does not include transitive dependencies.",
+    "GitHub Actions versions are as declared in workflow files."
+  ]
+}

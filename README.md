@@ -90,6 +90,11 @@ The evaluation corpus contains 12+ synthetic repositories covering:
 | Ecosystem detection | `oss-paper-ci ecosystems detect .` | Detect Python, R, Julia, MATLAB, Node, and more |
 | Terminal workbench | `oss-paper-ci workbench .` | Multi-step pipeline with progress display |
 | Guided wizard | `oss-paper-ci wizard` | Safe next-step recommendations for new users |
+| Trust audit | `oss-paper-ci trust audit .` | Local static trust and workflow audit |
+| Security scan | `oss-paper-ci security scan .` | Scan for secrets, dangerous patterns, Docker risks |
+| Dependency inventory | `oss-paper-ci trust inventory .` | SBOM-like dependency inventory |
+| Provenance manifest | `oss-paper-ci trust provenance .` | Generate local provenance manifest |
+| Artifact verification | `oss-paper-ci trust verify-artifacts .` | Verify SHA256 checksums |
 
 ## Safety model
 
@@ -118,6 +123,29 @@ oss-paper-ci scan . --format github --github-step-summary "$GITHUB_STEP_SUMMARY"
 ```
 
 See [examples/github-actions/](examples/github-actions/) for workflow templates.
+
+## Trust & Security
+
+OSS-Paper-CI includes local static checks for supply-chain trust and security:
+
+```bash
+# Trust audit (workflow risks, permissions, action pinning)
+oss-paper-ci trust audit .
+
+# Security scan (secrets, dangerous patterns, Docker risks)
+oss-paper-ci security scan .
+
+# Dependency inventory (SBOM-like)
+oss-paper-ci trust inventory .
+
+# Provenance manifest
+oss-paper-ci trust provenance .
+
+# Verify release artifacts
+oss-paper-ci trust verify-artifacts release-artifacts/
+```
+
+**Important:** These are local static analysis checks only. They are not a security certification, do not verify third-party integrity, and do not claim SLSA, Sigstore, or SPDX compliance. See [SECURITY.md](SECURITY.md) for the full threat model and limitations.
 
 ## Documentation
 

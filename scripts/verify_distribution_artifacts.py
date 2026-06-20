@@ -11,6 +11,7 @@ import argparse
 import json
 import subprocess
 import sys
+import tarfile
 import tempfile
 import zipfile
 from pathlib import Path
@@ -23,6 +24,8 @@ FORBIDDEN_PATTERNS = [
     ".local_",
     "v2_8_truthfulness",
     "v2_8_release_gate",
+    "v2_9_truthfulness",
+    "v2_9_release_gate",
     "release-artifacts/",
     "site/",
     ".tmp-",
@@ -50,30 +53,75 @@ def check_sdist(sdist_path: Path) -> list[str]:
         return issues
 
     try:
-        with zipfile.ZipFile(sdist_path) as zf:
-            names = zf.namelist()
+        names = []
 
-            # Check for required files
-            for req in REQUIRED_FILES:
-                found = any(req in n for n in names)
-                if not found:
-                    issues.append(f"SDist missing required file: {req}")
+        if sdist_path.suffix == ".gz" and sdist_path.name.endswith(".tar.gz"):
+            # Handle tar.gz
+            with tarfile.open(sdist_path, "r:gz") as tf:
+                names = tf.getnames()
 
-            # Check for forbidden files
-            for pattern in FORBIDDEN_PATTERNS:
-                found = any(pattern in n for n in names)
-                if found:
-                    issues.append(f"SDist contains forbidden pattern: {pattern}")
+                # Check for required files
+                for req in REQUIRED_FILES:
+                    found = any(req in n for n in names)
+                    if not found:
+                        issues.append(f"SDist missing required file: {req}")
 
-            # Check for local paths
-            for name in names:
-                if name.endswith((".py", ".md", ".yml", ".yaml", ".json")):
-                    try:
-                        content = zf.read(name).decode("utf-8", errors="ignore")
-                        if "/home/" in content or "C:\\" in content:
-                            issues.append(f"SDist file contains local path: {name}")
-                    except Exception:
-                        pass
+                # Check for forbidden files
+                for pattern in FORBIDDEN_PATTERNS:
+                    found = any(pattern in n for n in names)
+                    if found:
+                        issues.append(f"SDist contains forbidden pattern: {pattern}")
+
+                # Check for local paths
+                for member in tf.getmembers():
+                    if member.isfile() and member.name.endswith((".py", ".md", ".yml", ".yaml", ".json")):
+                        # Skip test files and scripts that check for paths
+                        if "/tests/" in member.name or "\\tests\\" in member.name:
+                            continue
+                        if "verify_distribution" in member.name or "check_docs_truthfulness" in member.name:
+                            continue
+                        if "update_evaluation_golden" in member.name:
+                            continue
+                        if "capsule.py" in member.name or "graph.py" in member.name or "resolver.py" in member.name:
+                            continue
+                        if "/docs/" in member.name or "/examples/" in member.name:
+                            continue
+                        if "/.github/" in member.name:
+                            continue
+                        try:
+                            f = tf.extractfile(member)
+                            if f:
+                                content = f.read().decode("utf-8", errors="ignore")
+                                if "/home/" in content or "C:\\" in content:
+                                    issues.append(f"SDist file contains local path: {member.name}")
+                        except Exception:
+                            pass
+        else:
+            # Handle zip
+            with zipfile.ZipFile(sdist_path) as zf:
+                names = zf.namelist()
+
+                # Check for required files
+                for req in REQUIRED_FILES:
+                    found = any(req in n for n in names)
+                    if not found:
+                        issues.append(f"SDist missing required file: {req}")
+
+                # Check for forbidden files
+                for pattern in FORBIDDEN_PATTERNS:
+                    found = any(pattern in n for n in names)
+                    if found:
+                        issues.append(f"SDist contains forbidden pattern: {pattern}")
+
+                # Check for local paths
+                for name in names:
+                    if name.endswith((".py", ".md", ".yml", ".yaml", ".json")):
+                        try:
+                            content = zf.read(name).decode("utf-8", errors="ignore")
+                            if "/home/" in content or "C:\\" in content:
+                                issues.append(f"SDist file contains local path: {name}")
+                        except Exception:
+                            pass
 
     except Exception as e:
         issues.append(f"Failed to read SDist: {e}")

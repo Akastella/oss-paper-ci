@@ -7,13 +7,13 @@ Auto-generated from `oss-paper-ci --help` output.
 ```
 usage: oss-paper-ci [-h] [--version] [--plain] [--no-color] [--no-animate]
                     [--theme {classic,minimal,contrast}] [--debug]
-                    {scan,init,explain,list-checks,config,diff,rules,validate-contract,graph,workspace,batch,cache,reproduce,capsule,guide,dossier,ecosystems,data,results,version,baseline,smoke,doctor,comment,wizard,workbench,theme,adopt,scaffold,fix}
+                    {scan,init,explain,list-checks,config,diff,rules,validate-contract,graph,workspace,batch,cache,reproduce,capsule,guide,dossier,ecosystems,data,results,version,baseline,smoke,doctor,comment,wizard,workbench,theme,adopt,scaffold,eval,fix,quickstart,try-demo,trust,security}
                     ...
 
 Check reproducibility readiness of scientific paper repositories.
 
 positional arguments:
-  {scan,init,explain,list-checks,config,diff,rules,validate-contract,graph,workspace,batch,cache,reproduce,capsule,guide,dossier,ecosystems,data,results,version,baseline,smoke,doctor,comment,wizard,workbench,theme,adopt,scaffold,fix}
+  {scan,init,explain,list-checks,config,diff,rules,validate-contract,graph,workspace,batch,cache,reproduce,capsule,guide,dossier,ecosystems,data,results,version,baseline,smoke,doctor,comment,wizard,workbench,theme,adopt,scaffold,eval,fix,quickstart,try-demo,trust,security}
     scan                Scan a repository for reproducibility checks.
     init                Generate a default config or contract file.
     explain             Explain a check ID or policy profile.
@@ -43,7 +43,12 @@ positional arguments:
     theme               Theme management.
     adopt               Generate an adoption plan for a repository.
     scaffold            Scaffold missing reproducibility files.
+    eval                Benchmark evaluation.
     fix                 Preview and apply safe fixes.
+    quickstart          Show recommended first steps for new users.
+    try-demo            Run a self-contained demo using built-in examples.
+    trust               Trust & supply-chain security.
+    security            Security scanning.
 
 options:
   -h, --help            show this help message and exit
