@@ -1,5 +1,38 @@
 # Changelog
 
+## [3.1.0rc1] - 2026-06-21
+
+### Added
+- Reproduction Orchestrator: `reproduce plan/run/status/report/compare/bundle/inspect/verify-bundle` subcommand group
+- `reproduce plan` generates execution plan from reproducibility.yml without executing code
+- `reproduce run --execute` executes declared commands in dependency order with safety gates
+- `reproduce run` defaults to dry-run; `--execute` required for actual execution
+- Sandbox isolation: `--sandbox local` (default) or `--sandbox docker`
+- Command safety: dangerous command blocking, timeout enforcement, dependency ordering
+- Artifact validation: existence check, SHA256 hashing, size limits
+- Metric validation: JSON parsing, tolerance range checking (expected_min/expected_max)
+- `reproduce status` reads run directory and reports command/artifact/metric status
+- `reproduce compare` compares run results against expected values in reproducibility.yml
+- `reproduce bundle` creates ZIP evidence bundle with manifest and SHA256SUMS
+- `reproduce inspect` and `reproduce verify-bundle` for bundle inspection and integrity verification
+- Extended reproducibility.yml schema v0.2: `commands`, `artifacts`, `metrics`, `safety` sections
+- Backward compatible with existing reproducibility.yml v0.3 (experiments auto-converted to commands)
+- Demo repository: examples/repro-system-demo/ with deterministic, self-contained ML pipeline
+- Example reports: examples/reports/repro_plan_demo.md, repro_run_demo.json/md/html, repro_compare_demo.md, repro_bundle_inspect.md, repro_bundle_verify.md
+- Markdown, JSON, and HTML report formats for all reproduction subcommands
+- Self-contained HTML reports (no external CDN)
+- `--fail-on failed-command/missing-artifact/out-of-range` for CI integration
+
+### Changed
+- Version bumped to 3.1.0rc1
+- `reproduce` converted from flat command to subcommand group (backward compatible: `reproduce <path>` maps to `reproduce run <path>`)
+
+### Notes
+- Reproduction orchestrator documents declared reproduction steps; it does not prove scientific correctness
+- All commands default to dry-run; explicit `--execute` required for execution
+- No network access, no auto-install, no modification of user repository by default
+- Docker sandbox is optional; falls back to local if Docker unavailable
+
 ## [3.0.0rc1] - 2026-06-20
 
 ### Added

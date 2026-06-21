@@ -1,0 +1,74 @@
+# Reproduction Evidence Bundle — GitHub Actions Example
+#
+# This workflow creates a reproduction evidence bundle and verifies it.
+# It demonstrates the full plan → run → bundle → verify pipeline.
+#
+# IMPORTANT: Only execute code from trusted, reviewed repositories.
+
+name: Reproduction Evidence Bundle
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  evidence-bundle:
+    name: Create & Verify Evidence Bundle
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install oss-paper-ci
+        run: pip install -e .
+
+      - name: Generate plan
+        run: |
+          oss-paper-ci reproduce plan examples/repro-system-demo \
+            --format json \
+            --output plan.json
+
+      - name: Execute reproduction
+        run: |
+          oss-paper-ci reproduce run examples/repro-system-demo \
+            --execute \
+            --sandbox local \
+            --output-dir .repro-run \
+            --format json \
+            --output run.json
+
+      - name: Create evidence bundle
+        run: |
+          oss-paper-ci reproduce bundle .repro-run \
+            --output evidence-bundle.zip
+
+      - name: Inspect bundle
+        run: |
+          oss-paper-ci reproduce inspect evidence-bundle.zip \
+            --format markdown \
+            --output bundle-inspect.md
+
+      - name: Verify bundle integrity
+        run: |
+          oss-paper-ci reproduce verify-bundle evidence-bundle.zip \
+            --format markdown \
+            --output bundle-verify.md
+
+      - name: Upload all artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: reproduction-evidence-bundle
+          path: |
+            plan.json
+            run.json
+            evidence-bundle.zip
+            bundle-inspect.md
+            bundle-verify.md

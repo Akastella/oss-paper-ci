@@ -84,6 +84,7 @@ oss-paper-ci eval compare --baseline tests/golden/evaluation_summary.json --curr
 | データ診断 | `oss-paper-ci data diagnose .` | データ文書と可用性をチェック |
 | 結果検証 | `oss-paper-ci results validate .` | 主張された結果が証拠に裏付けられているか検証 |
 | 安全な再現 | `oss-paper-ci reproduce URL --dry-run` | コードを実行しない再現試行 |
+| 再現オーケストレーター | `oss-paper-ci reproduce plan/run/report` | 再現ワークフローの計画・実行・検証 |
 | 再現カプセル | `oss-paper-ci capsule verify out.zip` | 証拠パッケージの検証と確認 |
 | 再現ドシエ | `oss-paper-ci dossier .` | 著者/レビュアー/メンテナー向けの要約を生成 |
 | ワークスペースバッチ | `oss-paper-ci batch scan --workspace ws.yml` | 設定ファイルから複数プロジェクトをスキャン |
@@ -165,6 +166,29 @@ oss-paper-ci evidence verify evidence-bundle.zip
 ```
 
 詳細は [docs/evidence-report.md](docs/evidence-report.md) を参照。
+
+## 再現オーケストレーター
+
+再現オーケストレーターは、リポジトリ内の `reproducibility.yml` を読み取り、実行計画を作成し、明示的な許可がある場合のみ宣言されたコマンドを実行し、ログ・成果物・指標を収集して再現レポートを生成します。デフォルトではコードを実行せず、論文の科学的正しさを証明するものではありません。
+
+```bash
+# 計画の生成（コードを実行しない）
+oss-paper-ci reproduce plan examples/repro-system-demo
+
+# 明示的な許可後に実行
+oss-paper-ci reproduce run examples/repro-system-demo --execute --sandbox local
+
+# HTMLレポートの生成
+oss-paper-ci reproduce report .oss-paper-ci-repro-run --format html --output reproduction.html
+
+# 期待値との比較
+oss-paper-ci reproduce compare .oss-paper-ci-repro-run --expected examples/repro-system-demo/reproducibility.yml
+
+# 証拠バンドルの作成
+oss-paper-ci reproduce bundle .oss-paper-ci-repro-run --output reproduction-evidence.zip
+```
+
+詳細は [docs/reproduction-orchestrator.md](docs/reproduction-orchestrator.md) を参照。
 
 ## ドキュメント
 
