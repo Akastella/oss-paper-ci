@@ -1,5 +1,29 @@
 # Changelog
 
+## [3.0.0rc1] - 2026-06-20
+
+### Added
+- Unified Evidence Report: `oss-paper-ci evidence .` generates a single report aggregating scan, data, results, ecosystems, trust, and security
+- Three report profiles: `--profile reviewer`, `--profile author`, `--profile maintainer`
+- Evidence bundle: `oss-paper-ci evidence bundle .` creates shareable ZIP with reports, manifest, and SHA256SUMS
+- Bundle inspection: `oss-paper-ci evidence inspect BUNDLE.zip`
+- Bundle verification: `oss-paper-ci evidence verify BUNDLE.zip`
+- Markdown, JSON, and HTML output formats for evidence reports
+- Self-contained HTML reports (no external CDN)
+- Profile-specific plain-language summaries and next steps
+- Docs: evidence-report.md, evidence-bundle.md, reviewer-pack.md, author-pack.md, maintainer-pack.md, evidence-schema.md, evidence-limitations.md
+- Examples: examples/evidence/ with reviewer/author/maintainer reports
+- GitHub Action examples: evidence-report.yml, evidence-bundle.yml
+- Tests for evidence CLI, schema, profiles, bundles, and docs truthfulness
+
+### Changed
+- Version bumped to 3.0.0rc1
+
+### Notes
+- Evidence reports are engineering completeness assessments, not scientific correctness proofs
+- Bundle is locally generated; not a signed attestation
+- All paths in reports are relative; no absolute paths exposed
+
 ## [2.9.0rc1] - 2026-06-20
 
 ### Added

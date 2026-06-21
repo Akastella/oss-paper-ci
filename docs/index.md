@@ -110,6 +110,16 @@ See [Evaluation](evaluation.md) for details.
 - [Supply-chain security](supply-chain.md) — supply-chain considerations
 - [Security limitations](security-limitations.md) — what checks can and cannot do
 
+### Evidence Reports
+
+- [Evidence report](evidence-report.md) — unified evidence report overview
+- [Evidence bundle](evidence-bundle.md) — shareable evidence packages
+- [Reviewer pack](reviewer-pack.md) — reviewer-focused guidance
+- [Author pack](author-pack.md) — author-focused guidance
+- [Maintainer pack](maintainer-pack.md) — maintainer-focused guidance
+- [Evidence schema](evidence-schema.md) — JSON schema reference
+- [Evidence limitations](evidence-limitations.md) — what reports do NOT verify
+
 ### Reference
 
 - [Check categories](checks.md) — what gets checked

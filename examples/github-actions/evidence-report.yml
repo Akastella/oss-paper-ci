@@ -1,0 +1,47 @@
+# Evidence Report GitHub Action Example
+# Generates a unified evidence report and uploads as artifact.
+# Does NOT auto-comment, auto-fail, or execute untrusted scripts.
+
+name: Evidence Report
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  evidence:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.12"]
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install oss-paper-ci
+        run: pip install oss-paper-ci  # after PyPI publication
+
+      - name: Generate evidence report (reviewer)
+        run: |
+          oss-paper-ci evidence . --profile reviewer --format json --output evidence-report.json
+          oss-paper-ci evidence . --profile reviewer --format markdown --output evidence-report.md
+          oss-paper-ci evidence . --profile reviewer --format html --output evidence-report.html
+
+      - name: Upload evidence report
+        uses: actions/upload-artifact@v4
+        with:
+          name: evidence-report
+          path: |
+            evidence-report.json
+            evidence-report.md
+            evidence-report.html

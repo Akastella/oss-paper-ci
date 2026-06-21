@@ -95,6 +95,8 @@ The evaluation corpus contains 12+ synthetic repositories covering:
 | Dependency inventory | `oss-paper-ci trust inventory .` | SBOM-like dependency inventory |
 | Provenance manifest | `oss-paper-ci trust provenance .` | Generate local provenance manifest |
 | Artifact verification | `oss-paper-ci trust verify-artifacts .` | Verify SHA256 checksums |
+| Evidence report | `oss-paper-ci evidence .` | Unified evidence report (all checks) |
+| Evidence bundle | `oss-paper-ci evidence bundle .` | Shareable evidence package |
 
 ## Safety model
 
@@ -146,6 +148,26 @@ oss-paper-ci trust verify-artifacts release-artifacts/
 ```
 
 **Important:** These are local static analysis checks only. They are not a security certification, do not verify third-party integrity, and do not claim SLSA, Sigstore, or SPDX compliance. See [SECURITY.md](SECURITY.md) for the full threat model and limitations.
+
+## Evidence Report
+
+The unified evidence report aggregates all checks into a single shareable document:
+
+```bash
+# Reviewer-focused report
+oss-paper-ci evidence . --profile reviewer --format html --output evidence.html
+
+# Author-focused report with next steps
+oss-paper-ci evidence . --profile author --format markdown
+
+# Create shareable bundle
+oss-paper-ci evidence bundle . --output evidence-bundle.zip
+
+# Verify bundle integrity
+oss-paper-ci evidence verify evidence-bundle.zip
+```
+
+The evidence report helps authors and reviewers communicate "what reproducibility evidence exists" — it does not prove scientific correctness or predict acceptance. See [docs/evidence-report.md](docs/evidence-report.md).
 
 ## Documentation
 

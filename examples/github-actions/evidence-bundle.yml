@@ -1,0 +1,43 @@
+# Evidence Bundle GitHub Action Example
+# Creates a shareable evidence bundle and uploads as artifact.
+
+name: Evidence Bundle
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  bundle:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.12"]
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install oss-paper-ci
+        run: pip install oss-paper-ci  # after PyPI publication
+
+      - name: Create evidence bundle
+        run: oss-paper-ci evidence bundle . --profile reviewer --output evidence-bundle.zip
+
+      - name: Verify bundle
+        run: oss-paper-ci evidence verify evidence-bundle.zip
+
+      - name: Upload bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: evidence-bundle
+          path: evidence-bundle.zip
