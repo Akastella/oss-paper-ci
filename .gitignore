@@ -66,8 +66,13 @@ oss-paper-ci-out/
 # Release gate and truthfulness reports
 v2_*_truthfulness.*
 v2_*_release_gate.*
+v3_*_truthfulness.*
+v3_*_release_gate.*
 
 # Test artifacts
 test.json
 PATH/
 trigger CI
+
+# Evidence bundle temp
+.tmp-evidence-bundle.zip

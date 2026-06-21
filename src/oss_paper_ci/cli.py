@@ -476,7 +476,59 @@ def main(argv: list[str] | None = None) -> int:
     ss.add_argument("--format", choices=["json", "markdown"], default="markdown", help="Output format.")
     ss.add_argument("--output", "-o", help="Write report to file instead of stdout.")
 
-    args, remaining = parser.parse_known_args(argv)
+    # evidence command group
+    evidence_parser = subparsers.add_parser("evidence", help="Unified evidence report.")
+    evidence_sub = evidence_parser.add_subparsers(dest="evidence_command")
+
+    # evidence report (default subcommand)
+    ev = evidence_sub.add_parser("report", help="Generate unified evidence report.")
+    ev.add_argument("path", nargs="?", default=".", help="Path to repository root (default: .)")
+    ev.add_argument("--profile", choices=["reviewer", "author", "maintainer"], default="reviewer",
+                     help="Report profile (default: reviewer).")
+    ev.add_argument("--format", choices=["json", "markdown", "html"], default="markdown",
+                     help="Output format (default: markdown).")
+    ev.add_argument("--output", "-o", help="Write report to file instead of stdout.")
+    ev.add_argument("--include", action="append",
+                     help="Include specific sections (can be repeated). Default: all.")
+
+    # evidence bundle
+    eb = evidence_sub.add_parser("bundle", help="Create evidence bundle ZIP.")
+    eb.add_argument("path", nargs="?", default=".", help="Path to repository root (default: .)")
+    eb.add_argument("--profile", choices=["reviewer", "author", "maintainer"], default="reviewer",
+                     help="Report profile (default: reviewer).")
+    eb.add_argument("--output", "-o", default="evidence-bundle.zip",
+                     help="Output ZIP path (default: evidence-bundle.zip).")
+    eb.add_argument("--include", action="append",
+                     help="Include specific sections (can be repeated). Default: all.")
+
+    # evidence inspect
+    ei = evidence_sub.add_parser("inspect", help="Inspect evidence bundle.")
+    ei.add_argument("bundle", help="Path to evidence bundle ZIP.")
+    ei.add_argument("--format", choices=["json", "markdown"], default="markdown",
+                     help="Output format (default: markdown).")
+    ei.add_argument("--output", "-o", help="Write report to file instead of stdout.")
+
+    # evidence verify
+    evf = evidence_sub.add_parser("verify", help="Verify evidence bundle integrity.")
+    evf.add_argument("bundle", help="Path to evidence bundle ZIP.")
+    evf.add_argument("--format", choices=["json", "markdown"], default="markdown",
+                      help="Output format (default: markdown).")
+    evf.add_argument("--output", "-o", help="Write report to file instead of stdout.")
+
+    # Handle `evidence .` as shorthand for `evidence report .`
+    # Insert "report" before parsing if evidence is followed by a path, not a subcommand
+    _ev_subcmds = {"report", "bundle", "inspect", "verify"}
+    if argv is None:
+        _argv_list = sys.argv[1:]
+    else:
+        _argv_list = list(argv)
+
+    if "evidence" in _argv_list:
+        _ev_idx = _argv_list.index("evidence")
+        if _ev_idx + 1 < len(_argv_list) and _argv_list[_ev_idx + 1] not in _ev_subcmds and not _argv_list[_ev_idx + 1].startswith("-"):
+            _argv_list.insert(_ev_idx + 1, "report")
+
+    args, remaining = parser.parse_known_args(_argv_list)
 
     # Resolve output mode from global flags
     from oss_paper_ci.terminal import OutputMode
@@ -630,6 +682,9 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.command == "security":
         return _cmd_security(args)
+
+    if args.command == "evidence":
+        return _cmd_evidence(args)
 
     parser.print_help()
     return 0
@@ -3616,3 +3671,159 @@ def _cmd_security_scan(args: argparse.Namespace) -> int:
 
     # Finding security issues is not a program error
     return 0
+
+
+# ── Evidence command ────────────────────────────────────────────────────────
+
+def _cmd_evidence(args: argparse.Namespace) -> int:
+    """Handle evidence subcommand group."""
+    sub = getattr(args, "evidence_command", None)
+
+    if sub == "report":
+        return _cmd_evidence_report(args)
+
+    if sub == "bundle":
+        return _cmd_evidence_bundle(args)
+
+    if sub == "inspect":
+        return _cmd_evidence_inspect(args)
+
+    if sub == "verify":
+        return _cmd_evidence_verify(args)
+
+    # Default: treat `evidence .` as `evidence report .`
+    if sub is None:
+        # If a path was given, run report
+        return _cmd_evidence_report(args)
+
+    print("Usage: oss-paper-ci evidence {report|bundle|inspect|verify}", file=sys.stderr)
+    return 1
+
+
+def _cmd_evidence_report(args: argparse.Namespace) -> int:
+    """Generate unified evidence report."""
+    import json as json_mod
+
+    from oss_paper_ci.evidence import (
+        build_evidence_report,
+        format_evidence_html,
+        format_evidence_markdown,
+    )
+
+    path = Path(getattr(args, "path", ".")).resolve()
+    if not path.exists():
+        print(f"Error: path does not exist: {path}", file=sys.stderr)
+        return 2
+
+    profile = getattr(args, "profile", "reviewer")
+    fmt = getattr(args, "format", "markdown")
+    output = getattr(args, "output", None)
+    include = getattr(args, "include", None)
+
+    report = build_evidence_report(path, profile=profile, include_sections=include)
+
+    if fmt == "json":
+        text = json_mod.dumps(report.to_dict(), indent=2, ensure_ascii=False)
+    elif fmt == "html":
+        text = format_evidence_html(report)
+    else:
+        text = format_evidence_markdown(report)
+
+    if output:
+        Path(output).write_text(text, encoding="utf-8")
+        print(f"Evidence report written to {output}")
+    else:
+        print(text)
+
+    return 0
+
+
+def _cmd_evidence_bundle(args: argparse.Namespace) -> int:
+    """Create evidence bundle."""
+    from oss_paper_ci.evidence_bundle import create_evidence_bundle
+
+    path = Path(getattr(args, "path", ".")).resolve()
+    if not path.exists():
+        print(f"Error: path does not exist: {path}", file=sys.stderr)
+        return 2
+
+    profile = getattr(args, "profile", "reviewer")
+    output = getattr(args, "output", "evidence-bundle.zip")
+    include = getattr(args, "include", None)
+
+    result = create_evidence_bundle(path, output, profile=profile, include_sections=include)
+
+    if result.get("ok"):
+        print(f"Evidence bundle created: {result['output']}")
+        print(f"  Profile: {result['profile']}")
+        print(f"  Files: {result['files_count']}")
+        return 0
+    else:
+        print(f"Error creating bundle: {result}", file=sys.stderr)
+        return 2
+
+
+def _cmd_evidence_inspect(args: argparse.Namespace) -> int:
+    """Inspect evidence bundle."""
+    import json as json_mod
+
+    from oss_paper_ci.evidence_bundle import (
+        format_bundle_inspect_markdown,
+        inspect_evidence_bundle,
+    )
+
+    bundle_path = Path(getattr(args, "bundle", "")).resolve()
+    if not bundle_path.exists():
+        print(f"Error: bundle not found: {bundle_path}", file=sys.stderr)
+        return 2
+
+    fmt = getattr(args, "format", "markdown")
+    output = getattr(args, "output", None)
+
+    info = inspect_evidence_bundle(bundle_path)
+
+    if fmt == "json":
+        text = json_mod.dumps(info, indent=2, ensure_ascii=False)
+    else:
+        text = format_bundle_inspect_markdown(info)
+
+    if output:
+        Path(output).write_text(text, encoding="utf-8")
+        print(f"Inspection written to {output}")
+    else:
+        print(text)
+
+    return 0
+
+
+def _cmd_evidence_verify(args: argparse.Namespace) -> int:
+    """Verify evidence bundle."""
+    import json as json_mod
+
+    from oss_paper_ci.evidence_bundle import (
+        format_bundle_verify_markdown,
+        verify_evidence_bundle,
+    )
+
+    bundle_path = Path(getattr(args, "bundle", "")).resolve()
+    if not bundle_path.exists():
+        print(f"Error: bundle not found: {bundle_path}", file=sys.stderr)
+        return 2
+
+    fmt = getattr(args, "format", "markdown")
+    output = getattr(args, "output", None)
+
+    vr = verify_evidence_bundle(bundle_path)
+
+    if fmt == "json":
+        text = json_mod.dumps(vr.to_dict(), indent=2, ensure_ascii=False)
+    else:
+        text = format_bundle_verify_markdown(vr)
+
+    if output:
+        Path(output).write_text(text, encoding="utf-8")
+        print(f"Verification written to {output}")
+    else:
+        print(text)
+
+    return 0 if vr.ok else 1

@@ -146,6 +146,26 @@ oss-paper-ci trust verify-artifacts release-artifacts/
 
 **重要な注意：** これらはローカル静的解析チェックのみです。安全認証ではなく、サードパーティの整合性を検証するものでもなく、SLSA、Sigstore、SPDX 準拠を主張するものでもありません。完全な脅威モデルと制限事項は [SECURITY.md](SECURITY.md) を参照してください。
 
+## 統合エビデンスレポート
+
+統合エビデンスレポートは、再現準備状況、環境、データ、結果、実行入口、信頼性チェック、安全境界を一つのレポートにまとめます。これは再現性の証拠を共有するためのものであり、論文の科学的正しさや採否を判定するものではありません。
+
+```bash
+# レビュアー向けレポート
+oss-paper-ci evidence . --profile reviewer --format html --output evidence.html
+
+# 著者向けレポート
+oss-paper-ci evidence . --profile author --format markdown
+
+# 共有可能なバンドルの作成
+oss-paper-ci evidence bundle . --output evidence-bundle.zip
+
+# バンドルの整合性検証
+oss-paper-ci evidence verify evidence-bundle.zip
+```
+
+詳細は [docs/evidence-report.md](docs/evidence-report.md) を参照。
+
 ## ドキュメント
 
 | トピック | リンク |

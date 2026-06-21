@@ -1,0 +1,558 @@
+{
+  "schema_version": "0.1",
+  "report_type": "oss-paper-ci-evidence-report",
+  "tool_version": "3.0.0rc1",
+  "profile": "reviewer",
+  "repo": "demo-paper-repo",
+  "summary": {
+    "status": "pass",
+    "readiness_score": 91,
+    "risk_level": "low",
+    "total_findings": 22,
+    "findings_high": 0,
+    "findings_medium": 0,
+    "plain_language_summary": "The repository scores 91/100 on reproducibility readiness (status: pass). 22 finding(s) were identified. 3 data documentation check(s) are missing. This is an engineering completeness indicator. It does not judge scientific correctness."
+  },
+  "sections": {
+    "repository": {
+      "path": "demo-paper-repo",
+      "commit": "5c47f9166dbafd2d1abf4299743cc7f9212e8087",
+      "dirty": true
+    },
+    "reproducibility": {
+      "score": 91,
+      "status": "pass",
+      "checks_total": 43,
+      "checks_pass": 24,
+      "checks_warn": 19,
+      "checks_fail": 0,
+      "policy": {
+        "profile": "default"
+      },
+      "score_components": {
+        "readiness_score": 91,
+        "data_evidence_score": 99,
+        "execution_evidence_score": 99,
+        "artifact_evidence_score": 100,
+        "provenance_evidence_score": 98
+      },
+      "findings": [
+        {
+          "id": "META003",
+          "title": "Citation information exists",
+          "severity": "warning",
+          "status": "warn",
+          "message": "No citation information found.",
+          "recommendation": "Add a CITATION.cff file or a 'Citation' section to your README so that users know how to properly cite your work."
+        },
+        {
+          "id": "META004",
+          "title": "Reproduction instructions exist",
+          "severity": "warning",
+          "status": "warn",
+          "message": "No reproduction instructions found in README.",
+          "recommendation": "Add sections such as 'Getting Started', 'Installation', or 'Usage' to your README so that others can reproduce your results."
+        },
+        {
+          "id": "META005",
+          "title": "Contributing guidelines exist",
+          "severity": "info",
+          "status": "warn",
+          "message": "No contributing guidelines found.",
+          "recommendation": "Consider adding a CONTRIBUTING.md file or an issue template to encourage community contributions."
+        },
+        {
+          "id": "META006",
+          "title": "Version or release information",
+          "severity": "info",
+          "status": "warn",
+          "message": "No version or release information found.",
+          "recommendation": "Add a CHANGELOG, VERSION file, or a version field in pyproject.toml so users can track releases."
+        },
+        {
+          "id": "ENV002",
+          "title": "Lock file exists",
+          "severity": "warning",
+          "status": "warn",
+          "message": "No lock file found",
+          "recommendation": "Add a lock file (e.g. poetry.lock, Pipfile.lock, uv.lock, or conda-lock.yml) to ensure reproducible dependency resolution."
+        },
+        {
+          "id": "ENV003",
+          "title": "Python version specified",
+          "severity": "warning",
+          "status": "warn",
+          "message": "No Python version specification found",
+          "recommendation": "Specify the required Python version in pyproject.toml (requires-python), setup.cfg (python_requires), .python-version, or Pipfile."
+        },
+        {
+          "id": "ENV006",
+          "title": "Multiple environment files consistent",
+          "severity": "warning",
+          "status": "warn",
+          "message": "Both requirements.txt and environment.yml exist but no clear guidance found in README",
+          "recommendation": "Document in the README which file (requirements.txt or environment.yml) users should use and under what circumstances."
+        },
+        {
+          "id": "EXP005",
+          "title": "Random seed setting detected",
+          "severity": "info",
+          "status": "warn",
+          "message": "No random seed setting detected in scripts/ or src/.",
+          "recommendation": "Set random seeds (e.g., random.seed(), np.random.seed(), torch.manual_seed()) so experiments are reproducible."
+        },
+        {
+          "id": "EXP006",
+          "title": "Configuration files exist",
+          "severity": "warning",
+          "status": "warn",
+          "message": "No configuration files or CLI argument parsing found.",
+          "recommendation": "Add a config file (e.g., config.yaml) or use argparse/click so experiment parameters are explicit and reproducible."
+        },
+        {
+          "id": "EXP007",
+          "title": "Notebook risk assessment",
+          "severity": "info",
+          "status": "warn",
+          "message": "No Jupyter notebooks found in the repository.",
+          "recommendation": ""
+        },
+        {
+          "id": "DATA002",
+          "title": "Data download instructions exist",
+          "severity": "warning",
+          "status": "warn",
+          "message": "No data download instructions found.",
+          "recommendation": "Add download instructions to your README (e.g. wget/curl commands, links to Zenodo/Figshare/HuggingFace) or include a download_data.sh / get_data.py script."
+        },
+        {
+          "id": "DATA003",
+          "title": "Data categories distinguished",
+          "severity": "info",
+          "status": "warn",
+          "message": "No distinction between data categories found.",
+          "recommendation": "Consider organizing your data into subdirectories such as raw/, processed/, interim/, and external/ to clarify the data processing pipeline."
+        },
+        {
+          "id": "DATA005",
+          "title": "Data paths in .gitignore",
+          "severity": "info",
+          "status": "warn",
+          "message": "No data-related patterns found in .gitignore.",
+          "recommendation": "Add data patterns to .gitignore (e.g. data/, *.csv, *.h5, *.parquet) to prevent accidental commits of large or sensitive data files."
+        },
+        {
+          "id": "RES005",
+          "title": "Result regeneration instructions",
+          "severity": "info",
+          "status": "warn",
+          "message": "No result regeneration instructions found.",
+          "recommendation": "Add instructions to your README (e.g. 'To reproduce Figure 1, run ...') or a Makefile with result-related targets so others can regenerate your results."
+        },
+        {
+          "id": "PAP001",
+          "title": "Paper directory detected",
+          "severity": "info",
+          "status": "warn",
+          "message": "No paper or manuscript files detected.",
+          "recommendation": "If your project includes a paper, consider placing it in a paper/, manuscript/, or latex/ directory."
+        },
+        {
+          "id": "PAP004",
+          "title": "Citation keys consistent",
+          "severity": "info",
+          "status": "warn",
+          "message": "No citation files found to verify.",
+          "recommendation": "Add a CITATION.cff or .bib file so that users can properly cite your work."
+        },
+        {
+          "id": "PAP005",
+          "title": "Figure paths in paper match files",
+          "severity": "info",
+          "status": "warn",
+          "message": "No .tex files found; skipping figure path check.",
+          "recommendation": ""
+        },
+        {
+          "id": "CI002",
+          "title": "Tests exist",
+          "severity": "warning",
+          "status": "warn",
+          "message": "No test files or test configuration found.",
+          "recommendation": "Add a tests/ directory with unit tests and configure pytest so that others can verify the correctness of your code."
+        },
+        {
+          "id": "CI004",
+          "title": "Issue or PR templates exist",
+          "severity": "warning",
+          "status": "warn",
+          "message": "No issue or PR templates found.",
+          "recommendation": "Consider adding issue and pull request templates in .github/ to standardize contributions."
+        }
+      ]
+    },
+    "data": {
+      "checks_total": 8,
+      "checks_missing": 3,
+      "checks": [
+        {
+          "check_id": "DATA_DIR",
+          "title": "Data directory",
+          "status": "present",
+          "message": "data/ directory exists",
+          "recommendation": ""
+        },
+        {
+          "check_id": "DATA_README",
+          "title": "Data documentation",
+          "status": "present",
+          "message": "data/README.md exists",
+          "recommendation": ""
+        },
+        {
+          "check_id": "DATA_AVAILABILITY",
+          "title": "Data availability statement",
+          "status": "missing",
+          "message": "No data availability statement found in README",
+          "recommendation": "Add a data availability section to README."
+        },
+        {
+          "check_id": "DATA_EXTERNAL_URLS",
+          "title": "External data declarations",
+          "status": "unknown",
+          "message": "No external data URLs or DOIs detected",
+          "recommendation": "If data is hosted externally, add URLs to data/README.md."
+        },
+        {
+          "check_id": "DATA_SAMPLE",
+          "title": "Sample data",
+          "status": "missing",
+          "message": "No sample or example data found",
+          "recommendation": "Consider adding sample data for testing."
+        },
+        {
+          "check_id": "DATA_LARGE_FILES",
+          "title": "Large files",
+          "status": "present",
+          "message": "No large files (>10MB) detected in repository",
+          "recommendation": ""
+        },
+        {
+          "check_id": "DATA_GITIGNORE",
+          "title": "Data .gitignore patterns",
+          "status": "missing",
+          "message": "No data-related patterns in .gitignore",
+          "recommendation": "Add data patterns to .gitignore if large files are not tracked."
+        },
+        {
+          "check_id": "DATA_LICENSE",
+          "title": "Data license/usage",
+          "status": "unknown",
+          "message": "No data license or usage restrictions found",
+          "recommendation": "Consider adding data usage terms if applicable."
+        }
+      ]
+    },
+    "results": {
+      "checks_total": 3,
+      "checks_missing": 0,
+      "checks_invalid": 0,
+      "checks": [
+        {
+          "check_id": "RESULTS_DIR",
+          "title": "Results directory",
+          "status": "present",
+          "message": "results/ directory exists with 2 file(s)",
+          "recommendation": ""
+        },
+        {
+          "check_id": "METRICS_JSON",
+          "title": "Metrics file",
+          "status": "present",
+          "message": "results\\metrics.json is valid JSON with 3 fields (3 numeric)",
+          "recommendation": ""
+        },
+        {
+          "check_id": "FIGURES_DIR",
+          "title": "Figures directory",
+          "status": "present",
+          "message": "figures/ directory exists with 1 file(s)",
+          "recommendation": ""
+        }
+      ]
+    },
+    "ecosystems": {
+      "detected": [
+        {
+          "id": "python",
+          "display_name": "Python",
+          "support_level": "native",
+          "runtime_available": true
+        }
+      ],
+      "total": 1
+    },
+    "trust": {
+      "summary": {
+        "status": "pass",
+        "high": 0,
+        "medium": 0,
+        "low": 0
+      },
+      "findings_count": 0,
+      "findings_high": 0,
+      "findings_medium": 0,
+      "findings_low": 0,
+      "findings": []
+    },
+    "adoption": {
+      "missing_files": [
+        "oss-paper-ci.yml"
+      ],
+      "recommended_files": [
+        "reproducibility.yml",
+        "data/README.md",
+        "results/README.md",
+        "figures/README.md",
+        ".github/workflows/oss-paper-ci.yml",
+        "README.md",
+        "requirements.txt",
+        "LICENSE"
+      ],
+      "manual_steps": []
+    }
+  },
+  "findings": [
+    {
+      "id": "META003",
+      "title": "Citation information exists",
+      "severity": "warning",
+      "status": "warn",
+      "message": "No citation information found.",
+      "recommendation": "Add a CITATION.cff file or a 'Citation' section to your README so that users know how to properly cite your work.",
+      "source_section": "reproducibility",
+      "category": "reproducibility"
+    },
+    {
+      "id": "META004",
+      "title": "Reproduction instructions exist",
+      "severity": "warning",
+      "status": "warn",
+      "message": "No reproduction instructions found in README.",
+      "recommendation": "Add sections such as 'Getting Started', 'Installation', or 'Usage' to your README so that others can reproduce your results.",
+      "source_section": "reproducibility",
+      "category": "reproducibility"
+    },
+    {
+      "id": "META005",
+      "title": "Contributing guidelines exist",
+      "severity": "info",
+      "status": "warn",
+      "message": "No contributing guidelines found.",
+      "recommendation": "Consider adding a CONTRIBUTING.md file or an issue template to encourage community contributions.",
+      "source_section": "reproducibility",
+      "category": "reproducibility"
+    },
+    {
+      "id": "META006",
+      "title": "Version or release information",
+      "severity": "info",
+      "status": "warn",
+      "message": "No version or release information found.",
+      "recommendation": "Add a CHANGELOG, VERSION file, or a version field in pyproject.toml so users can track releases.",
+      "source_section": "reproducibility",
+      "category": "reproducibility"
+    },
+    {
+      "id": "ENV002",
+      "title": "Lock file exists",
+      "severity": "warning",
+      "status": "warn",
+      "message": "No lock file found",
+      "recommendation": "Add a lock file (e.g. poetry.lock, Pipfile.lock, uv.lock, or conda-lock.yml) to ensure reproducible dependency resolution.",
+      "source_section": "reproducibility",
+      "category": "reproducibility"
+    },
+    {
+      "id": "ENV003",
+      "title": "Python version specified",
+      "severity": "warning",
+      "status": "warn",
+      "message": "No Python version specification found",
+      "recommendation": "Specify the required Python version in pyproject.toml (requires-python), setup.cfg (python_requires), .python-version, or Pipfile.",
+      "source_section": "reproducibility",
+      "category": "reproducibility"
+    },
+    {
+      "id": "ENV006",
+      "title": "Multiple environment files consistent",
+      "severity": "warning",
+      "status": "warn",
+      "message": "Both requirements.txt and environment.yml exist but no clear guidance found in README",
+      "recommendation": "Document in the README which file (requirements.txt or environment.yml) users should use and under what circumstances.",
+      "source_section": "reproducibility",
+      "category": "reproducibility"
+    },
+    {
+      "id": "EXP005",
+      "title": "Random seed setting detected",
+      "severity": "info",
+      "status": "warn",
+      "message": "No random seed setting detected in scripts/ or src/.",
+      "recommendation": "Set random seeds (e.g., random.seed(), np.random.seed(), torch.manual_seed()) so experiments are reproducible.",
+      "source_section": "reproducibility",
+      "category": "reproducibility"
+    },
+    {
+      "id": "EXP006",
+      "title": "Configuration files exist",
+      "severity": "warning",
+      "status": "warn",
+      "message": "No configuration files or CLI argument parsing found.",
+      "recommendation": "Add a config file (e.g., config.yaml) or use argparse/click so experiment parameters are explicit and reproducible.",
+      "source_section": "reproducibility",
+      "category": "reproducibility"
+    },
+    {
+      "id": "EXP007",
+      "title": "Notebook risk assessment",
+      "severity": "info",
+      "status": "warn",
+      "message": "No Jupyter notebooks found in the repository.",
+      "recommendation": "",
+      "source_section": "reproducibility",
+      "category": "reproducibility"
+    },
+    {
+      "id": "DATA002",
+      "title": "Data download instructions exist",
+      "severity": "warning",
+      "status": "warn",
+      "message": "No data download instructions found.",
+      "recommendation": "Add download instructions to your README (e.g. wget/curl commands, links to Zenodo/Figshare/HuggingFace) or include a download_data.sh / get_data.py script.",
+      "source_section": "reproducibility",
+      "category": "reproducibility"
+    },
+    {
+      "id": "DATA003",
+      "title": "Data categories distinguished",
+      "severity": "info",
+      "status": "warn",
+      "message": "No distinction between data categories found.",
+      "recommendation": "Consider organizing your data into subdirectories such as raw/, processed/, interim/, and external/ to clarify the data processing pipeline.",
+      "source_section": "reproducibility",
+      "category": "reproducibility"
+    },
+    {
+      "id": "DATA005",
+      "title": "Data paths in .gitignore",
+      "severity": "info",
+      "status": "warn",
+      "message": "No data-related patterns found in .gitignore.",
+      "recommendation": "Add data patterns to .gitignore (e.g. data/, *.csv, *.h5, *.parquet) to prevent accidental commits of large or sensitive data files.",
+      "source_section": "reproducibility",
+      "category": "reproducibility"
+    },
+    {
+      "id": "RES005",
+      "title": "Result regeneration instructions",
+      "severity": "info",
+      "status": "warn",
+      "message": "No result regeneration instructions found.",
+      "recommendation": "Add instructions to your README (e.g. 'To reproduce Figure 1, run ...') or a Makefile with result-related targets so others can regenerate your results.",
+      "source_section": "reproducibility",
+      "category": "reproducibility"
+    },
+    {
+      "id": "PAP001",
+      "title": "Paper directory detected",
+      "severity": "info",
+      "status": "warn",
+      "message": "No paper or manuscript files detected.",
+      "recommendation": "If your project includes a paper, consider placing it in a paper/, manuscript/, or latex/ directory.",
+      "source_section": "reproducibility",
+      "category": "reproducibility"
+    },
+    {
+      "id": "PAP004",
+      "title": "Citation keys consistent",
+      "severity": "info",
+      "status": "warn",
+      "message": "No citation files found to verify.",
+      "recommendation": "Add a CITATION.cff or .bib file so that users can properly cite your work.",
+      "source_section": "reproducibility",
+      "category": "reproducibility"
+    },
+    {
+      "id": "PAP005",
+      "title": "Figure paths in paper match files",
+      "severity": "info",
+      "status": "warn",
+      "message": "No .tex files found; skipping figure path check.",
+      "recommendation": "",
+      "source_section": "reproducibility",
+      "category": "reproducibility"
+    },
+    {
+      "id": "CI002",
+      "title": "Tests exist",
+      "severity": "warning",
+      "status": "warn",
+      "message": "No test files or test configuration found.",
+      "recommendation": "Add a tests/ directory with unit tests and configure pytest so that others can verify the correctness of your code.",
+      "source_section": "reproducibility",
+      "category": "reproducibility"
+    },
+    {
+      "id": "CI004",
+      "title": "Issue or PR templates exist",
+      "severity": "warning",
+      "status": "warn",
+      "message": "No issue or PR templates found.",
+      "recommendation": "Consider adding issue and pull request templates in .github/ to standardize contributions.",
+      "source_section": "reproducibility",
+      "category": "reproducibility"
+    },
+    {
+      "id": "DATA_AVAILABILITY",
+      "severity": "warning",
+      "category": "data",
+      "title": "Data availability statement",
+      "message": "No data availability statement found in README",
+      "recommendation": "Add a data availability section to README.",
+      "source_section": "data"
+    },
+    {
+      "id": "DATA_SAMPLE",
+      "severity": "warning",
+      "category": "data",
+      "title": "Sample data",
+      "message": "No sample or example data found",
+      "recommendation": "Consider adding sample data for testing.",
+      "source_section": "data"
+    },
+    {
+      "id": "DATA_GITIGNORE",
+      "severity": "warning",
+      "category": "data",
+      "title": "Data .gitignore patterns",
+      "message": "No data-related patterns in .gitignore",
+      "recommendation": "Add data patterns to .gitignore if large files are not tracked.",
+      "source_section": "data"
+    }
+  ],
+  "recommended_next_steps": [
+    "Review the evidence map to understand what documentation is present or missing.",
+    "Check the risk register for known gaps in the repository.",
+    "Verify that the claimed results trace to data and code."
+  ],
+  "limitations": [
+    "This report is an engineering completeness assessment, not a scientific correctness proof.",
+    "A high score does not guarantee the research is correct or reproducible.",
+    "A low score does not mean the research is flawed.",
+    "This tool does not execute experiments unless explicitly requested with --execute.",
+    "Trust and security checks are local static analysis only.",
+    "Dependency inventory is based on declared metadata, not resolved lockfiles.",
+    "This report does not predict paper acceptance or rejection."
+  ]
+}

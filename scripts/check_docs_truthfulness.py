@@ -519,6 +519,86 @@ def check_security_docs_no_overclaim(root: Path) -> list[dict]:
     return issues
 
 
+def check_evidence_command_exists(root: Path) -> list[dict]:
+    """Check that evidence CLI command is documented."""
+    issues = []
+    cli_path = root / "src" / "oss_paper_ci" / "cli.py"
+    if cli_path.exists():
+        content = cli_path.read_text(encoding="utf-8")
+        if "evidence" not in content:
+            issues.append({
+                "file": "src/oss_paper_ci/cli.py",
+                "line": 0,
+                "severity": "major",
+                "rule": "evidence-command-missing",
+                "message": "evidence command not found in cli.py",
+            })
+    return issues
+
+
+def check_evidence_examples_exist(root: Path) -> list[dict]:
+    """Check that evidence examples exist."""
+    issues = []
+    examples_dir = root / "examples" / "evidence"
+    if not examples_dir.exists():
+        issues.append({
+            "file": "examples/evidence",
+            "line": 0,
+            "severity": "major",
+            "rule": "evidence-examples-missing",
+            "message": "examples/evidence/ not found",
+        })
+    else:
+        required = ["README.md", "reviewer_report.md", "reviewer_report.json"]
+        for f in required:
+            if not (examples_dir / f).exists():
+                issues.append({
+                    "file": f"examples/evidence/{f}",
+                    "line": 0,
+                    "severity": "major",
+                    "rule": "evidence-example-missing",
+                    "message": f"examples/evidence/{f} not found",
+                })
+    return issues
+
+
+def check_evidence_docs_no_overclaim(root: Path) -> list[dict]:
+    """Check that evidence docs don't overclaim."""
+    issues = []
+    docs_to_check = [
+        "docs/evidence-report.md", "docs/evidence-bundle.md",
+        "docs/reviewer-pack.md", "docs/author-pack.md",
+    ]
+
+    overclaim_patterns = [
+        "prove scientific",
+        "prove correctness",
+        "predict acceptance",
+        "predict rejection",
+        "guarantee reproducibility",
+        "signed attestation",
+        "official sbom",
+    ]
+
+    for doc_path in docs_to_check:
+        path = root / doc_path
+        if path.exists():
+            content = path.read_text(encoding="utf-8").lower()
+            for pattern in overclaim_patterns:
+                if pattern in content:
+                    lines_with_pattern = [l for l in content.splitlines() if pattern in l]
+                    for line in lines_with_pattern:
+                        if not any(neg in line for neg in ["not", "no ", "don't", "doesn't", "do not", "isn't", "does not"]):
+                            issues.append({
+                                "file": doc_path,
+                                "line": 0,
+                                "severity": "blocker",
+                                "rule": "evidence-overclaim",
+                                "message": f"{doc_path} contains overclaim: '{pattern}'",
+                            })
+    return issues
+
+
 # CLI commands that oss-paper-ci supports
 VALID_CLI_COMMANDS = {
     "scan", "init", "explain", "version", "list-checks",
@@ -528,7 +608,7 @@ VALID_CLI_COMMANDS = {
     "wizard", "workbench", "theme",
     "adopt", "scaffold", "fix", "eval",
     "quickstart", "try-demo",
-    "trust", "security",
+    "trust", "security", "evidence",
 }
 
 # Files that exist in the project
@@ -840,6 +920,11 @@ def scan_project(root: Path) -> list[dict]:
     all_issues.extend(check_security_command_exists(root))
     all_issues.extend(check_trust_examples_exist(root))
     all_issues.extend(check_security_docs_no_overclaim(root))
+
+    # Evidence report checks
+    all_issues.extend(check_evidence_command_exists(root))
+    all_issues.extend(check_evidence_examples_exist(root))
+    all_issues.extend(check_evidence_docs_no_overclaim(root))
 
     return all_issues
 

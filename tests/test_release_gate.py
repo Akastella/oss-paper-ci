@@ -1,4 +1,4 @@
-"""Release gate tests for v2.9.0rc1.
+"""Release gate tests for v3.0.0rc1.
 
 Tests that verify the release package is truthful, clean, and ready for public upload.
 Covers: clean zip structure, docs truthfulness, action.yml correctness,
@@ -447,13 +447,13 @@ class TestVersionConsistency:
         # Extract version
         for line in content.split("\n"):
             if "__version__" in line:
-                assert "2.9.0rc1" in line
+                assert "3.0.0rc1" in line
                 return
         pytest.fail("Version not found in __init__.py")
 
     def test_pyproject_version(self):
         content = (ROOT / "pyproject.toml").read_text()
-        assert 'version = "2.9.0rc1"' in content
+        assert 'version = "3.0.0rc1"' in content
 
     def test_cli_version_output(self):
         result = subprocess.run(
@@ -461,7 +461,7 @@ class TestVersionConsistency:
             capture_output=True, text=True, cwd=ROOT, timeout=10,
         )
         assert result.returncode == 0
-        assert "2.9.0rc1" in result.stdout
+        assert "3.0.0rc1" in result.stdout
 
     def test_cli_version_matches_pyproject(self):
         # Get CLI version

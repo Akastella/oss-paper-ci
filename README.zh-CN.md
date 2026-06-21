@@ -146,6 +146,26 @@ oss-paper-ci trust verify-artifacts release-artifacts/
 
 **重要说明：** 这些只是本地静态分析检查，不是安全认证，不验证第三方完整性，也不声称符合 SLSA、Sigstore 或 SPDX 标准。完整威胁模型和限制见 [SECURITY.md](SECURITY.md)。
 
+## 统一证据报告
+
+统一证据报告会把复现准备度、环境、数据、结果、执行入口、信任检查和安全边界整合到一份报告中。它帮助作者和审查者沟通"仓库提供了哪些复现证据"，但不证明论文科学结论正确，也不预测录用结果。
+
+```bash
+# 面向审查者的报告
+oss-paper-ci evidence . --profile reviewer --format html --output evidence.html
+
+# 面向作者的报告
+oss-paper-ci evidence . --profile author --format markdown
+
+# 生成可分享的证据包
+oss-paper-ci evidence bundle . --output evidence-bundle.zip
+
+# 验证证据包完整性
+oss-paper-ci evidence verify evidence-bundle.zip
+```
+
+详见 [docs/evidence-report.md](docs/evidence-report.md)。
+
 ## 文档
 
 | 主题 | 链接 |
