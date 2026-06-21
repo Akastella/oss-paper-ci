@@ -40,7 +40,7 @@ OVERCLAIM_PATTERNS = [
     (r"(?<!does not )prove.*paper.*correct", "Claims to prove paper correctness"),
     (r"paper.*reproduced.*successfully", "Claims successful reproduction"),
     (r"(?<!不是)保证复现", "Claims guaranteed reproduction (Chinese)"),
-    (r"(?<!不)证明.*论文.*正确", "Claims paper correctness (Chinese)"),
+    (r"(?<!不)(?<!不会)证明.*论文.*正确", "Claims paper correctness (Chinese)"),
     (r"完全再現保証", "Claims guaranteed reproduction (Japanese)"),
     (r"(?<!正しくない)論文.*正しい", "Claims paper correctness (Japanese)"),
 ]

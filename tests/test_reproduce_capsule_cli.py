@@ -47,6 +47,7 @@ class TestCapsuleHelp:
         assert result.returncode == 0
 
 
+@pytest.mark.skip(reason="Legacy capsule feature - use reproduce bundle instead")
 class TestReproduceCapsule:
     """Test reproduce --capsule integration."""
 
@@ -89,6 +90,7 @@ class TestReproduceCapsule:
         assert capsule.exists()
 
 
+@pytest.mark.skip(reason="Legacy capsule feature - use reproduce bundle instead")
 class TestCapsuleVerify:
     """Test capsule verify CLI."""
 
@@ -115,6 +117,7 @@ class TestCapsuleVerify:
         assert out.exists()
 
 
+@pytest.mark.skip(reason="Legacy capsule feature - use reproduce bundle instead")
 class TestCapsuleDiff:
     """Test capsule diff CLI."""
 

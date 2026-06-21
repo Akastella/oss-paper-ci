@@ -179,24 +179,78 @@ def main(argv: list[str] | None = None) -> int:
     ci_cache = cache_sub.add_parser("info", help="Show cache statistics.")
     ci_cache.add_argument("--workspace", required=True, help="Path to workspace YAML file.")
 
-    # reproduce command
-    reproduce_parser = subparsers.add_parser("reproduce", help="Attempt to reproduce a paper repository.")
-    reproduce_parser.add_argument("url", help="GitHub URL, local path, or paper URL.")
-    reproduce_parser.add_argument("--repo", dest="repo_override", help="Explicit repository URL (for paper URLs).")
-    reproduce_parser.add_argument("--dry-run", action="store_true", default=True, help="Show what would happen without executing (default).")
-    reproduce_parser.add_argument("--execute", action="store_true", help="Actually run commands (required for execution).")
-    reproduce_parser.add_argument("--install", action="store_true", help="Install dependencies into isolated venv.")
-    reproduce_parser.add_argument("--no-install", action="store_true", help="Skip dependency installation.")
-    reproduce_parser.add_argument("--command", dest="reproduce_command", help="Override the reproduction command.")
-    reproduce_parser.add_argument("--workdir", help="Use a specific working directory.")
-    reproduce_parser.add_argument("--keep-workdir", action="store_true", help="Preserve working directory after run.")
-    reproduce_parser.add_argument("--timeout", type=int, default=300, help="Per-command timeout in seconds (default: 300).")
-    reproduce_parser.add_argument("--ecosystem", help="Target language ecosystem (e.g., r, julia, snakemake).")
-    reproduce_parser.add_argument("--format", choices=["markdown", "json", "html"], default="markdown", help="Output format (default: markdown).")
-    reproduce_parser.add_argument("--output", "-o", help="Write report to file instead of stdout.")
-    reproduce_parser.add_argument("--capsule", dest="capsule_path", help="Generate a reproduction capsule zip at this path.")
-    reproduce_parser.add_argument("--capsule-include-artifacts", action="store_true", help="Include generated artifacts in capsule.")
-    reproduce_parser.add_argument("--capsule-max-artifact-mb", type=float, default=10.0, help="Max artifact size in MB (default: 10).")
+    # reproduce command group
+    reproduce_parser = subparsers.add_parser("reproduce", help="Reproduction orchestrator: plan, run, report, compare, bundle.")
+    reproduce_sub = reproduce_parser.add_subparsers(dest="reproduce_command")
+
+    # reproduce plan
+    rp = reproduce_sub.add_parser("plan", help="Generate a reproduction plan (never executes code).")
+    rp.add_argument("path", nargs="?", default=".", help="Path to repository root (default: .)")
+    rp.add_argument("--contract", dest="contract_path", help="Path to reproducibility.yml")
+    rp.add_argument("--format", choices=["markdown", "json"], default="markdown", help="Output format (default: markdown).")
+    rp.add_argument("--output", "-o", help="Write plan to file instead of stdout.")
+
+    # reproduce run
+    rr = reproduce_sub.add_parser("run", help="Execute reproduction commands (requires --execute).")
+    rr.add_argument("path", nargs="?", default=".", help="Path to repository root (default: .)")
+    rr.add_argument("--contract", dest="contract_path", help="Path to reproducibility.yml")
+    rr.add_argument("--execute", action="store_true", help="Actually run commands (required for execution).")
+    rr.add_argument("--sandbox", choices=["local", "docker"], default="local", help="Sandbox type (default: local).")
+    rr.add_argument("--timeout", type=int, help="Override per-command timeout in seconds.")
+    rr.add_argument("--output-dir", dest="output_dir", help="Explicit output directory for run results.")
+    rr.add_argument("--format", choices=["markdown", "json", "html"], default="markdown", help="Output format (default: markdown).")
+    rr.add_argument("--output", "-o", help="Write report to file instead of stdout.")
+    rr.add_argument("--fail-on", dest="fail_on", choices=["failed-command", "missing-artifact", "out-of-range"],
+                    help="Exit non-zero on specific failure type.")
+    # Legacy flags for backward compat
+    rr.add_argument("--repo", dest="repo_override", help=argparse.SUPPRESS)
+    rr.add_argument("--url", dest="legacy_url", help=argparse.SUPPRESS)
+    rr.add_argument("--dry-run", action="store_true", default=False, help=argparse.SUPPRESS)
+    rr.add_argument("--install", action="store_true", help=argparse.SUPPRESS)
+    rr.add_argument("--no-install", action="store_true", help=argparse.SUPPRESS)
+    rr.add_argument("--command", dest="reproduce_command_legacy", help=argparse.SUPPRESS)
+    rr.add_argument("--workdir", help=argparse.SUPPRESS)
+    rr.add_argument("--keep-workdir", action="store_true", help=argparse.SUPPRESS)
+    rr.add_argument("--ecosystem", help=argparse.SUPPRESS)
+    rr.add_argument("--capsule", dest="capsule_path", help=argparse.SUPPRESS)
+    rr.add_argument("--capsule-include-artifacts", action="store_true", help=argparse.SUPPRESS)
+    rr.add_argument("--capsule-max-artifact-mb", type=float, default=10.0, help=argparse.SUPPRESS)
+
+    # reproduce status
+    rs = reproduce_sub.add_parser("status", help="Show status of a reproduction run.")
+    rs.add_argument("run_dir", help="Path to the run directory.")
+    rs.add_argument("--format", choices=["markdown", "json"], default="markdown", help="Output format (default: markdown).")
+    rs.add_argument("--output", "-o", help="Write output to file instead of stdout.")
+
+    # reproduce report
+    rre = reproduce_sub.add_parser("report", help="Generate a reproduction report.")
+    rre.add_argument("run_dir", help="Path to the run directory.")
+    rre.add_argument("--format", choices=["markdown", "json", "html"], default="markdown", help="Output format (default: markdown).")
+    rre.add_argument("--output", "-o", help="Write report to file instead of stdout.")
+
+    # reproduce compare
+    rc = reproduce_sub.add_parser("compare", help="Compare run against expected values.")
+    rc.add_argument("run_dir", help="Path to the run directory.")
+    rc.add_argument("--expected", required=True, help="Path to reproducibility.yml with expected values.")
+    rc.add_argument("--format", choices=["markdown", "json"], default="markdown", help="Output format (default: markdown).")
+    rc.add_argument("--output", "-o", help="Write output to file instead of stdout.")
+
+    # reproduce bundle
+    rb = reproduce_sub.add_parser("bundle", help="Create reproduction evidence bundle.")
+    rb.add_argument("run_dir", help="Path to the run directory.")
+    rb.add_argument("--output", "-o", default="reproduction-evidence.zip", help="Output ZIP path (default: reproduction-evidence.zip).")
+
+    # reproduce inspect
+    ri = reproduce_sub.add_parser("inspect", help="Inspect reproduction evidence bundle.")
+    ri.add_argument("bundle", help="Path to the bundle ZIP file.")
+    ri.add_argument("--format", choices=["markdown", "json"], default="markdown", help="Output format (default: markdown).")
+    ri.add_argument("--output", "-o", help="Write output to file instead of stdout.")
+
+    # reproduce verify-bundle
+    rvb = reproduce_sub.add_parser("verify-bundle", help="Verify reproduction evidence bundle integrity.")
+    rvb.add_argument("bundle", help="Path to the bundle ZIP file.")
+    rvb.add_argument("--format", choices=["markdown", "json"], default="markdown", help="Output format (default: markdown).")
+    rvb.add_argument("--output", "-o", help="Write output to file instead of stdout.")
 
     # capsule command group
     capsule_parser = subparsers.add_parser("capsule", help="Capsule management.")
@@ -527,6 +581,14 @@ def main(argv: list[str] | None = None) -> int:
         _ev_idx = _argv_list.index("evidence")
         if _ev_idx + 1 < len(_argv_list) and _argv_list[_ev_idx + 1] not in _ev_subcmds and not _argv_list[_ev_idx + 1].startswith("-"):
             _argv_list.insert(_ev_idx + 1, "report")
+
+    # Handle `reproduce <path>` as shorthand for `reproduce run <path>`
+    # for backward compatibility with the flat reproduce command.
+    _repro_subcmds = {"plan", "run", "status", "report", "compare", "bundle", "inspect", "verify-bundle"}
+    if "reproduce" in _argv_list:
+        _rp_idx = _argv_list.index("reproduce")
+        if _rp_idx + 1 < len(_argv_list) and _argv_list[_rp_idx + 1] not in _repro_subcmds and not _argv_list[_rp_idx + 1].startswith("-"):
+            _argv_list.insert(_rp_idx + 1, "run")
 
     args, remaining = parser.parse_known_args(_argv_list)
 
@@ -2032,83 +2094,401 @@ def _cmd_doctor(repo_path: str, fmt: str) -> int:
     return 0
 
 
-# ── Reproduce command ────────────────────────────────────────────────────────
+# ── Reproduce command group ──────────────────────────────────────────────────
 
 def _cmd_reproduce(args: argparse.Namespace) -> int:
-    """Handle the reproduce subcommand."""
-    from oss_paper_ci.reproduce import run_reproduce
-    from oss_paper_ci.reporting.reproduce_report import (
-        generate_reproduce_html_report,
-        generate_reproduce_json_report,
-        generate_reproduce_markdown_report,
-    )
+    """Handle the reproduce subcommand group."""
+    sub = getattr(args, "reproduce_command", None)
 
-    url = args.url
-    if not url:
-        print("Error: URL or path is required.", file=sys.stderr)
-        return 1
+    if sub == "plan":
+        return _cmd_reproduce_plan(args)
+    if sub == "run":
+        return _cmd_reproduce_run(args)
+    if sub == "status":
+        return _cmd_reproduce_status(args)
+    if sub == "report":
+        return _cmd_reproduce_report(args)
+    if sub == "compare":
+        return _cmd_reproduce_compare(args)
+    if sub == "bundle":
+        return _cmd_reproduce_bundle(args)
+    if sub == "inspect":
+        return _cmd_reproduce_inspect(args)
+    if sub == "verify-bundle":
+        return _cmd_reproduce_verify_bundle(args)
 
-    # --execute enables execution; without it, dry-run is forced
-    execute = getattr(args, "execute", False)
-    dry_run = not execute
+    # No subcommand — show help
+    print("Usage: oss-paper-ci reproduce <subcommand>", file=sys.stderr)
+    print("Subcommands: plan, run, status, report, compare, bundle, inspect, verify-bundle", file=sys.stderr)
+    return 1
 
-    # --no-install overrides --install
-    install = getattr(args, "install", False)
-    if getattr(args, "no_install", False):
-        install = False
 
-    # For capsule generation, keep workdir so artifacts can be collected
-    capsule_path = getattr(args, "capsule_path", None)
-    keep_workdir = getattr(args, "keep_workdir", False) or bool(capsule_path)
+def _cmd_reproduce_plan(args: argparse.Namespace) -> int:
+    """Handle reproduce plan subcommand."""
+    from oss_paper_ci.repro_plan import build_plan, format_plan_json, format_plan_markdown
 
-    result = run_reproduce(
-        url=url,
-        repo_override=getattr(args, "repo_override", None),
-        dry_run=dry_run,
-        execute=execute,
-        install=install,
-        command=getattr(args, "reproduce_command", None),
-        workdir=getattr(args, "workdir", None),
-        timeout=getattr(args, "timeout", 300),
-        keep_workdir=keep_workdir,
-    )
-
-    # Generate report
+    path = getattr(args, "path", ".")
+    contract_path = getattr(args, "contract_path", None)
     fmt = getattr(args, "format", "markdown")
     output = getattr(args, "output", None)
 
+    plan = build_plan(path, contract_path=contract_path)
+
     if fmt == "json":
-        text = generate_reproduce_json_report(result, output_path=output)
-    elif fmt == "html":
-        text = generate_reproduce_html_report(result, output_path=output)
+        text = format_plan_json(plan)
     else:
-        text = generate_reproduce_markdown_report(result, output_path=output)
+        text = format_plan_markdown(plan)
 
     if output:
+        Path(output).parent.mkdir(parents=True, exist_ok=True)
+        Path(output).write_text(text, encoding="utf-8")
+        print(f"Plan written to {output}")
+    else:
+        print(text)
+
+    if plan.warnings:
+        return 1
+    return 0
+
+
+def _cmd_reproduce_run(args: argparse.Namespace) -> int:
+    """Handle reproduce run subcommand."""
+    from oss_paper_ci.repro_runner import run_reproduction
+    from oss_paper_ci.reporting.repro_report import (
+        generate_repro_run_html,
+        generate_repro_run_json,
+        generate_repro_run_markdown,
+    )
+
+    path = getattr(args, "path", ".")
+    contract_path = getattr(args, "contract_path", None)
+    execute = getattr(args, "execute", False)
+    sandbox_type = getattr(args, "sandbox", "local")
+    timeout = getattr(args, "timeout", None)
+    output_dir = getattr(args, "output_dir", None)
+    fmt = getattr(args, "format", "markdown")
+    output = getattr(args, "output", None)
+    fail_on = getattr(args, "fail_on", None)
+
+    result = run_reproduction(
+        path,
+        contract_path=contract_path,
+        execute=execute,
+        sandbox_type=sandbox_type,
+        output_dir=output_dir,
+        timeout=timeout,
+    )
+
+    if fmt == "json":
+        text = generate_repro_run_json(result)
+    elif fmt == "html":
+        text = generate_repro_run_html(result)
+    else:
+        text = generate_repro_run_markdown(result)
+
+    if output:
+        Path(output).parent.mkdir(parents=True, exist_ok=True)
+        Path(output).write_text(text, encoding="utf-8")
         print(f"Report written to {output}")
     else:
         print(text)
 
-    # Generate capsule if requested
-    if capsule_path:
-        from oss_paper_ci.capsule import build_capsule
-        try:
-            include_artifacts = getattr(args, "capsule_include_artifacts", False) or True
-            max_mb = getattr(args, "capsule_max_artifact_mb", 10.0)
-            build_capsule(
-                result, capsule_path,
-                include_artifacts=include_artifacts,
-                max_artifact_mb=max_mb,
-            )
-            print(f"Capsule written to {capsule_path}")
-        except Exception as exc:
-            print(f"Error building capsule: {exc}", file=sys.stderr)
-            return 2
-
-    # Exit code
+    # Exit code logic
     if result.error:
         return 2
-    if not result.ok:
+    if fail_on == "failed-command" and any(
+        cr.status in ("failed", "timeout", "blocked") for cr in result.command_results
+    ):
+        return 1
+    if fail_on == "missing-artifact" and result.artifact_validation and result.artifact_validation.missing > 0:
+        return 1
+    if fail_on == "out-of-range" and result.metric_validation and not result.metric_validation.ok:
+        return 1
+    if not result.ok and result.overall_status not in ("dry_run",):
+        return 1
+    return 0
+
+
+def _cmd_reproduce_status(args: argparse.Namespace) -> int:
+    """Handle reproduce status subcommand."""
+    from oss_paper_ci.repro_status import (
+        format_status_json,
+        format_status_markdown,
+        read_run_status,
+    )
+
+    run_dir = getattr(args, "run_dir", None)
+    if not run_dir:
+        print("Error: run_dir is required.", file=sys.stderr)
+        return 1
+
+    fmt = getattr(args, "format", "markdown")
+    output = getattr(args, "output", None)
+
+    status = read_run_status(run_dir)
+
+    if fmt == "json":
+        text = format_status_json(status)
+    else:
+        text = format_status_markdown(status)
+
+    if output:
+        Path(output).parent.mkdir(parents=True, exist_ok=True)
+        Path(output).write_text(text, encoding="utf-8")
+        print(f"Status written to {output}")
+    else:
+        print(text)
+
+    if status.error:
+        return 1
+    return 0
+
+
+def _cmd_reproduce_report(args: argparse.Namespace) -> int:
+    """Handle reproduce report subcommand."""
+    import json as _json
+    from oss_paper_ci.repro_runner import ReproductionRun
+    from oss_paper_ci.reporting.repro_report import (
+        generate_repro_run_html,
+        generate_repro_run_json,
+        generate_repro_run_markdown,
+    )
+
+    run_dir = getattr(args, "run_dir", None)
+    if not run_dir:
+        print("Error: run_dir is required.", file=sys.stderr)
+        return 1
+
+    fmt = getattr(args, "format", "markdown")
+    output = getattr(args, "output", None)
+
+    # Load run manifest
+    manifest_path = Path(run_dir) / "run-manifest.json"
+    if not manifest_path.exists():
+        print(f"Error: No run-manifest.json found in {run_dir}", file=sys.stderr)
+        return 1
+
+    try:
+        with open(manifest_path, encoding="utf-8") as f:
+            manifest = _json.load(f)
+    except Exception as exc:
+        print(f"Error reading manifest: {exc}", file=sys.stderr)
+        return 1
+
+    # Create a minimal ReproductionRun-like object for the report generator
+    class _RunProxy:
+        pass
+
+    run = _RunProxy()
+    for key, val in manifest.items():
+        setattr(run, key, val)
+    # Ensure required attributes exist
+    run.overall_status = manifest.get("overall_status", "unknown")
+    run.dry_run = manifest.get("dry_run", True)
+    run.started_at = manifest.get("started_at", "")
+    run.finished_at = manifest.get("finished_at", "")
+    run.sandbox_type = manifest.get("sandbox_type", "unknown")
+    run.error = manifest.get("error", "")
+    run.warnings = manifest.get("warnings", [])
+    run.command_results = [_CmdResultProxy(cr) for cr in manifest.get("command_results", [])]
+    run.artifact_validation = _ArtValProxy(manifest.get("artifact_validation")) if manifest.get("artifact_validation") else None
+    run.metric_validation = _MetValProxy(manifest.get("metric_validation")) if manifest.get("metric_validation") else None
+
+    if fmt == "json":
+        text = generate_repro_run_json(run)
+    elif fmt == "html":
+        text = generate_repro_run_html(run)
+    else:
+        text = generate_repro_run_markdown(run)
+
+    if output:
+        Path(output).parent.mkdir(parents=True, exist_ok=True)
+        Path(output).write_text(text, encoding="utf-8")
+        print(f"Report written to {output}")
+    else:
+        print(text)
+
+    return 0
+
+
+class _CmdResultProxy:
+    """Proxy for command result dicts."""
+    def __init__(self, d: dict):
+        self.command_id = d.get("command_id", "")
+        self.command = d.get("command", "")
+        self.exit_code = d.get("exit_code", -1)
+        self.duration_seconds = d.get("duration_seconds", 0.0)
+        self.timed_out = d.get("timed_out", False)
+        self.blocked = d.get("blocked", False)
+        self.block_reason = d.get("block_reason", "")
+        self.stdout_excerpt = d.get("stdout_excerpt", "")
+        self.stderr_excerpt = d.get("stderr_excerpt", "")
+        self.status = d.get("status", "unknown")
+
+
+class _ArtResultProxy:
+    """Proxy for artifact result dicts."""
+    def __init__(self, d: dict):
+        self.path = d.get("path", "")
+        self.exists = d.get("exists", False)
+        self.size_bytes = d.get("size_bytes", 0)
+        self.sha256 = d.get("sha256", "")
+        self.type = d.get("type", "file")
+
+
+class _ArtValProxy:
+    """Proxy for artifact validation dicts."""
+    def __init__(self, d: dict):
+        self.total = d.get("total", 0)
+        self.found = d.get("found", 0)
+        self.missing = d.get("missing", 0)
+        self.artifacts = [_ArtResultProxy(a) for a in d.get("artifacts", [])]
+
+
+class _MetCheckProxy:
+    """Proxy for metric check dicts."""
+    def __init__(self, d: dict):
+        self.key = d.get("key", "")
+        self.actual_value = d.get("actual_value")
+        self.expected_min = d.get("expected_min")
+        self.expected_max = d.get("expected_max")
+        self.in_range = d.get("in_range", True)
+        self.file = d.get("file", "")
+
+
+class _MetValProxy:
+    """Proxy for metric validation dicts."""
+    def __init__(self, d: dict):
+        self.total = d.get("total", 0)
+        self.in_range = d.get("in_range", 0)
+        self.out_of_range = d.get("out_of_range", 0)
+        self.errors = d.get("errors", 0)
+        self.checks = [_MetCheckProxy(c) for c in d.get("checks", [])]
+        self.ok = self.out_of_range == 0 and self.errors == 0
+
+
+def _cmd_reproduce_compare(args: argparse.Namespace) -> int:
+    """Handle reproduce compare subcommand."""
+    from oss_paper_ci.repro_compare import (
+        compare_run,
+        format_compare_json,
+        format_compare_markdown,
+    )
+
+    run_dir = getattr(args, "run_dir", None)
+    expected = getattr(args, "expected", None)
+    if not run_dir or not expected:
+        print("Error: run_dir and --expected are required.", file=sys.stderr)
+        return 1
+
+    fmt = getattr(args, "format", "markdown")
+    output = getattr(args, "output", None)
+
+    report = compare_run(run_dir, expected)
+
+    if fmt == "json":
+        text = format_compare_json(report)
+    else:
+        text = format_compare_markdown(report)
+
+    if output:
+        Path(output).parent.mkdir(parents=True, exist_ok=True)
+        Path(output).write_text(text, encoding="utf-8")
+        print(f"Comparison written to {output}")
+    else:
+        print(text)
+
+    if report.error:
+        return 2
+    if not report.ok:
+        return 1
+    return 0
+
+
+def _cmd_reproduce_bundle(args: argparse.Namespace) -> int:
+    """Handle reproduce bundle subcommand."""
+    from oss_paper_ci.repro_bundle import create_bundle
+
+    run_dir = getattr(args, "run_dir", None)
+    output = getattr(args, "output", "reproduction-evidence.zip")
+    if not run_dir:
+        print("Error: run_dir is required.", file=sys.stderr)
+        return 1
+
+    try:
+        path = create_bundle(run_dir, output)
+        print(f"Bundle created: {path}")
+    except Exception as exc:
+        print(f"Error creating bundle: {exc}", file=sys.stderr)
+        return 2
+
+    return 0
+
+
+def _cmd_reproduce_inspect(args: argparse.Namespace) -> int:
+    """Handle reproduce inspect subcommand."""
+    from oss_paper_ci.repro_bundle import (
+        format_bundle_inspect_markdown,
+        inspect_bundle,
+    )
+
+    bundle = getattr(args, "bundle", None)
+    if not bundle:
+        print("Error: bundle path is required.", file=sys.stderr)
+        return 1
+
+    fmt = getattr(args, "format", "markdown")
+    output = getattr(args, "output", None)
+
+    info = inspect_bundle(bundle)
+
+    if fmt == "json":
+        import json as _json
+        text = _json.dumps(info.to_dict(), indent=2)
+    else:
+        text = format_bundle_inspect_markdown(info)
+
+    if output:
+        Path(output).parent.mkdir(parents=True, exist_ok=True)
+        Path(output).write_text(text, encoding="utf-8")
+        print(f"Inspection written to {output}")
+    else:
+        print(text)
+
+    return 0
+
+
+def _cmd_reproduce_verify_bundle(args: argparse.Namespace) -> int:
+    """Handle reproduce verify-bundle subcommand."""
+    from oss_paper_ci.repro_bundle import (
+        format_bundle_verify_markdown,
+        verify_bundle,
+    )
+
+    bundle = getattr(args, "bundle", None)
+    if not bundle:
+        print("Error: bundle path is required.", file=sys.stderr)
+        return 1
+
+    fmt = getattr(args, "format", "markdown")
+    output = getattr(args, "output", None)
+
+    result = verify_bundle(bundle)
+
+    if fmt == "json":
+        import json as _json
+        text = _json.dumps(result.to_dict(), indent=2)
+    else:
+        text = format_bundle_verify_markdown(result)
+
+    if output:
+        Path(output).parent.mkdir(parents=True, exist_ok=True)
+        Path(output).write_text(text, encoding="utf-8")
+        print(f"Verification written to {output}")
+    else:
+        print(text)
+
+    if not result.valid:
         return 1
     return 0
 

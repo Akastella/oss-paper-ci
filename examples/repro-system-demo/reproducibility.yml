@@ -1,0 +1,55 @@
+schema_version: "0.2"
+
+project_name: "repro-system-demo"
+project_type: "ml"
+
+environment:
+  type: python
+  python: ">=3.10"
+  install:
+    - python -m pip install -r requirements.txt
+
+commands:
+  - id: train
+    run: python scripts/train.py
+    timeout_seconds: 30
+    expected_artifacts:
+      - results/model.json
+      - results/train_metrics.json
+
+  - id: evaluate
+    run: python scripts/evaluate.py
+    timeout_seconds: 30
+    depends_on: [train]
+    expected_artifacts:
+      - results/metrics.json
+
+  - id: make_figures
+    run: python scripts/make_figures.py
+    timeout_seconds: 30
+    depends_on: [evaluate]
+    expected_artifacts:
+      - figures/summary.txt
+
+artifacts:
+  - path: results/model.json
+    type: file
+  - path: results/metrics.json
+    type: metrics
+  - path: figures/summary.txt
+    type: figure-placeholder
+
+metrics:
+  - file: results/metrics.json
+    key: accuracy
+    expected_min: 0.0
+    expected_max: 1.0
+  - file: results/metrics.json
+    key: loss
+    expected_min: 0.0
+
+safety:
+  network: false
+  allow_shell: false
+  max_runtime_seconds: 120
+  max_artifact_mb: 10

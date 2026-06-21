@@ -84,6 +84,7 @@ The evaluation corpus contains 12+ synthetic repositories covering:
 | Data diagnostics | `oss-paper-ci data diagnose .` | Check data documentation and availability |
 | Result validation | `oss-paper-ci results validate .` | Verify claimed results trace to evidence |
 | Safe reproduction | `oss-paper-ci reproduce URL --dry-run` | Attempt reproduction without executing code |
+| Reproduction orchestrator | `oss-paper-ci reproduce plan/run/report` | Plan, execute, and verify reproduction workflow |
 | Reproduction capsule | `oss-paper-ci capsule verify out.zip` | Verify and inspect evidence packages |
 | Reproducibility dossier | `oss-paper-ci dossier .` | Generate author/reviewer/maintainer summaries |
 | Workspace batch | `oss-paper-ci batch scan --workspace ws.yml` | Scan multiple projects from a config |
@@ -168,6 +169,29 @@ oss-paper-ci evidence verify evidence-bundle.zip
 ```
 
 The evidence report helps authors and reviewers communicate "what reproducibility evidence exists" — it does not prove scientific correctness or predict acceptance. See [docs/evidence-report.md](docs/evidence-report.md).
+
+## Reproduction Orchestrator
+
+The reproduction orchestrator reads `reproducibility.yml`, generates an execution plan, runs declared commands (with explicit authorization), collects artifacts and metrics, and generates verification reports.
+
+```bash
+# Generate a plan (never executes code)
+oss-paper-ci reproduce plan examples/repro-system-demo
+
+# Execute with safety gates
+oss-paper-ci reproduce run examples/repro-system-demo --execute --sandbox local
+
+# Generate HTML report
+oss-paper-ci reproduce report .oss-paper-ci-repro-run --format html --output reproduction.html
+
+# Compare against expected values
+oss-paper-ci reproduce compare .oss-paper-ci-repro-run --expected examples/repro-system-demo/reproducibility.yml
+
+# Create evidence bundle
+oss-paper-ci reproduce bundle .oss-paper-ci-repro-run --output reproduction-evidence.zip
+```
+
+The orchestrator defaults to dry-run. It does not prove scientific correctness — it only verifies that declared reproduction steps can be executed and that artifacts and metrics match expectations. See [docs/reproduction-orchestrator.md](docs/reproduction-orchestrator.md).
 
 ## Documentation
 

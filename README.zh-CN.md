@@ -84,6 +84,7 @@ oss-paper-ci eval compare --baseline tests/golden/evaluation_summary.json --curr
 | 数据诊断 | `oss-paper-ci data diagnose .` | 检查数据文档和可用性 |
 | 结果验证 | `oss-paper-ci results validate .` | 验证声称的结果是否有证据支撑 |
 | 安全复现 | `oss-paper-ci reproduce URL --dry-run` | 不执行代码的复现尝试 |
+| 复现编排器 | `oss-paper-ci reproduce plan/run/report` | 规划、执行和验证复现工作流 |
 | 复现胶囊 | `oss-paper-ci capsule verify out.zip` | 验证和查看证据包 |
 | 复现摘要 | `oss-paper-ci dossier .` | 生成面向作者/审稿人/维护者的摘要 |
 | 批量扫描 | `oss-paper-ci batch scan --workspace ws.yml` | 从配置文件批量扫描多个项目 |
@@ -165,6 +166,29 @@ oss-paper-ci evidence verify evidence-bundle.zip
 ```
 
 详见 [docs/evidence-report.md](docs/evidence-report.md)。
+
+## 复现编排器
+
+复现编排器可以读取仓库中的 `reproducibility.yml`，生成执行计划，在显式授权后运行声明的命令，收集日志、产物和指标，并生成复现报告。它不会默认执行代码，也不会证明论文结论正确；它只记录声明流程是否能够被安全、可追踪地执行。
+
+```bash
+# 生成计划（不执行代码）
+oss-paper-ci reproduce plan examples/repro-system-demo
+
+# 显式授权后执行
+oss-paper-ci reproduce run examples/repro-system-demo --execute --sandbox local
+
+# 生成 HTML 报告
+oss-paper-ci reproduce report .oss-paper-ci-repro-run --format html --output reproduction.html
+
+# 对比预期值
+oss-paper-ci reproduce compare .oss-paper-ci-repro-run --expected examples/repro-system-demo/reproducibility.yml
+
+# 生成证据包
+oss-paper-ci reproduce bundle .oss-paper-ci-repro-run --output reproduction-evidence.zip
+```
+
+详见 [docs/reproduction-orchestrator.md](docs/reproduction-orchestrator.md)。
 
 ## 文档
 

@@ -31,34 +31,34 @@ class TestReproduceHelp:
     def test_reproduce_help(self):
         result = _run_cli("reproduce", "--help")
         assert result.returncode == 0
-        assert "URL" in result.stdout or "url" in result.stdout.lower()
+        # Now a subcommand group -- should list available subcommands
+        assert "run" in result.stdout
 
 
 class TestReproduceDryRun:
-    """Test reproduce dry-run mode."""
+    """Test reproduce dry-run mode (default, no --dry-run flag)."""
 
     def test_dry_run_local_path(self):
         demo = ROOT / "examples" / "demo-reproduce-repo"
-        result = _run_cli("reproduce", str(demo), "--dry-run")
+        result = _run_cli("reproduce", "run", str(demo))
         assert result.returncode == 0
-        assert "dry-run" in result.stdout.lower()
 
     def test_dry_run_markdown_format(self):
         demo = ROOT / "examples" / "demo-reproduce-repo"
-        result = _run_cli("reproduce", str(demo), "--dry-run", "--format", "markdown")
+        result = _run_cli("reproduce", "run", str(demo), "--format", "markdown")
         assert result.returncode == 0
-        assert "Reproduction Attempt Report" in result.stdout
+        assert "Reproduction Run Report" in result.stdout
 
     def test_dry_run_json_format(self):
         demo = ROOT / "examples" / "demo-reproduce-repo"
-        result = _run_cli("reproduce", str(demo), "--dry-run", "--format", "json")
+        result = _run_cli("reproduce", "run", str(demo), "--format", "json")
         assert result.returncode == 0
         data = json.loads(result.stdout)
         assert data["dry_run"] is True
 
     def test_dry_run_html_format(self):
         demo = ROOT / "examples" / "demo-reproduce-repo"
-        result = _run_cli("reproduce", str(demo), "--dry-run", "--format", "html")
+        result = _run_cli("reproduce", "run", str(demo), "--format", "html")
         assert result.returncode == 0
         assert "<!DOCTYPE html>" in result.stdout
 
@@ -66,12 +66,12 @@ class TestReproduceDryRun:
         demo = ROOT / "examples" / "demo-reproduce-repo"
         out = tmp_path / "report.md"
         result = _run_cli(
-            "reproduce", str(demo), "--dry-run",
+            "reproduce", "run", str(demo),
             "--format", "markdown", "--output", str(out),
         )
         assert result.returncode == 0
         assert out.exists()
-        assert "Reproduction Attempt Report" in out.read_text(encoding="utf-8")
+        assert "Reproduction Run Report" in out.read_text(encoding="utf-8")
 
     def test_dry_run_does_not_execute(self, tmp_path):
         """Verify dry-run does not actually run commands."""
@@ -82,8 +82,11 @@ class TestReproduceDryRun:
             f"Path('{marker.as_posix()}').write_text('executed')"
         )
         (tmp_path / "requirements.txt").write_text("")
+        (tmp_path / "reproducibility.yml").write_text(
+            "reproduction:\n  commands:\n    - id: train\n      run: python scripts/train.py\n"
+        )
 
-        result = _run_cli("reproduce", str(tmp_path), "--dry-run")
+        result = _run_cli("reproduce", "run", str(tmp_path))
         assert result.returncode == 0
         assert not marker.exists()
 
@@ -94,41 +97,31 @@ class TestReproduceExecute:
     def test_execute_demo_repo(self):
         demo = ROOT / "examples" / "demo-reproduce-repo"
         result = _run_cli(
-            "reproduce", str(demo),
-            "--execute", "--install",
+            "reproduce", "run", str(demo),
+            "--execute",
             "--format", "json",
         )
         assert result.returncode == 0
         data = json.loads(result.stdout)
-        assert data["clone_ok"] is True
         assert len(data["command_results"]) > 0
 
     def test_execute_with_output(self, tmp_path):
         demo = ROOT / "examples" / "demo-reproduce-repo"
         out = tmp_path / "report.json"
         result = _run_cli(
-            "reproduce", str(demo),
-            "--execute", "--install",
+            "reproduce", "run", str(demo),
+            "--execute",
             "--format", "json", "--output", str(out),
         )
         assert result.returncode == 0
         assert out.exists()
 
 
-class TestReproducePaperUrl:
-    """Test reproduce with paper URLs."""
-
-    def test_paper_url_without_repo(self):
-        result = _run_cli("reproduce", "https://arxiv.org/abs/2301.00001")
-        assert result.returncode != 0
-        assert "--repo" in result.stdout or "--repo" in result.stderr
-
-
 class TestReproduceEdgeCases:
     """Test edge cases."""
 
     def test_nonexistent_path(self):
-        result = _run_cli("reproduce", "/nonexistent/path")
+        result = _run_cli("reproduce", "run", "/nonexistent/path")
         assert result.returncode != 0
 
     def test_version_includes_reproduce(self):

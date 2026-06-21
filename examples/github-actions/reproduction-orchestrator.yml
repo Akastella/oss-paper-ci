@@ -1,0 +1,92 @@
+# Reproduction Orchestrator — GitHub Actions Example
+#
+# This workflow demonstrates how to use the reproduction orchestrator
+# in a CI pipeline. It runs against the built-in demo repository.
+#
+# IMPORTANT: This example only executes code from THIS repository's demo.
+# Do NOT use --execute on untrusted repositories without review.
+
+name: Reproduction Orchestrator
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  reproduction-plan:
+    name: Generate Reproduction Plan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install oss-paper-ci
+        run: pip install -e .
+
+      - name: Generate reproduction plan
+        run: oss-paper-ci reproduce plan examples/repro-system-demo --format markdown --output reproduction-plan.md
+
+      - name: Upload plan
+        uses: actions/upload-artifact@v4
+        with:
+          name: reproduction-plan
+          path: reproduction-plan.md
+
+  reproduction-run:
+    name: Execute Reproduction
+    runs-on: ubuntu-latest
+    needs: reproduction-plan
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install oss-paper-ci
+        run: pip install -e .
+
+      - name: Run reproduction (execute)
+        run: |
+          oss-paper-ci reproduce run examples/repro-system-demo \
+            --execute \
+            --sandbox local \
+            --output-dir .oss-paper-ci-repro-run \
+            --format json \
+            --output reproduction-run.json
+
+      - name: Generate HTML report
+        run: |
+          oss-paper-ci reproduce report .oss-paper-ci-repro-run \
+            --format html \
+            --output reproduction-report.html
+
+      - name: Compare against expected
+        run: |
+          oss-paper-ci reproduce compare .oss-paper-ci-repro-run \
+            --expected examples/repro-system-demo/reproducibility.yml \
+            --format markdown \
+            --output reproduction-compare.md
+
+      - name: Create evidence bundle
+        run: |
+          oss-paper-ci reproduce bundle .oss-paper-ci-repro-run \
+            --output reproduction-evidence.zip
+
+      - name: Upload evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: reproduction-evidence
+          path: |
+            reproduction-run.json
+            reproduction-report.html
+            reproduction-compare.md
+            reproduction-evidence.zip

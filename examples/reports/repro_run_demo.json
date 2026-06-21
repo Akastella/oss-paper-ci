@@ -1,0 +1,116 @@
+{
+  "repo_path": "repro-system-demo",
+  "contract_path": "reproducibility.yml",
+  "sandbox_type": "local",
+  "run_dir": ".oss-paper-ci-repro-run",
+  "dry_run": false,
+  "started_at": "2026-06-21T01:36:41Z",
+  "finished_at": "2026-06-21T01:36:42Z",
+  "duration_seconds": 0.0,
+  "command_results": [
+    {
+      "command_id": "train",
+      "command": "python scripts/train.py",
+      "exit_code": 0,
+      "duration_seconds": 0.14,
+      "timed_out": false,
+      "blocked": false,
+      "block_reason": "",
+      "stdout_excerpt": "Training complete.\n  Model: results/model.json\n  Metrics: results/train_metrics.json\n",
+      "stderr_excerpt": "",
+      "status": "success"
+    },
+    {
+      "command_id": "evaluate",
+      "command": "python scripts/evaluate.py",
+      "exit_code": 0,
+      "duration_seconds": 0.125,
+      "timed_out": false,
+      "blocked": false,
+      "block_reason": "",
+      "stdout_excerpt": "Evaluation complete.\n  Accuracy: 0.87\n  Loss: 0.312\n  Metrics: results/metrics.json\n",
+      "stderr_excerpt": "",
+      "status": "success"
+    },
+    {
+      "command_id": "make_figures",
+      "command": "python scripts/make_figures.py",
+      "exit_code": 0,
+      "duration_seconds": 0.141,
+      "timed_out": false,
+      "blocked": false,
+      "block_reason": "",
+      "stdout_excerpt": "Figure generation complete.\n  Summary: figures/summary.txt\n",
+      "stderr_excerpt": "",
+      "status": "success"
+    }
+  ],
+  "overall_status": "success",
+  "warnings": [],
+  "artifact_validation": {
+    "total": 4,
+    "found": 4,
+    "missing": 0,
+    "artifacts": [
+      {
+        "path": "results/model.json",
+        "exists": true,
+        "size_bytes": 170,
+        "type": "file",
+        "sha256": "4ac2542d0a1c6b13110f1aaa73c14ae15a290a0531b67e79cc811448481d1e01"
+      },
+      {
+        "path": "results/train_metrics.json",
+        "exists": true,
+        "size_bytes": 85,
+        "type": "file",
+        "sha256": "a1d042bc38485525966aa62e12ae8e6500d300330412a50ac067a4f19693500a"
+      },
+      {
+        "path": "results/metrics.json",
+        "exists": true,
+        "size_bytes": 137,
+        "type": "metrics",
+        "sha256": "f160814154cec2683ff3859d9a96b7b357eb3fea271e9d98feff3a8d41c96ce8"
+      },
+      {
+        "path": "figures/summary.txt",
+        "exists": true,
+        "size_bytes": 316,
+        "type": "figure-placeholder",
+        "sha256": "e53b998406ff5d545f610a57eefc4210c16871fcfd3370a4acc4036fdf0abc13"
+      }
+    ],
+    "warnings": []
+  },
+  "metric_validation": {
+    "total": 2,
+    "in_range": 2,
+    "out_of_range": 0,
+    "errors": 0,
+    "checks": [
+      {
+        "file": "results/metrics.json",
+        "key": "accuracy",
+        "in_range": true,
+        "actual_value": 0.87,
+        "expected_min": 0.0,
+        "expected_max": 1.0
+      },
+      {
+        "file": "results/metrics.json",
+        "key": "loss",
+        "in_range": true,
+        "actual_value": 0.312,
+        "expected_min": 0.0
+      }
+    ],
+    "warnings": []
+  },
+  "artifact_hashes": {
+    "results/model.json": "4ac2542d0a1c6b13110f1aaa73c14ae15a290a0531b67e79cc811448481d1e01",
+    "results/train_metrics.json": "a1d042bc38485525966aa62e12ae8e6500d300330412a50ac067a4f19693500a",
+    "results/metrics.json": "f160814154cec2683ff3859d9a96b7b357eb3fea271e9d98feff3a8d41c96ce8",
+    "figures/summary.txt": "e53b998406ff5d545f610a57eefc4210c16871fcfd3370a4acc4036fdf0abc13"
+  }
+}
