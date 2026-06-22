@@ -88,6 +88,8 @@ oss-paper-ci eval compare --baseline tests/golden/evaluation_summary.json --curr
 | 复现胶囊 | `oss-paper-ci capsule verify out.zip` | 验证和查看证据包 |
 | 复现摘要 | `oss-paper-ci dossier .` | 生成面向作者/审稿人/维护者的摘要 |
 | 批量扫描 | `oss-paper-ci batch scan --workspace ws.yml` | 从配置文件批量扫描多个项目 |
+| 仓库分析 | `oss-paper-ci intake .` | 分析仓库结构、提取命令、检测生态系统 |
+| 自动规划 | `oss-paper-ci autoplan .` | 从仓库分析生成候选复现计划 |
 | 生态检测 | `oss-paper-ci ecosystems detect .` | 检测 Python、R、Julia、MATLAB 等 |
 | 终端工作台 | `oss-paper-ci workbench .` | 多步流水线带进度显示 |
 | 向导 | `oss-paper-ci wizard` | 为新用户提供安全的下一步建议 |
@@ -189,6 +191,26 @@ oss-paper-ci reproduce bundle .oss-paper-ci-repro-run --output reproduction-evid
 ```
 
 详见 [docs/reproduction-orchestrator.md](docs/reproduction-orchestrator.md)。
+
+## 仓库分析与自动规划
+
+很多科研仓库没有标准的 `reproducibility.yml`。OSS-Paper-CI 可以先做仓库分析，读取 README、环境文件、脚本、notebooks、workflow 和结果目录，生成候选复现计划。这个计划需要人工确认；工具不会默认执行推断出的命令，也不会保证推断一定正确。
+
+```bash
+# 分析仓库（只读）
+oss-paper-ci intake .
+
+# 生成候选复现计划
+oss-paper-ci autoplan . --output candidate-reproducibility.yml
+
+# 验证候选计划
+oss-paper-ci autoplan validate candidate-reproducibility.yml
+
+# 与已有配置对比
+oss-paper-ci autoplan diff --old reproducibility.yml --new candidate-reproducibility.yml
+```
+
+详见 [docs/repository-intake.md](docs/repository-intake.md) 和 [docs/autoplan.md](docs/autoplan.md)。
 
 ## 文档
 

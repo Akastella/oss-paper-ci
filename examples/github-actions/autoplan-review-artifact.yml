@@ -1,0 +1,78 @@
+# Example: Autoplan with PR artifact for review
+#
+# This workflow generates a candidate reproducibility plan and uploads it
+# as a PR artifact. PR maintainers should manually review the candidate
+# plan before adopting it.
+#
+# IMPORTANT: This workflow does NOT execute any inferred commands.
+# It does NOT automatically write reproducibility.yml to the repository.
+# The candidate plan is for review only.
+
+name: Autoplan Review
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  autoplan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Install oss-paper-ci
+        run: pip install oss-paper-ci  # after PyPI
+
+      - name: Run intake analysis
+        run: |
+          oss-paper-ci intake . --format markdown --output intake-report.md
+          oss-paper-ci intake . --format json --output intake-report.json
+
+      - name: Generate candidate plan
+        run: |
+          oss-paper-ci autoplan . --output candidate-reproducibility.yml
+
+      - name: Validate candidate plan
+        run: |
+          oss-paper-ci autoplan validate candidate-reproducibility.yml || true
+
+      - name: Diff with existing config
+        if: hashFiles('reproducibility.yml') != ''
+        run: |
+          oss-paper-ci autoplan diff \
+            --old reproducibility.yml \
+            --new candidate-reproducibility.yml \
+            --format markdown \
+            --output autoplan-diff.md
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: autoplan-review
+          path: |
+            intake-report.md
+            intake-report.json
+            candidate-reproducibility.yml
+            autoplan-diff.md
+
+      - name: PR Summary
+        if: github.event_name == 'pull_request'
+        run: |
+          echo "## Autoplan Review" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "A candidate reproducibility plan has been generated." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Review the candidate plan before adopting it.**" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Download the \`autoplan-review\` artifact to review:" >> $GITHUB_STEP_SUMMARY
+          echo "- \`intake-report.md\` -- Repository intake analysis" >> $GITHUB_STEP_SUMMARY
+          echo "- \`candidate-reproducibility.yml\` -- Candidate plan" >> $GITHUB_STEP_SUMMARY
+          echo "- \`autoplan-diff.md\` -- Diff with existing config (if any)" >> $GITHUB_STEP_SUMMARY

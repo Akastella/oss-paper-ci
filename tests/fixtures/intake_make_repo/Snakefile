@@ -1,0 +1,18 @@
+rule all:
+    input:
+        "results/metrics.json",
+        "figures/plot.png"
+
+rule train:
+    output:
+        "results/metrics.json"
+    shell:
+        "python scripts/train.py"
+
+rule figures:
+    input:
+        "results/metrics.json"
+    output:
+        "figures/plot.png"
+    shell:
+        "python scripts/make_figures.py"

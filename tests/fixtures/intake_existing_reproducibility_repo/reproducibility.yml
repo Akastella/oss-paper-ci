@@ -1,0 +1,32 @@
+schema_version: "0.2"
+generated_by: oss-paper-ci
+generated_mode: candidate
+confidence: 0.75
+
+environment:
+  type: python
+  python: ">=3.10"
+  install:
+    - python -m pip install -r requirements.txt
+
+commands:
+  - id: train
+    run: python scripts/train.py
+    timeout_seconds: 300
+    expected_artifacts:
+      - results/metrics.json
+
+artifacts:
+  - path: results/metrics.json
+    type: metrics
+
+metrics: []
+
+safety:
+  network: false
+  allow_shell: false
+  max_runtime_seconds: 600
+  max_artifact_mb: 20
+
+limitations:
+  - Candidate plan inferred from repository files; review before execution.
