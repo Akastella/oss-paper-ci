@@ -26,6 +26,8 @@ oss-paper-ci reproduce examples/demo-reproduce-repo --dry-run
 | Reproduction capsule | `oss-paper-ci reproduce URL --execute --capsule out.zip` | Package evidence |
 | Reproducibility dossier | `oss-paper-ci dossier .` | Human-readable summary |
 | Workspace batch | `oss-paper-ci batch scan --workspace ws.yml` | Multi-project scan |
+| Repository intake | `oss-paper-ci intake .` | Analyze repo structure, extract commands |
+| Autoplan | `oss-paper-ci autoplan .` | Generate candidate reproducibility plan |
 | Ecosystem detection | `oss-paper-ci ecosystems detect .` | Multi-language detection |
 | Terminal workbench | `oss-paper-ci workbench .` | Full pipeline with progress |
 | Evaluation | `oss-paper-ci eval run examples/evaluation-corpus` | Run benchmark evaluation |
@@ -86,6 +88,8 @@ See [Evaluation](evaluation.md) for details.
 - [Result validation](result-validation.md) — result artifact existence and format
 - [Evidence scores](evidence-scores.md) — score components and meaning
 - [Language ecosystems](language-ecosystems.md) — multi-language detection and support
+- [Repository intake](repository-intake.md) — analyze repo structure, extract commands
+- [Autoplan](autoplan.md) — generate candidate reproducibility plan
 - [Reproduction](reproduce.md) — one-command reproduction attempt
 - [Reproduction capsules](reproduction-capsules.md) — verifiable evidence packages
 - [Batch scanning](batch-scan.md) — scan multiple projects

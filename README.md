@@ -88,6 +88,8 @@ The evaluation corpus contains 12+ synthetic repositories covering:
 | Reproduction capsule | `oss-paper-ci capsule verify out.zip` | Verify and inspect evidence packages |
 | Reproducibility dossier | `oss-paper-ci dossier .` | Generate author/reviewer/maintainer summaries |
 | Workspace batch | `oss-paper-ci batch scan --workspace ws.yml` | Scan multiple projects from a config |
+| Repository intake | `oss-paper-ci intake .` | Analyze repo structure, extract commands, detect ecosystems |
+| Autoplan | `oss-paper-ci autoplan .` | Generate candidate reproducibility plan from repo analysis |
 | Ecosystem detection | `oss-paper-ci ecosystems detect .` | Detect Python, R, Julia, MATLAB, Node, and more |
 | Terminal workbench | `oss-paper-ci workbench .` | Multi-step pipeline with progress display |
 | Guided wizard | `oss-paper-ci wizard` | Safe next-step recommendations for new users |
@@ -192,6 +194,26 @@ oss-paper-ci reproduce bundle .oss-paper-ci-repro-run --output reproduction-evid
 ```
 
 The orchestrator defaults to dry-run. It does not prove scientific correctness — it only verifies that declared reproduction steps can be executed and that artifacts and metrics match expectations. See [docs/reproduction-orchestrator.md](docs/reproduction-orchestrator.md).
+
+## Repository Intake & Autoplan
+
+Many research repositories don't have a standard `reproducibility.yml`. OSS-Paper-CI can analyze a repository, extract commands from README and build files, detect ecosystems, and generate a candidate reproducibility plan. The candidate plan requires human review; the tool does not execute inferred commands by default.
+
+```bash
+# Analyze a repository (read-only)
+oss-paper-ci intake .
+
+# Generate candidate reproducibility plan
+oss-paper-ci autoplan . --output candidate-reproducibility.yml
+
+# Validate the candidate plan
+oss-paper-ci autoplan validate candidate-reproducibility.yml
+
+# Compare with existing config
+oss-paper-ci autoplan diff --old reproducibility.yml --new candidate-reproducibility.yml
+```
+
+Intake reads README, environment files, scripts, notebooks, workflow files, and result directories. Confidence scores indicate detection quality, not scientific correctness. See [docs/repository-intake.md](docs/repository-intake.md) and [docs/autoplan.md](docs/autoplan.md).
 
 ## Documentation
 

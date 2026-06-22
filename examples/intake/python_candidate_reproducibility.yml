@@ -1,0 +1,37 @@
+artifacts:
+- path: results\metrics.json
+  type: metrics
+commands:
+- expected_artifacts:
+  - results\metrics.json
+  id: train
+  run: python scripts/train.py --epochs 10
+  timeout_seconds: 300
+- expected_artifacts:
+  - results\metrics.json
+  id: evaluate
+  run: python scripts/evaluate.py --data data/test.csv
+  timeout_seconds: 300
+- id: cmd
+  run: train
+  timeout_seconds: 300
+- id: cmd_2
+  run: evaluate
+  timeout_seconds: 300
+confidence: 0.87
+environment:
+  install:
+  - python -m pip install -r requirements.txt
+  python: '>=3.10'
+  type: python
+generated_by: oss-paper-ci
+generated_mode: candidate
+limitations:
+- Candidate plan inferred from repository files; review before execution.
+metrics: []
+safety:
+  allow_shell: false
+  max_artifact_mb: 20
+  max_runtime_seconds: 600
+  network: false
+schema_version: '0.2'

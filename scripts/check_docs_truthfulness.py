@@ -609,6 +609,7 @@ VALID_CLI_COMMANDS = {
     "adopt", "scaffold", "fix", "eval",
     "quickstart", "try-demo",
     "trust", "security", "evidence",
+    "intake", "autoplan",
 }
 
 # Files that exist in the project
@@ -774,6 +775,110 @@ def check_workflow_cli_commands(filepath: Path, root: Path) -> list[dict]:
     return issues
 
 
+def check_intake_command_exists(root: Path) -> list[dict]:
+    """Check that intake CLI command is documented."""
+    issues = []
+    cli_path = root / "src" / "oss_paper_ci" / "cli.py"
+    if cli_path.exists():
+        content = cli_path.read_text(encoding="utf-8")
+        if "intake" not in content:
+            issues.append({
+                "file": "src/oss_paper_ci/cli.py",
+                "line": 0,
+                "severity": "blocker",
+                "rule": "intake-command-missing",
+                "message": "intake command not found in cli.py",
+            })
+    return issues
+
+
+def check_autoplan_command_exists(root: Path) -> list[dict]:
+    """Check that autoplan CLI command is documented."""
+    issues = []
+    cli_path = root / "src" / "oss_paper_ci" / "cli.py"
+    if cli_path.exists():
+        content = cli_path.read_text(encoding="utf-8")
+        if "autoplan" not in content:
+            issues.append({
+                "file": "src/oss_paper_ci/cli.py",
+                "line": 0,
+                "severity": "blocker",
+                "rule": "autoplan-command-missing",
+                "message": "autoplan command not found in cli.py",
+            })
+    return issues
+
+
+def check_intake_examples_exist(root: Path) -> list[dict]:
+    """Check that intake examples exist."""
+    issues = []
+    intake_examples = [
+        "examples/intake/README.md",
+        "examples/intake/python_intake_report.md",
+        "examples/intake/python_intake_report.json",
+        "examples/intake/python_candidate_reproducibility.yml",
+    ]
+    for ex in intake_examples:
+        if not (root / ex).exists():
+            issues.append({
+                "file": ex,
+                "line": 0,
+                "severity": "major",
+                "rule": "missing-intake-example",
+                "message": f"Intake example file missing: {ex}",
+            })
+    return issues
+
+
+def check_intake_docs_no_overclaim(root: Path) -> list[dict]:
+    """Check that intake docs don't overclaim."""
+    issues = []
+    intake_docs = [
+        "docs/repository-intake.md",
+        "docs/autoplan.md",
+    ]
+    overclaim_patterns = [
+        (r"guarantee\s+reproduc", "blocker", "intake-overclaim-guarantee"),
+        (r"automatically\s+(?:find|locate|discover)\s+(?:the\s+)?code", "blocker", "intake-overclaim-auto-code"),
+        (r"(?:always|guaranteed?)\s+(?:correct|accurate|right)", "major", "intake-overclaim-accuracy"),
+        (r"execute\s+(?:inferred|detected)\s+commands?\s+(?:by\s+default|automatically)", "blocker", "intake-overclaim-auto-execute"),
+        (r"clone\s+(?:by\s+default|automatically)", "blocker", "intake-overclaim-auto-clone"),
+    ]
+    for doc_path in intake_docs:
+        p = root / doc_path
+        if p.exists():
+            content = p.read_text(encoding="utf-8")
+            for pattern, severity, rule in overclaim_patterns:
+                if re.search(pattern, content, re.IGNORECASE):
+                    issues.append({
+                        "file": doc_path,
+                        "line": 0,
+                        "severity": severity,
+                        "rule": rule,
+                        "message": f"Intake doc overclaim: {doc_path} contains '{pattern}'",
+                    })
+    return issues
+
+
+def check_i18n_intake_section(root: Path) -> list[dict]:
+    """Check that i18n READMEs mention intake/autoplan."""
+    issues = []
+    for readme_name in ["README.zh-CN.md", "README.ja.md"]:
+        readme_path = root / readme_name
+        if readme_path.exists():
+            content = readme_path.read_text(encoding="utf-8")
+            for cmd in ["intake", "autoplan"]:
+                if cmd not in content.lower():
+                    issues.append({
+                        "file": readme_name,
+                        "line": 0,
+                        "severity": "major",
+                        "rule": "i18n-missing-intake-command",
+                        "message": f"{readme_name} does not mention '{cmd}' command",
+                    })
+    return issues
+
+
 def scan_project(root: Path) -> list[dict]:
     """Scan the entire project for truthfulness issues."""
     discover_valid_files(root)
@@ -925,6 +1030,13 @@ def scan_project(root: Path) -> list[dict]:
     all_issues.extend(check_evidence_command_exists(root))
     all_issues.extend(check_evidence_examples_exist(root))
     all_issues.extend(check_evidence_docs_no_overclaim(root))
+
+    # Intake & autoplan checks
+    all_issues.extend(check_intake_command_exists(root))
+    all_issues.extend(check_autoplan_command_exists(root))
+    all_issues.extend(check_intake_examples_exist(root))
+    all_issues.extend(check_intake_docs_no_overclaim(root))
+    all_issues.extend(check_i18n_intake_section(root))
 
     return all_issues
 

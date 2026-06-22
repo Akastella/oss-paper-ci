@@ -1,0 +1,8 @@
+[project]
+name = "intake-test-repo"
+version = "0.1.0"
+requires-python = ">=3.10"
+
+[project.scripts]
+train = "scripts.train:main"
+evaluate = "scripts.evaluate:main"

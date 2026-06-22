@@ -1,5 +1,41 @@
 # Changelog
 
+## [3.2.0rc1] - 2026-06-22
+
+### Added
+- Repository Intake: `intake` command for read-only repository analysis
+- `intake .` scans README, environment files, scripts, notebooks, workflow files, and result directories
+- `intake . --format json|markdown|html` generates intake reports in multiple formats
+- `intake https://github.com/owner/repo --clone` clones and analyzes GitHub repositories
+- `intake https://arxiv.org/abs/...` recognizes paper URLs with boundary warnings
+- Autoplan: `autoplan` command group for candidate reproducibility plan generation
+- `autoplan .` generates candidate reproducibility.yml from repository analysis
+- `autoplan . --output candidate.yml` writes candidate config to file
+- `autoplan . --write --force` writes candidate config to repository (explicit opt-in)
+- `autoplan validate` validates a candidate reproducibility.yml
+- `autoplan diff --old X --new Y` compares two reproducibility configs
+- `autoplan explain` explains a reproducibility config file
+- README command mining: extracts install/train/evaluate commands from documentation
+- Build file extraction: Makefile targets, Snakemake rules, package.json scripts, pyproject.toml scripts
+- Ecosystem detection: Python, R, Julia, Node, Rust, Java, C++, Make, Snakemake, Dockerfile, conda
+- Confidence scoring: environment, commands, artifacts, metrics dimensions
+- Dangerous command detection: flags sudo, rm -rf, curl|sh, git push, etc.
+- Safety boundaries: read-only intake, no auto-clone, no auto-execute, no auto-write
+- Intake reports: JSON, Markdown, HTML formats (self-contained HTML, no CDN)
+- GitHub Actions examples: intake-autoplan.yml, autoplan-review-artifact.yml
+- Examples: examples/intake/ with real command-generated reports
+- Test fixtures: 8 intake-specific fixture repositories
+- Tests: 9 new test files covering intake, autoplan, README mining, command extraction, confidence, URL boundaries, safety, reports
+
+### Changed
+- Version bumped to 3.2.0rc1
+
+### Notes
+- Candidate plans are auto-generated and require human review before execution.
+- Confidence scores indicate detection quality, not scientific correctness.
+- Paper URLs are recognized but not fetched; provide a repository path.
+- GitHub URLs require explicit `--clone` to download.
+
 ## [3.1.0rc1] - 2026-06-21
 
 ### Added

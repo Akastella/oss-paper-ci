@@ -88,6 +88,8 @@ oss-paper-ci eval compare --baseline tests/golden/evaluation_summary.json --curr
 | 再現カプセル | `oss-paper-ci capsule verify out.zip` | 証拠パッケージの検証と確認 |
 | 再現ドシエ | `oss-paper-ci dossier .` | 著者/レビュアー/メンテナー向けの要約を生成 |
 | ワークスペースバッチ | `oss-paper-ci batch scan --workspace ws.yml` | 設定ファイルから複数プロジェクトをスキャン |
+| リポジトリ intake | `oss-paper-ci intake .` | リポジトリ構造の分析、コマンド抽出、エコシステム検出 |
+| 自動プラン | `oss-paper-ci autoplan .` | リポジトリ分析から候補再現計画を生成 |
 | エコシステム検出 | `oss-paper-ci ecosystems detect .` | Python、R、Julia、MATLABなどを検出 |
 | ターミナルワークベンチ | `oss-paper-ci workbench .` | 進行状況表示付きマルチステップパイプライン |
 | ウィザード | `oss-paper-ci wizard` | 新規ユーザー向けの安全な次のステップを提案 |
@@ -189,6 +191,26 @@ oss-paper-ci reproduce bundle .oss-paper-ci-repro-run --output reproduction-evid
 ```
 
 詳細は [docs/reproduction-orchestrator.md](docs/reproduction-orchestrator.md) を参照。
+
+## リポジトリ intake と自動プラン
+
+多くの研究リポジトリには標準化された `reproducibility.yml` がありません。OSS-Paper-CI はリポジトリを分析し、README、環境ファイル、スクリプト、notebook、ワークフロー、結果ディレクトリから情報を抽出し、候補となる再現計画を生成できます。この計画は人間による確認が必要であり、推定されたコマンドはデフォルトでは実行されません。
+
+```bash
+# リポジトリの分析（読み取り専用）
+oss-paper-ci intake .
+
+# 候補再現計画の生成
+oss-paper-ci autoplan . --output candidate-reproducibility.yml
+
+# 候補計画の検証
+oss-paper-ci autoplan validate candidate-reproducibility.yml
+
+# 既存設定との比較
+oss-paper-ci autoplan diff --old reproducibility.yml --new candidate-reproducibility.yml
+```
+
+詳細は [docs/repository-intake.md](docs/repository-intake.md) と [docs/autoplan.md](docs/autoplan.md) を参照。
 
 ## ドキュメント
 

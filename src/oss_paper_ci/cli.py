@@ -569,6 +569,51 @@ def main(argv: list[str] | None = None) -> int:
                       help="Output format (default: markdown).")
     evf.add_argument("--output", "-o", help="Write report to file instead of stdout.")
 
+    # intake command
+    intake_parser = subparsers.add_parser("intake", help="Repository intake analysis (read-only).")
+    intake_parser.add_argument("input", help="Local path, GitHub URL, or paper URL.")
+    intake_parser.add_argument("--format", choices=["json", "markdown", "html"], default="markdown",
+                               help="Output format (default: markdown).")
+    intake_parser.add_argument("--output", "-o", help="Write report to file instead of stdout.")
+    intake_parser.add_argument("--clone", action="store_true",
+                               help="Clone GitHub URL (only if input is a GitHub URL).")
+
+    # autoplan command group
+    autoplan_parser = subparsers.add_parser("autoplan", help="Generate candidate reproducibility plan.")
+    autoplan_sub = autoplan_parser.add_subparsers(dest="autoplan_command")
+
+    # autoplan (default: generate)
+    ap = autoplan_sub.add_parser("generate", help="Generate candidate reproducibility.yml.")
+    ap.add_argument("path", nargs="?", default=".", help="Path to repository root (default: .)")
+    ap.add_argument("--format", choices=["yaml", "json", "markdown"], default="yaml",
+                    help="Output format (default: yaml).")
+    ap.add_argument("--output", "-o", help="Write candidate config to file.")
+    ap.add_argument("--write", action="store_true",
+                    help="Write candidate config (requires --output or writes to default path).")
+    ap.add_argument("--force", action="store_true",
+                    help="Overwrite existing file (only with --write).")
+    ap.add_argument("--clone", action="store_true",
+                    help="Clone GitHub URL if input is a URL.")
+
+    # autoplan validate
+    av = autoplan_sub.add_parser("validate", help="Validate a candidate reproducibility.yml.")
+    av.add_argument("config", help="Path to candidate reproducibility.yml.")
+    av.add_argument("--format", choices=["text", "json"], default="text", help="Output format.")
+
+    # autoplan diff
+    ad = autoplan_sub.add_parser("diff", help="Compare two reproducibility.yml files.")
+    ad.add_argument("--old", required=True, help="Path to old config.")
+    ad.add_argument("--new", dest="new_config", required=True, help="Path to new config.")
+    ad.add_argument("--format", choices=["markdown", "json"], default="markdown",
+                    help="Output format (default: markdown).")
+    ad.add_argument("--output", "-o", help="Write diff to file.")
+
+    # autoplan explain
+    ae = autoplan_sub.add_parser("explain", help="Explain a candidate reproducibility.yml.")
+    ae.add_argument("config", help="Path to candidate reproducibility.yml.")
+    ae.add_argument("--format", choices=["markdown", "json"], default="markdown",
+                    help="Output format (default: markdown).")
+
     # Handle `evidence .` as shorthand for `evidence report .`
     # Insert "report" before parsing if evidence is followed by a path, not a subcommand
     _ev_subcmds = {"report", "bundle", "inspect", "verify"}
@@ -589,6 +634,13 @@ def main(argv: list[str] | None = None) -> int:
         _rp_idx = _argv_list.index("reproduce")
         if _rp_idx + 1 < len(_argv_list) and _argv_list[_rp_idx + 1] not in _repro_subcmds and not _argv_list[_rp_idx + 1].startswith("-"):
             _argv_list.insert(_rp_idx + 1, "run")
+
+    # Handle `autoplan .` as shorthand for `autoplan generate .`
+    _ap_subcmds = {"generate", "validate", "diff", "explain"}
+    if "autoplan" in _argv_list:
+        _ap_idx = _argv_list.index("autoplan")
+        if _ap_idx + 1 < len(_argv_list) and _argv_list[_ap_idx + 1] not in _ap_subcmds and not _argv_list[_ap_idx + 1].startswith("-"):
+            _argv_list.insert(_ap_idx + 1, "generate")
 
     args, remaining = parser.parse_known_args(_argv_list)
 
@@ -747,6 +799,12 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.command == "evidence":
         return _cmd_evidence(args)
+
+    if args.command == "intake":
+        return _cmd_intake(args)
+
+    if args.command == "autoplan":
+        return _cmd_autoplan(args)
 
     parser.print_help()
     return 0
@@ -4207,3 +4265,276 @@ def _cmd_evidence_verify(args: argparse.Namespace) -> int:
         print(text)
 
     return 0 if vr.ok else 1
+
+
+# ── Intake command ─────────────────────────────────────────────────────────
+
+def _cmd_intake(args: argparse.Namespace) -> int:
+    """Handle intake command: repository intake analysis (read-only)."""
+    from oss_paper_ci.intake import run_intake
+    from oss_paper_ci.reporting.intake_report import (
+        generate_intake_json,
+        generate_intake_markdown,
+        generate_intake_html,
+    )
+
+    input_path = getattr(args, "input", ".")
+    fmt = getattr(args, "format", "markdown")
+    output = getattr(args, "output", None)
+    clone = getattr(args, "clone", False)
+
+    report = run_intake(input_path, clone=clone)
+
+    if fmt == "json":
+        text = generate_intake_json(report)
+    elif fmt == "html":
+        text = generate_intake_html(report)
+    else:
+        text = generate_intake_markdown(report)
+
+    if output:
+        Path(output).write_text(text, encoding="utf-8")
+        print(f"Intake report written to {output}")
+    else:
+        print(text)
+
+    return 0
+
+
+# ── Autoplan command ───────────────────────────────────────────────────────
+
+def _cmd_autoplan(args: argparse.Namespace) -> int:
+    """Handle autoplan command group."""
+    sub = getattr(args, "autoplan_command", None)
+
+    if sub == "generate" or sub is None:
+        return _cmd_autoplan_generate(args)
+    if sub == "validate":
+        return _cmd_autoplan_validate(args)
+    if sub == "diff":
+        return _cmd_autoplan_diff(args)
+    if sub == "explain":
+        return _cmd_autoplan_explain(args)
+
+    print("Usage: oss-paper-ci autoplan {generate|validate|diff|explain}", file=sys.stderr)
+    return 1
+
+
+def _cmd_autoplan_generate(args: argparse.Namespace) -> int:
+    """Handle autoplan generate command."""
+    import yaml as yaml_mod
+    import json as json_mod
+    from oss_paper_ci.autoplan import run_autoplan
+    from oss_paper_ci.reporting.intake_report import generate_intake_markdown
+
+    path = getattr(args, "path", ".")
+    fmt = getattr(args, "format", "yaml")
+    output = getattr(args, "output", None)
+    write = getattr(args, "write", False)
+    force = getattr(args, "force", False)
+    clone = getattr(args, "clone", False)
+
+    result = run_autoplan(path, clone=clone)
+
+    # Show warnings
+    for w in result.warnings:
+        print(f"Warning: {w}", file=sys.stderr)
+
+    if not result.candidate_config:
+        print("Error: Could not generate candidate plan.", file=sys.stderr)
+        return 1
+
+    # Format output
+    if fmt == "json":
+        text = json_mod.dumps(result.candidate_config, indent=2, ensure_ascii=False)
+    elif fmt == "markdown":
+        text = _format_autoplan_markdown(result)
+    else:
+        text = yaml_mod.dump(result.candidate_config, default_flow_style=False, allow_unicode=True)
+
+    # Handle --write
+    if write:
+        target = output or "reproducibility.yml"
+        target_path = Path(target)
+        if target_path.exists() and not force:
+            print(f"Error: {target} already exists. Use --force to overwrite.", file=sys.stderr)
+            return 1
+        target_path.write_text(text, encoding="utf-8")
+        print(f"Candidate config written to {target}")
+    elif output:
+        Path(output).write_text(text, encoding="utf-8")
+        print(f"Candidate config written to {output}")
+    else:
+        print(text)
+
+    return 0
+
+
+def _cmd_autoplan_validate(args: argparse.Namespace) -> int:
+    """Handle autoplan validate command."""
+    import json as json_mod
+    from oss_paper_ci.autoplan import validate_candidate_config
+
+    config_path = getattr(args, "config", "")
+    fmt = getattr(args, "format", "text")
+
+    warnings = validate_candidate_config(config_path)
+
+    if fmt == "json":
+        print(json_mod.dumps({"valid": len(warnings) == 0, "warnings": warnings}, indent=2))
+    else:
+        if not warnings:
+            print(f"✅ {config_path} is valid.")
+        else:
+            print(f"⚠️ {config_path} has {len(warnings)} issue(s):")
+            for w in warnings:
+                print(f"  - {w}")
+
+    return 0 if not warnings else 1
+
+
+def _cmd_autoplan_diff(args: argparse.Namespace) -> int:
+    """Handle autoplan diff command."""
+    import json as json_mod
+    from oss_paper_ci.autoplan import diff_configs, format_diff_markdown
+
+    old_path = getattr(args, "old", "")
+    new_path = getattr(args, "new_config", "")
+    fmt = getattr(args, "format", "markdown")
+    output = getattr(args, "output", None)
+
+    diff = diff_configs(old_path, new_path)
+
+    if fmt == "json":
+        text = json_mod.dumps(diff, indent=2, ensure_ascii=False)
+    else:
+        text = format_diff_markdown(diff)
+
+    if output:
+        Path(output).write_text(text, encoding="utf-8")
+        print(f"Diff written to {output}")
+    else:
+        print(text)
+
+    return 0
+
+
+def _cmd_autoplan_explain(args: argparse.Namespace) -> int:
+    """Handle autoplan explain command."""
+    import yaml as yaml_mod
+    import json as json_mod
+
+    config_path = getattr(args, "config", "")
+    fmt = getattr(args, "format", "markdown")
+
+    p = Path(config_path)
+    if not p.exists():
+        print(f"Error: File not found: {config_path}", file=sys.stderr)
+        return 1
+
+    try:
+        with open(p, encoding="utf-8") as f:
+            data = yaml_mod.safe_load(f) or {}
+    except Exception as e:
+        print(f"Error: Failed to parse YAML: {e}", file=sys.stderr)
+        return 1
+
+    if fmt == "json":
+        print(json_mod.dumps(data, indent=2, ensure_ascii=False))
+    else:
+        print(_format_explain_markdown(data))
+
+    return 0
+
+
+def _format_autoplan_markdown(result) -> str:
+    """Format autoplan result as markdown."""
+    import yaml as yaml_mod
+    lines: list[str] = []
+    lines.append("# Candidate Reproducibility Plan")
+    lines.append("")
+    lines.append("⚠️ **This is an auto-generated candidate plan. Review before execution.**")
+    lines.append("")
+
+    if result.intake_report:
+        conf = result.intake_report.confidence
+        if conf:
+            lines.append(f"**Overall Confidence:** {conf.get('overall', 0):.2f}")
+            lines.append("")
+
+    lines.append("## Candidate Config")
+    lines.append("")
+    lines.append("```yaml")
+    lines.append(yaml_mod.dump(result.candidate_config, default_flow_style=False, allow_unicode=True).strip())
+    lines.append("```")
+    lines.append("")
+
+    if result.warnings:
+        lines.append("## Warnings")
+        for w in result.warnings:
+            lines.append(f"- ⚠️ {w}")
+        lines.append("")
+
+    if result.limitations:
+        lines.append("## Limitations")
+        for lim in result.limitations:
+            lines.append(f"- {lim}")
+        lines.append("")
+
+    return "\n".join(lines)
+
+
+def _format_explain_markdown(data: dict) -> str:
+    """Format explain output as markdown."""
+    lines: list[str] = []
+    lines.append("# Reproducibility Config Explanation")
+    lines.append("")
+
+    gen = data.get("generated_by", "unknown")
+    mode = data.get("generated_mode", "unknown")
+    conf = data.get("confidence", "?")
+    lines.append(f"- **Generated by:** {gen}")
+    lines.append(f"- **Mode:** {mode}")
+    lines.append(f"- **Confidence:** {conf}")
+    lines.append("")
+
+    env = data.get("environment", {})
+    if env:
+        lines.append("## Environment")
+        lines.append(f"- **Type:** {env.get('type', '?')}")
+        if env.get("install"):
+            lines.append("- **Install:**")
+            for cmd in env["install"]:
+                lines.append(f"  - `{cmd}`")
+        lines.append("")
+
+    commands = data.get("commands", [])
+    if commands:
+        lines.append(f"## Commands ({len(commands)})")
+        for cmd in commands:
+            lines.append(f"- **{cmd.get('id', '?')}:** `{cmd.get('run', '?')}`")
+        lines.append("")
+
+    artifacts = data.get("artifacts", [])
+    if artifacts:
+        lines.append(f"## Artifacts ({len(artifacts)})")
+        for a in artifacts:
+            lines.append(f"- `{a.get('path', '?')}` ({a.get('type', '?')})")
+        lines.append("")
+
+    safety = data.get("safety", {})
+    if safety:
+        lines.append("## Safety")
+        lines.append(f"- Network: {'allowed' if safety.get('network') else 'blocked'}")
+        lines.append(f"- Shell: {'allowed' if safety.get('allow_shell') else 'blocked'}")
+        lines.append(f"- Max runtime: {safety.get('max_runtime_seconds', '?')}s")
+        lines.append("")
+
+    limitations = data.get("limitations", [])
+    if limitations:
+        lines.append("## Limitations")
+        for lim in limitations:
+            lines.append(f"- {lim}")
+        lines.append("")
+
+    return "\n".join(lines)

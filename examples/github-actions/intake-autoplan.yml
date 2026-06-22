@@ -1,0 +1,62 @@
+# Example: Repository intake and autoplan in CI
+#
+# This workflow runs intake analysis and generates a candidate reproducibility plan.
+# The candidate plan is uploaded as an artifact for manual review.
+# No commands are executed; no files are modified.
+
+name: Intake & Autoplan
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  intake:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Install oss-paper-ci
+        run: pip install oss-paper-ci  # after PyPI
+
+      - name: Run intake analysis
+        run: |
+          oss-paper-ci intake . --format markdown --output intake-report.md
+          oss-paper-ci intake . --format json --output intake-report.json
+
+      - name: Generate candidate plan
+        run: |
+          oss-paper-ci autoplan . --output candidate-reproducibility.yml
+
+      - name: Validate candidate plan
+        run: |
+          oss-paper-ci autoplan validate candidate-reproducibility.yml || true
+
+      - name: Upload intake report
+        uses: actions/upload-artifact@v4
+        with:
+          name: intake-report
+          path: |
+            intake-report.md
+            intake-report.json
+
+      - name: Upload candidate plan
+        uses: actions/upload-artifact@v4
+        with:
+          name: candidate-reproducibility
+          path: candidate-reproducibility.yml
+
+      - name: Summary
+        run: |
+          echo "## Repository Intake Report" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          cat intake-report.md >> $GITHUB_STEP_SUMMARY

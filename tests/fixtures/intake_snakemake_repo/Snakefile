@@ -1,0 +1,17 @@
+rule all:
+    input:
+        "results/output.csv"
+
+rule preprocess:
+    output:
+        "data/clean.csv"
+    shell:
+        "python scripts/preprocess.py"
+
+rule analyze:
+    input:
+        "data/clean.csv"
+    output:
+        "results/output.csv"
+    shell:
+        "python scripts/analyze.py"

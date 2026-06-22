@@ -1,0 +1,137 @@
+{
+  "schema_version": "0.1",
+  "report_type": "oss-paper-ci-intake-report",
+  "tool_version": "3.2.0rc1",
+  "source": {
+    "input": "tests/fixtures/intake_python_repo",
+    "kind": "local",
+    "cloned": false
+  },
+  "detected": {
+    "languages": [
+      "python"
+    ],
+    "ecosystems": [
+      {
+        "id": "python",
+        "display_name": "Python",
+        "detected_files": [
+          "requirements.txt",
+          "pyproject.toml",
+          "scripts\\evaluate.py",
+          "scripts\\train.py"
+        ],
+        "environment_files": [
+          "requirements.txt",
+          "pyproject.toml"
+        ],
+        "entrypoint_candidates": [
+          "scripts\\evaluate.py",
+          "scripts\\train.py"
+        ],
+        "install_plan": [
+          "python -m pip install -r requirements.txt"
+        ],
+        "run_plan": [
+          "python evaluate.py",
+          "python train.py"
+        ],
+        "runtime_required": "python3",
+        "runtime_available": true,
+        "support_level": "native",
+        "limitations": [],
+        "safety_notes": [
+          "Uses isolated virtual environment for installation."
+        ]
+      }
+    ],
+    "environment_files": [
+      "requirements.txt",
+      "pyproject.toml"
+    ],
+    "workflow_files": [],
+    "scripts": [
+      "scripts\\evaluate.py",
+      "scripts\\train.py"
+    ],
+    "notebooks": [],
+    "data_paths": [
+      "data/"
+    ],
+    "result_paths": [
+      "results/"
+    ],
+    "artifact_paths": [
+      "results\\metrics.json"
+    ],
+    "has_existing_config": false,
+    "existing_config_path": ""
+  },
+  "command_candidates": [
+    {
+      "id": "install",
+      "command": "pip install -r requirements.txt",
+      "source": "README.md",
+      "line": 7,
+      "kind": "install",
+      "confidence": 0.7,
+      "dangerous": false,
+      "reason": "Code block in README.md:7, section 'installation'"
+    },
+    {
+      "id": "train",
+      "command": "python scripts/train.py --epochs 10",
+      "source": "README.md",
+      "line": 13,
+      "kind": "train",
+      "confidence": 0.7,
+      "dangerous": false,
+      "reason": "Code block in README.md:13, section 'training'"
+    },
+    {
+      "id": "evaluate",
+      "command": "python scripts/evaluate.py --data data/test.csv",
+      "source": "README.md",
+      "line": 19,
+      "kind": "evaluate",
+      "confidence": 0.7,
+      "dangerous": false,
+      "reason": "Code block in README.md:19, section 'evaluation'"
+    },
+    {
+      "id": "cmd",
+      "command": "train",
+      "source": "pyproject.toml",
+      "line": 7,
+      "kind": "unknown",
+      "confidence": 0.5,
+      "dangerous": false,
+      "reason": "pyproject.toml script entry 'train'"
+    },
+    {
+      "id": "cmd_2",
+      "command": "evaluate",
+      "source": "pyproject.toml",
+      "line": 8,
+      "kind": "unknown",
+      "confidence": 0.5,
+      "dangerous": false,
+      "reason": "pyproject.toml script entry 'evaluate'"
+    }
+  ],
+  "confidence": {
+    "overall": 0.87,
+    "environment": 1.0,
+    "commands": 0.9,
+    "artifacts": 0.7,
+    "metrics": 0.7
+  },
+  "warnings": [],
+  "limitations": [
+    "Intake analysis is read-only; no commands are executed.",
+    "Command candidates are inferred from documentation and config files.",
+    "Confidence scores indicate detection quality, not correctness.",
+    "Review all candidates before using them in a reproducibility plan.",
+    "Paper URLs are recognized but not fetched; provide a repository path."
+  ]
+}
