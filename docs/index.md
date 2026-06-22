@@ -91,6 +91,8 @@ See [Evaluation](evaluation.md) for details.
 - [Repository intake](repository-intake.md) — analyze repo structure, extract commands
 - [Autoplan](autoplan.md) — generate candidate reproducibility plan
 - [Reproduction](reproduce.md) — one-command reproduction attempt
+- [Reproduction sessions](reproduction-sessions.md) — track, resume, and bundle reproduction attempts
+- [Reproduction matrix](reproduction-matrix.md) — run across Python versions and profiles
 - [Reproduction capsules](reproduction-capsules.md) — verifiable evidence packages
 - [Batch scanning](batch-scan.md) — scan multiple projects
 - [Workspace](workspace.md) — workspace configuration

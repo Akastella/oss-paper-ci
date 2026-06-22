@@ -85,6 +85,8 @@ The evaluation corpus contains 12+ synthetic repositories covering:
 | Result validation | `oss-paper-ci results validate .` | Verify claimed results trace to evidence |
 | Safe reproduction | `oss-paper-ci reproduce URL --dry-run` | Attempt reproduction without executing code |
 | Reproduction orchestrator | `oss-paper-ci reproduce plan/run/report` | Plan, execute, and verify reproduction workflow |
+| Reproduction sessions | `oss-paper-ci session start/status/report` | Track, resume, and bundle reproduction attempts |
+| Matrix execution | `oss-paper-ci matrix plan/run/compare` | Run across Python versions and profiles |
 | Reproduction capsule | `oss-paper-ci capsule verify out.zip` | Verify and inspect evidence packages |
 | Reproducibility dossier | `oss-paper-ci dossier .` | Generate author/reviewer/maintainer summaries |
 | Workspace batch | `oss-paper-ci batch scan --workspace ws.yml` | Scan multiple projects from a config |
@@ -214,6 +216,40 @@ oss-paper-ci autoplan diff --old reproducibility.yml --new candidate-reproducibi
 ```
 
 Intake reads README, environment files, scripts, notebooks, workflow files, and result directories. Confidence scores indicate detection quality, not scientific correctness. See [docs/repository-intake.md](docs/repository-intake.md) and [docs/autoplan.md](docs/autoplan.md).
+
+## Reproduction Sessions
+
+Reproduction sessions track the lifecycle of a reproduction attempt: planning, execution, status, logs, artifacts, and failure reasons. Sessions support resuming interrupted runs, re-running failed steps, and comparing results across configurations.
+
+```bash
+# Start a session (dry-run by default)
+oss-paper-ci session start examples/repro-system-demo --name demo
+
+# Resume with execution
+oss-paper-ci session resume .oss-paper-ci-sessions/demo --execute
+
+# Generate HTML report
+oss-paper-ci session report .oss-paper-ci-sessions/demo --format html --output session.html
+
+# Create evidence bundle
+oss-paper-ci session bundle .oss-paper-ci-sessions/demo --output session-evidence.zip
+```
+
+Sessions are dry-run by default; only `--execute` runs commands. See [docs/reproduction-sessions.md](docs/reproduction-sessions.md).
+
+## Matrix Execution
+
+Matrix execution runs reproduction across multiple configurations (Python versions, profiles). Each variant creates an independent session.
+
+```bash
+# Plan a matrix
+oss-paper-ci matrix plan examples/repro-system-demo --python 3.10,3.11,3.12
+
+# Compare variants
+oss-paper-ci matrix compare .oss-paper-ci-matrix --format markdown
+```
+
+Matrix does not auto-install Python versions; missing runtimes are marked unavailable. See [docs/reproduction-matrix.md](docs/reproduction-matrix.md).
 
 ## Documentation
 

@@ -85,6 +85,8 @@ oss-paper-ci eval compare --baseline tests/golden/evaluation_summary.json --curr
 | 结果验证 | `oss-paper-ci results validate .` | 验证声称的结果是否有证据支撑 |
 | 安全复现 | `oss-paper-ci reproduce URL --dry-run` | 不执行代码的复现尝试 |
 | 复现编排器 | `oss-paper-ci reproduce plan/run/report` | 规划、执行和验证复现工作流 |
+| 复现会话 | `oss-paper-ci session start/status/report` | 追踪、恢复和打包复现尝试 |
+| 矩阵执行 | `oss-paper-ci matrix plan/run/compare` | 跨 Python 版本和配置文件运行 |
 | 复现胶囊 | `oss-paper-ci capsule verify out.zip` | 验证和查看证据包 |
 | 复现摘要 | `oss-paper-ci dossier .` | 生成面向作者/审稿人/维护者的摘要 |
 | 批量扫描 | `oss-paper-ci batch scan --workspace ws.yml` | 从配置文件批量扫描多个项目 |
@@ -211,6 +213,40 @@ oss-paper-ci autoplan diff --old reproducibility.yml --new candidate-reproducibi
 ```
 
 详见 [docs/repository-intake.md](docs/repository-intake.md) 和 [docs/autoplan.md](docs/autoplan.md)。
+
+## 复现会话
+
+复现会话用于记录一次复现流程的计划、执行状态、日志、产物、指标和失败原因。它支持恢复中断的运行、重跑失败步骤，以及在多个环境配置之间比较结果。默认情况下，会话只生成计划；只有显式使用 `--execute` 才会执行声明的命令。
+
+```bash
+# 启动会话（默认不执行）
+oss-paper-ci session start examples/repro-system-demo --name demo
+
+# 恢复并执行
+oss-paper-ci session resume .oss-paper-ci-sessions/demo --execute
+
+# 生成 HTML 报告
+oss-paper-ci session report .oss-paper-ci-sessions/demo --format html --output session.html
+
+# 创建证据包
+oss-paper-ci session bundle .oss-paper-ci-sessions/demo --output session-evidence.zip
+```
+
+详见 [docs/reproduction-sessions.md](docs/reproduction-sessions.md)。
+
+## 矩阵执行
+
+矩阵执行在多个配置（Python 版本、配置文件）之间运行复现。每个变体创建独立的会话。
+
+```bash
+# 规划矩阵
+oss-paper-ci matrix plan examples/repro-system-demo --python 3.10,3.11,3.12
+
+# 比较变体
+oss-paper-ci matrix compare .oss-paper-ci-matrix --format markdown
+```
+
+矩阵不会自动安装 Python 版本；缺失的运行时标记为不可用。详见 [docs/reproduction-matrix.md](docs/reproduction-matrix.md)。
 
 ## 文档
 

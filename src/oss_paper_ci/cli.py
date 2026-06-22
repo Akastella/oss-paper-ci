@@ -614,6 +614,107 @@ def main(argv: list[str] | None = None) -> int:
     ae.add_argument("--format", choices=["markdown", "json"], default="markdown",
                     help="Output format (default: markdown).")
 
+    # session command group
+    session_parser = subparsers.add_parser("session", help="Reproduction session management.")
+    session_sub = session_parser.add_subparsers(dest="session_command")
+
+    # session start
+    ss = session_sub.add_parser("start", help="Start a new reproduction session.")
+    ss.add_argument("path", nargs="?", default=".", help="Path to repository root (default: .)")
+    ss.add_argument("--name", default="default", help="Session name (default: default).")
+    ss.add_argument("--config", dest="config_path", help="Path to reproducibility.yml.")
+    ss.add_argument("--output-dir", dest="output_dir", help="Session output directory.")
+    ss.add_argument("--execute", action="store_true", help="Execute commands (required for execution).")
+    ss.add_argument("--format", choices=["json", "markdown"], default="markdown", help="Output format.")
+
+    # session list
+    sl = session_sub.add_parser("list", help="List reproduction sessions.")
+    sl.add_argument("base_dir", nargs="?", default=".oss-paper-ci-sessions",
+                    help="Base sessions directory.")
+    sl.add_argument("--format", choices=["text", "json"], default="text", help="Output format.")
+
+    # session status
+    sst = session_sub.add_parser("status", help="Show session status.")
+    sst.add_argument("session_dir", help="Path to session directory.")
+    sst.add_argument("--format", choices=["text", "json"], default="text", help="Output format.")
+
+    # session resume
+    sr = session_sub.add_parser("resume", help="Resume a paused session.")
+    sr.add_argument("session_dir", help="Path to session directory.")
+    sr.add_argument("--execute", action="store_true", help="Execute pending commands.")
+    sr.add_argument("--format", choices=["markdown", "json"], default="markdown", help="Output format.")
+    sr.add_argument("--output", "-o", help="Write report to file.")
+
+    # session rerun-failed
+    srf = session_sub.add_parser("rerun-failed", help="Re-run failed commands.")
+    srf.add_argument("session_dir", help="Path to session directory.")
+    srf.add_argument("--execute", action="store_true", help="Execute failed commands.")
+    srf.add_argument("--format", choices=["markdown", "json"], default="markdown", help="Output format.")
+    srf.add_argument("--output", "-o", help="Write report to file.")
+
+    # session report
+    srep = session_sub.add_parser("report", help="Generate session report.")
+    srep.add_argument("session_dir", help="Path to session directory.")
+    srep.add_argument("--format", choices=["markdown", "json", "html"], default="markdown",
+                      help="Output format (default: markdown).")
+    srep.add_argument("--output", "-o", help="Write report to file.")
+
+    # session bundle
+    sb = session_sub.add_parser("bundle", help="Create session evidence bundle.")
+    sb.add_argument("session_dir", help="Path to session directory.")
+    sb.add_argument("--output", "-o", default="session-evidence.zip", help="Output ZIP path.")
+
+    # session inspect
+    si = session_sub.add_parser("inspect", help="Inspect session evidence bundle.")
+    si.add_argument("bundle", help="Path to session bundle ZIP.")
+    si.add_argument("--format", choices=["markdown", "json"], default="markdown", help="Output format.")
+    si.add_argument("--output", "-o", help="Write report to file.")
+
+    # session verify-bundle
+    svb = session_sub.add_parser("verify-bundle", help="Verify session evidence bundle.")
+    svb.add_argument("bundle", help="Path to session bundle ZIP.")
+    svb.add_argument("--format", choices=["markdown", "json"], default="markdown", help="Output format.")
+    svb.add_argument("--output", "-o", help="Write report to file.")
+
+    # matrix command group
+    matrix_parser = subparsers.add_parser("matrix", help="Matrix execution across configurations.")
+    matrix_sub = matrix_parser.add_subparsers(dest="matrix_command")
+
+    # matrix plan
+    mp = matrix_sub.add_parser("plan", help="Plan a matrix execution.")
+    mp.add_argument("path", nargs="?", default=".", help="Path to repository root.")
+    mp.add_argument("--python", help="Comma-separated Python versions.")
+    mp.add_argument("--profile", help="Comma-separated profiles.")
+    mp.add_argument("--config", dest="config_path", help="Path to reproducibility.yml.")
+    mp.add_argument("--format", choices=["markdown", "json"], default="markdown", help="Output format.")
+    mp.add_argument("--output", "-o", help="Write plan to file.")
+
+    # matrix run
+    mrun = matrix_sub.add_parser("run", help="Execute a matrix run.")
+    mrun.add_argument("path", nargs="?", default=".", help="Path to repository root.")
+    mrun.add_argument("--python", help="Comma-separated Python versions.")
+    mrun.add_argument("--profile", help="Comma-separated profiles.")
+    mrun.add_argument("--config", dest="config_path", help="Path to reproducibility.yml.")
+    mrun.add_argument("--execute", action="store_true", help="Execute commands.")
+    mrun.add_argument("--output-dir", dest="output_dir", default=".oss-paper-ci-matrix",
+                      help="Matrix output directory.")
+    mrun.add_argument("--format", choices=["markdown", "json"], default="markdown", help="Output format.")
+    mrun.add_argument("--output", "-o", help="Write report to file.")
+
+    # matrix report
+    mrep = matrix_sub.add_parser("report", help="Generate matrix report.")
+    mrep.add_argument("matrix_dir", nargs="?", default=".oss-paper-ci-matrix",
+                      help="Matrix output directory.")
+    mrep.add_argument("--format", choices=["markdown", "json"], default="markdown", help="Output format.")
+    mrep.add_argument("--output", "-o", help="Write report to file.")
+
+    # matrix compare
+    mcomp = matrix_sub.add_parser("compare", help="Compare matrix variants.")
+    mcomp.add_argument("matrix_dir", nargs="?", default=".oss-paper-ci-matrix",
+                       help="Matrix output directory.")
+    mcomp.add_argument("--format", choices=["markdown", "json"], default="markdown", help="Output format.")
+    mcomp.add_argument("--output", "-o", help="Write report to file.")
+
     # Handle `evidence .` as shorthand for `evidence report .`
     # Insert "report" before parsing if evidence is followed by a path, not a subcommand
     _ev_subcmds = {"report", "bundle", "inspect", "verify"}
@@ -641,6 +742,20 @@ def main(argv: list[str] | None = None) -> int:
         _ap_idx = _argv_list.index("autoplan")
         if _ap_idx + 1 < len(_argv_list) and _argv_list[_ap_idx + 1] not in _ap_subcmds and not _argv_list[_ap_idx + 1].startswith("-"):
             _argv_list.insert(_ap_idx + 1, "generate")
+
+    # Handle `session <path>` as shorthand for `session start <path>`
+    _session_subcmds = {"start", "list", "status", "resume", "rerun-failed", "report", "bundle", "inspect", "verify-bundle"}
+    if "session" in _argv_list:
+        _s_idx = _argv_list.index("session")
+        if _s_idx + 1 < len(_argv_list) and _argv_list[_s_idx + 1] not in _session_subcmds and not _argv_list[_s_idx + 1].startswith("-"):
+            _argv_list.insert(_s_idx + 1, "start")
+
+    # Handle `matrix <path>` as shorthand for `matrix plan <path>`
+    _matrix_subcmds = {"plan", "run", "report", "compare"}
+    if "matrix" in _argv_list:
+        _m_idx = _argv_list.index("matrix")
+        if _m_idx + 1 < len(_argv_list) and _argv_list[_m_idx + 1] not in _matrix_subcmds and not _argv_list[_m_idx + 1].startswith("-"):
+            _argv_list.insert(_m_idx + 1, "plan")
 
     args, remaining = parser.parse_known_args(_argv_list)
 
@@ -805,6 +920,12 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.command == "autoplan":
         return _cmd_autoplan(args)
+
+    if args.command == "session":
+        return _cmd_session(args)
+
+    if args.command == "matrix":
+        return _cmd_matrix(args)
 
     parser.print_help()
     return 0
@@ -4538,3 +4659,429 @@ def _format_explain_markdown(data: dict) -> str:
         lines.append("")
 
     return "\n".join(lines)
+
+
+# ── Session command ───────────────────────────────────────────────────────
+
+def _cmd_session(args: argparse.Namespace) -> int:
+    """Handle session command group."""
+    sub = getattr(args, "session_command", None)
+
+    if sub == "start" or sub is None:
+        return _cmd_session_start(args)
+    if sub == "list":
+        return _cmd_session_list(args)
+    if sub == "status":
+        return _cmd_session_status(args)
+    if sub == "resume":
+        return _cmd_session_resume(args)
+    if sub == "rerun-failed":
+        return _cmd_session_rerun_failed(args)
+    if sub == "report":
+        return _cmd_session_report(args)
+    if sub == "bundle":
+        return _cmd_session_bundle(args)
+    if sub == "inspect":
+        return _cmd_session_inspect(args)
+    if sub == "verify-bundle":
+        return _cmd_session_verify_bundle(args)
+
+    print("Usage: oss-paper-ci session {start|list|status|resume|rerun-failed|report|bundle|inspect|verify-bundle}", file=sys.stderr)
+    return 1
+
+
+def _cmd_session_start(args: argparse.Namespace) -> int:
+    """Handle session start command."""
+    from oss_paper_ci.session import create_session, execute_session
+    from oss_paper_ci.session_store import save_session
+    from oss_paper_ci.session_report import generate_session_markdown, generate_session_json
+
+    path = getattr(args, "path", ".")
+    name = getattr(args, "name", "default")
+    config = getattr(args, "config_path", None)
+    output_dir = getattr(args, "output_dir", None)
+    execute = getattr(args, "execute", False)
+    fmt = getattr(args, "format", "markdown")
+
+    # Create session
+    manifest = create_session(path, config_path=config, name=name)
+
+    # Execute if requested
+    if execute:
+        manifest = execute_session(manifest)
+
+    # Determine output directory
+    if not output_dir:
+        output_dir = f".oss-paper-ci-sessions/{name}"
+
+    # Save session
+    save_session(manifest, output_dir)
+
+    # Output
+    if fmt == "json":
+        text = generate_session_json(manifest)
+    else:
+        text = generate_session_markdown(manifest)
+
+    print(text)
+    print(f"\nSession saved to {output_dir}", file=sys.stderr)
+    return 0
+
+
+def _cmd_session_list(args: argparse.Namespace) -> int:
+    """Handle session list command."""
+    import json as json_mod
+    from oss_paper_ci.session_store import list_sessions
+
+    base_dir = getattr(args, "base_dir", ".oss-paper-ci-sessions")
+    fmt = getattr(args, "format", "text")
+
+    sessions = list_sessions(base_dir)
+
+    if fmt == "json":
+        print(json_mod.dumps(sessions, indent=2))
+    else:
+        if not sessions:
+            print(f"No sessions found in {base_dir}")
+            return 0
+        print(f"Sessions in {base_dir}:")
+        print("")
+        for s in sessions:
+            status = s.get("status", "?")
+            name = s.get("name", "?")
+            cmd_count = s.get("command_count", 0)
+            print(f"  {name} [{status}] ({cmd_count} commands)")
+    return 0
+
+
+def _cmd_session_status(args: argparse.Namespace) -> int:
+    """Handle session status command."""
+    import json as json_mod
+    from oss_paper_ci.session_store import load_session
+
+    session_dir = getattr(args, "session_dir", "")
+    fmt = getattr(args, "format", "text")
+
+    try:
+        manifest = load_session(session_dir)
+    except FileNotFoundError as e:
+        print(f"Error: {e}", file=sys.stderr)
+        return 1
+
+    if fmt == "json":
+        print(json_mod.dumps(manifest.to_dict(), indent=2))
+    else:
+        print(f"Session: {manifest.name}")
+        print(f"Status: {manifest.status}")
+        print(f"Commands: {manifest.summary.total} total, {manifest.summary.passed} passed, {manifest.summary.failed} failed")
+    return 0
+
+
+def _cmd_session_resume(args: argparse.Namespace) -> int:
+    """Handle session resume command."""
+    from oss_paper_ci.session import get_commands_to_resume, execute_session
+    from oss_paper_ci.session_store import load_session, save_session
+    from oss_paper_ci.session_report import generate_session_markdown, generate_session_json
+
+    session_dir = getattr(args, "session_dir", "")
+    execute = getattr(args, "execute", False)
+    fmt = getattr(args, "format", "markdown")
+    output = getattr(args, "output", None)
+
+    try:
+        manifest = load_session(session_dir)
+    except FileNotFoundError as e:
+        print(f"Error: {e}", file=sys.stderr)
+        return 1
+
+    to_resume = get_commands_to_resume(manifest)
+    if not to_resume:
+        print("No commands to resume (all passed or blocked).")
+        return 0
+
+    print(f"Commands to resume: {len(to_resume)}")
+    for cmd in to_resume:
+        print(f"  - {cmd.command_id}: {cmd.status}")
+
+    if execute:
+        manifest = execute_session(manifest)
+        save_session(manifest, session_dir)
+
+    if fmt == "json":
+        text = generate_session_json(manifest)
+    else:
+        text = generate_session_markdown(manifest)
+
+    if output:
+        Path(output).write_text(text, encoding="utf-8")
+        print(f"Report written to {output}")
+    else:
+        print(text)
+
+    return 0
+
+
+def _cmd_session_rerun_failed(args: argparse.Namespace) -> int:
+    """Handle session rerun-failed command."""
+    from oss_paper_ci.session import get_commands_to_rerun_failed, execute_session
+    from oss_paper_ci.session_store import load_session, save_session
+    from oss_paper_ci.session_report import generate_session_markdown, generate_session_json
+
+    session_dir = getattr(args, "session_dir", "")
+    execute = getattr(args, "execute", False)
+    fmt = getattr(args, "format", "markdown")
+    output = getattr(args, "output", None)
+
+    try:
+        manifest = load_session(session_dir)
+    except FileNotFoundError as e:
+        print(f"Error: {e}", file=sys.stderr)
+        return 1
+
+    to_rerun = get_commands_to_rerun_failed(manifest)
+    if not to_rerun:
+        print("No failed commands to re-run.")
+        return 0
+
+    print(f"Commands to re-run: {len(to_rerun)}")
+    for cmd in to_rerun:
+        print(f"  - {cmd.command_id}: {cmd.status}")
+
+    if execute:
+        # Reset failed commands to pending
+        for cmd in manifest.commands:
+            if cmd.status in ("failed", "timeout"):
+                cmd.status = "pending"
+        manifest = execute_session(manifest)
+        save_session(manifest, session_dir)
+
+    if fmt == "json":
+        text = generate_session_json(manifest)
+    else:
+        text = generate_session_markdown(manifest)
+
+    if output:
+        Path(output).write_text(text, encoding="utf-8")
+        print(f"Report written to {output}")
+    else:
+        print(text)
+
+    return 0
+
+
+def _cmd_session_report(args: argparse.Namespace) -> int:
+    """Handle session report command."""
+    from oss_paper_ci.session_store import load_session
+    from oss_paper_ci.session_report import (
+        generate_session_markdown, generate_session_json, generate_session_html,
+    )
+
+    session_dir = getattr(args, "session_dir", "")
+    fmt = getattr(args, "format", "markdown")
+    output = getattr(args, "output", None)
+
+    try:
+        manifest = load_session(session_dir)
+    except FileNotFoundError as e:
+        print(f"Error: {e}", file=sys.stderr)
+        return 1
+
+    if fmt == "json":
+        text = generate_session_json(manifest, output)
+    elif fmt == "html":
+        text = generate_session_html(manifest, output)
+    else:
+        text = generate_session_markdown(manifest, output)
+
+    if not output:
+        print(text)
+    else:
+        print(f"Report written to {output}")
+
+    return 0
+
+
+def _cmd_session_bundle(args: argparse.Namespace) -> int:
+    """Handle session bundle command."""
+    from oss_paper_ci.session_bundle import create_session_bundle
+
+    session_dir = getattr(args, "session_dir", "")
+    output = getattr(args, "output", "session-evidence.zip")
+
+    try:
+        create_session_bundle(session_dir, output)
+        print(f"Session bundle created: {output}")
+    except Exception as e:
+        print(f"Error: {e}", file=sys.stderr)
+        return 1
+
+    return 0
+
+
+def _cmd_session_inspect(args: argparse.Namespace) -> int:
+    """Handle session inspect command."""
+    from oss_paper_ci.session_bundle import inspect_session_bundle, format_bundle_inspect_markdown
+    import json as json_mod
+
+    bundle_path = getattr(args, "bundle", "")
+    fmt = getattr(args, "format", "markdown")
+    output = getattr(args, "output", None)
+
+    info = inspect_session_bundle(bundle_path)
+
+    if fmt == "json":
+        text = json_mod.dumps(info.to_dict(), indent=2)
+    else:
+        text = format_bundle_inspect_markdown(info)
+
+    if output:
+        Path(output).write_text(text, encoding="utf-8")
+        print(f"Report written to {output}")
+    else:
+        print(text)
+
+    return 0
+
+
+def _cmd_session_verify_bundle(args: argparse.Namespace) -> int:
+    """Handle session verify-bundle command."""
+    from oss_paper_ci.session_bundle import verify_session_bundle, format_bundle_verify_markdown
+    import json as json_mod
+
+    bundle_path = getattr(args, "bundle", "")
+    fmt = getattr(args, "format", "markdown")
+    output = getattr(args, "output", None)
+
+    result = verify_session_bundle(bundle_path)
+
+    if fmt == "json":
+        text = json_mod.dumps(result.to_dict(), indent=2)
+    else:
+        text = format_bundle_verify_markdown(result)
+
+    if output:
+        Path(output).write_text(text, encoding="utf-8")
+        print(f"Report written to {output}")
+    else:
+        print(text)
+
+    return 0 if result.valid else 1
+
+
+# ── Matrix command ────────────────────────────────────────────────────────
+
+def _cmd_matrix(args: argparse.Namespace) -> int:
+    """Handle matrix command group."""
+    sub = getattr(args, "matrix_command", None)
+
+    if sub == "plan" or sub is None:
+        return _cmd_matrix_plan(args)
+    if sub == "run":
+        return _cmd_matrix_run(args)
+    if sub == "report":
+        return _cmd_matrix_report(args)
+    if sub == "compare":
+        return _cmd_matrix_compare(args)
+
+    print("Usage: oss-paper-ci matrix {plan|run|report|compare}", file=sys.stderr)
+    return 1
+
+
+def _cmd_matrix_plan(args: argparse.Namespace) -> int:
+    """Handle matrix plan command."""
+    from oss_paper_ci.matrix import plan_matrix
+    from oss_paper_ci.matrix_report import generate_matrix_plan_markdown, generate_matrix_json
+
+    path = getattr(args, "path", ".")
+    python_versions = getattr(args, "python", None)
+    profiles = getattr(args, "profile", None)
+    config = getattr(args, "config_path", None)
+    fmt = getattr(args, "format", "markdown")
+    output = getattr(args, "output", None)
+
+    py_list = python_versions.split(",") if python_versions else None
+    prof_list = profiles.split(",") if profiles else None
+
+    plan = plan_matrix(path, config_path=config, python_versions=py_list, profiles=prof_list)
+
+    if fmt == "json":
+        text = generate_matrix_json(plan, output)
+    else:
+        text = generate_matrix_plan_markdown(plan, output)
+
+    if not output:
+        print(text)
+    else:
+        print(f"Plan written to {output}")
+
+    return 0
+
+
+def _cmd_matrix_run(args: argparse.Namespace) -> int:
+    """Handle matrix run command."""
+    from oss_paper_ci.matrix import plan_matrix, run_matrix
+    from oss_paper_ci.matrix_report import generate_matrix_result_markdown, generate_matrix_json
+
+    path = getattr(args, "path", ".")
+    python_versions = getattr(args, "python", None)
+    profiles = getattr(args, "profile", None)
+    config = getattr(args, "config_path", None)
+    execute = getattr(args, "execute", False)
+    output_dir = getattr(args, "output_dir", ".oss-paper-ci-matrix")
+    fmt = getattr(args, "format", "markdown")
+    output = getattr(args, "output", None)
+
+    py_list = python_versions.split(",") if python_versions else None
+    prof_list = profiles.split(",") if profiles else None
+
+    plan = plan_matrix(path, config_path=config, python_versions=py_list, profiles=prof_list)
+    result = run_matrix(plan, output_dir=output_dir, execute=execute)
+
+    if fmt == "json":
+        text = generate_matrix_json(result, output)
+    else:
+        text = generate_matrix_result_markdown(result, output)
+
+    if not output:
+        print(text)
+    else:
+        print(f"Report written to {output}")
+
+    return 0
+
+
+def _cmd_matrix_report(args: argparse.Namespace) -> int:
+    """Handle matrix report command."""
+    from oss_paper_ci.matrix_report import generate_matrix_compare_markdown
+    import json as json_mod
+
+    matrix_dir = getattr(args, "matrix_dir", ".oss-paper-ci-matrix")
+    fmt = getattr(args, "format", "markdown")
+    output = getattr(args, "output", None)
+
+    text = generate_matrix_compare_markdown(matrix_dir, output)
+
+    if not output:
+        print(text)
+    else:
+        print(f"Report written to {output}")
+
+    return 0
+
+
+def _cmd_matrix_compare(args: argparse.Namespace) -> int:
+    """Handle matrix compare command."""
+    from oss_paper_ci.matrix_report import generate_matrix_compare_markdown
+
+    matrix_dir = getattr(args, "matrix_dir", ".oss-paper-ci-matrix")
+    fmt = getattr(args, "format", "markdown")
+    output = getattr(args, "output", None)
+
+    text = generate_matrix_compare_markdown(matrix_dir, output)
+
+    if not output:
+        print(text)
+    else:
+        print(f"Report written to {output}")
+
+    return 0

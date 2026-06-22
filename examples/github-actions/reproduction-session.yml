@@ -1,0 +1,55 @@
+# Example: Reproduction session in CI
+#
+# This workflow runs a reproduction session and uploads the report as an artifact.
+# Default mode is dry-run; --execute is only used for the built-in demo.
+
+name: Reproduction Session
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  session:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Install oss-paper-ci
+        run: pip install oss-paper-ci  # after PyPI
+
+      - name: Start session (dry-run)
+        run: |
+          oss-paper-ci session start examples/repro-system-demo \
+            --name ci-demo \
+            --output-dir .oss-paper-ci-sessions/ci-demo
+
+      - name: Generate session report
+        run: |
+          oss-paper-ci session report .oss-paper-ci-sessions/ci-demo \
+            --format markdown --output session-report.md
+          oss-paper-ci session report .oss-paper-ci-sessions/ci-demo \
+            --format json --output session-report.json
+
+      - name: Create session bundle
+        run: |
+          oss-paper-ci session bundle .oss-paper-ci-sessions/ci-demo \
+            --output session-evidence.zip
+
+      - name: Upload session artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: session-report
+          path: |
+            session-report.md
+            session-report.json
+            session-evidence.zip
