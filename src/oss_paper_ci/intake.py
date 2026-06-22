@@ -55,7 +55,7 @@ class IntakeReport:
 
     schema_version: str = "0.1"
     report_type: str = "oss-paper-ci-intake-report"
-    tool_version: str = "3.2.0rc1"
+    tool_version: str = ""
     source: dict[str, Any] = field(default_factory=dict)
     detected: DetectedInfo = field(default_factory=DetectedInfo)
     command_candidates: list[CommandCandidate] = field(default_factory=list)
@@ -95,6 +95,8 @@ def run_intake(
     from oss_paper_ci.autoplan_score import compute_confidence
 
     report = IntakeReport()
+    from oss_paper_ci import __version__
+    report.tool_version = __version__
     report.source = {
         "input": input_path,
         "kind": classify_input(input_path),

@@ -85,6 +85,8 @@ oss-paper-ci eval compare --baseline tests/golden/evaluation_summary.json --curr
 | 結果検証 | `oss-paper-ci results validate .` | 主張された結果が証拠に裏付けられているか検証 |
 | 安全な再現 | `oss-paper-ci reproduce URL --dry-run` | コードを実行しない再現試行 |
 | 再現オーケストレーター | `oss-paper-ci reproduce plan/run/report` | 再現ワークフローの計画・実行・検証 |
+| 再現セッション | `oss-paper-ci session start/status/report` | 再現試行の追跡・再開・バンドル |
+| マトリクス実行 | `oss-paper-ci matrix plan/run/compare` | Pythonバージョンやプロファイルを横断して実行 |
 | 再現カプセル | `oss-paper-ci capsule verify out.zip` | 証拠パッケージの検証と確認 |
 | 再現ドシエ | `oss-paper-ci dossier .` | 著者/レビュアー/メンテナー向けの要約を生成 |
 | ワークスペースバッチ | `oss-paper-ci batch scan --workspace ws.yml` | 設定ファイルから複数プロジェクトをスキャン |
@@ -211,6 +213,40 @@ oss-paper-ci autoplan diff --old reproducibility.yml --new candidate-reproducibi
 ```
 
 詳細は [docs/repository-intake.md](docs/repository-intake.md) と [docs/autoplan.md](docs/autoplan.md) を参照。
+
+## 再現セッション
+
+再現セッションは、再現手順の計画、実行状態、ログ、成果物、指標、失敗理由を記録します。中断した実行の再開、失敗したステップの再実行、複数環境での結果比較を支援します。デフォルトでは計画のみを作成し、宣言されたコマンドを実行するには明示的な `--execute` が必要です。
+
+```bash
+# セッションの開始（デフォルトでは実行しない）
+oss-paper-ci session start examples/repro-system-demo --name demo
+
+# 再開して実行
+oss-paper-ci session resume .oss-paper-ci-sessions/demo --execute
+
+# HTMLレポートの生成
+oss-paper-ci session report .oss-paper-ci-sessions/demo --format html --output session.html
+
+# 証拠バンドルの作成
+oss-paper-ci session bundle .oss-paper-ci-sessions/demo --output session-evidence.zip
+```
+
+詳細は [docs/reproduction-sessions.md](docs/reproduction-sessions.md) を参照。
+
+## マトリクス実行
+
+マトリクス実行は、複数の設定（Pythonバージョン、プロファイル）で再現を実行します。各バリアントは独立したセッションを作成します。
+
+```bash
+# マトリクスの計画
+oss-paper-ci matrix plan examples/repro-system-demo --python 3.10,3.11,3.12
+
+# バリアントの比較
+oss-paper-ci matrix compare .oss-paper-ci-matrix --format markdown
+```
+
+マトリクスはPythonバージョンを自動インストールしません。利用できないランタイムは「利用不可」としてマークされます。詳細は [docs/reproduction-matrix.md](docs/reproduction-matrix.md) を参照。
 
 ## ドキュメント
 

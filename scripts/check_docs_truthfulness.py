@@ -610,6 +610,7 @@ VALID_CLI_COMMANDS = {
     "quickstart", "try-demo",
     "trust", "security", "evidence",
     "intake", "autoplan",
+    "session", "matrix",
 }
 
 # Files that exist in the project

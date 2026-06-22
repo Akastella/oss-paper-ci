@@ -1,0 +1,64 @@
+{
+  "schema_version": "0.1",
+  "report_type": "oss-paper-ci-reproduction-session",
+  "tool_version": "3.3.0rc1",
+  "session_id": "111e695421c2",
+  "name": "demo",
+  "repo": "examples\\repro-system-demo",
+  "config": "examples\\repro-system-demo\\reproducibility.yml",
+  "status": "planned",
+  "commands": [
+    {
+      "command_id": "train",
+      "command": "python scripts/train.py",
+      "status": "pending",
+      "exit_code": -1,
+      "duration_seconds": 0.0,
+      "block_reason": "",
+      "attempts": 0,
+      "artifacts": [],
+      "metrics": {},
+      "warnings": []
+    },
+    {
+      "command_id": "evaluate",
+      "command": "python scripts/evaluate.py",
+      "status": "pending",
+      "exit_code": -1,
+      "duration_seconds": 0.0,
+      "block_reason": "",
+      "attempts": 0,
+      "artifacts": [],
+      "metrics": {},
+      "warnings": []
+    },
+    {
+      "command_id": "make_figures",
+      "command": "python scripts/make_figures.py",
+      "status": "pending",
+      "exit_code": -1,
+      "duration_seconds": 0.0,
+      "block_reason": "",
+      "attempts": 0,
+      "artifacts": [],
+      "metrics": {},
+      "warnings": []
+    }
+  ],
+  "summary": {
+    "total": 3,
+    "passed": 0,
+    "failed": 0,
+    "blocked": 0,
+    "timeout": 0,
+    "skipped": 0,
+    "unavailable": 0,
+    "pending": 3
+  },
+  "limitations": [
+    "Session commands are declared in reproducibility.yml.",
+    "Default mode is dry-run; use --execute to run commands.",
+    "Blocked dangerous commands are not executed."
+  ],
+  "warnings": []
+}

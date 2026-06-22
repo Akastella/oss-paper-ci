@@ -1,5 +1,39 @@
 # Changelog
 
+## [3.3.0rc1] - 2026-06-22
+
+### Added
+- Reproduction Sessions: `session` command group for lifecycle management
+- `session start` creates a session from reproducibility.yml (dry-run by default)
+- `session list` lists all sessions in a directory
+- `session status` shows session status and command summary
+- `session resume` resumes pending/failed commands (dry-run by default)
+- `session rerun-failed` re-runs only failed commands (dry-run by default)
+- `session report` generates Markdown, JSON, and HTML session reports
+- `session bundle` creates ZIP evidence bundles with SHA256 checksums
+- `session inspect` inspects session evidence bundles
+- `session verify-bundle` verifies bundle integrity
+- Run History: tracks attempts, durations, and status changes per command
+- Matrix Execution: `matrix` command group for multi-configuration runs
+- `matrix plan` plans matrix with Python versions and profiles
+- `matrix run` executes matrix variants (dry-run by default)
+- `matrix report` generates matrix comparison reports
+- `matrix compare` compares results across variants
+- Session directory layout with per-command stdout/stderr and metadata
+- Deterministic session IDs from name/repo/config
+- GitHub Actions examples for session and matrix workflows
+- 7 new doc files: reproduction-sessions, reproduction-matrix, session-safety, etc.
+- 8 new test files covering session, matrix, run history, bundles
+- Examples: examples/session/ and examples/matrix/ with real command-generated reports
+
+### Changed
+- Version bumped to 3.3.0rc1
+
+### Notes
+- Sessions are dry-run by default; `--execute` required for execution.
+- Matrix does not auto-install Python versions; missing runtimes marked unavailable.
+- Session directories are not committed to git.
+
 ## [3.2.0rc1] - 2026-06-22
 
 ### Added
