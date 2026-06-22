@@ -1,5 +1,38 @@
 # Changelog
 
+## [3.4.0rc1] - 2026-06-22
+
+### Added
+- Language Adapter Framework: unified multi-language detection and planning system
+- `adapters list` lists all registered language adapters
+- `adapters inspect` detects adapters for a repository
+- `adapters explain` shows adapter details
+- `adapters plan` generates reproduction plans using adapters
+- `adapters validate` validates adapter detection reports
+- `adapters doctor` diagnoses adapter runtime availability
+- Python adapter: detects pyproject.toml, requirements.txt, setup.py, conda, uv, poetry
+- R adapter: detects DESCRIPTION, renv.lock, R scripts, Rmd/qmd notebooks
+- Julia adapter: detects Project.toml, Manifest.toml, Julia scripts
+- MATLAB/Octave adapter: detects .m files, run scripts (dry-run only)
+- Node.js adapter: detects package.json, lock files, JS/TS scripts
+- Rust adapter: detects Cargo.toml, Cargo.lock, Rust source files
+- Java adapter: detects pom.xml, build.gradle, Java source files
+- C/C++ adapter: detects CMakeLists.txt, Makefile, C/C++ source files
+- Make adapter: detects Makefile, parses targets
+- Snakemake adapter: detects Snakefile, config files (dry-run only)
+- Nextflow adapter: detects main.nf, nextflow.config (dry-run only)
+- Shell adapter: detects .sh scripts with dangerous command blocking
+- Unified adapter report schema with stable JSON output
+- Adapter registry for centralized adapter management
+- Runtime detection for all supported languages
+- Safety rules and dangerous command blocking per adapter
+- Artifact rules and metric rules for each adapter
+- 17 test fixtures for adapter detection
+- Adapter documentation and examples
+
+### Changed
+- Version bumped to 3.4.0rc1
+
 ## [3.3.0rc1] - 2026-06-22
 
 ### Added
@@ -17,6 +50,7 @@
 - Matrix Execution: `matrix` command group for multi-configuration runs
 - `matrix plan` plans matrix with Python versions and profiles
 - `matrix run` executes matrix variants (dry-run by default)
+- `matrix report` generates matrix comparison reports
 - `matrix report` generates matrix comparison reports
 - `matrix compare` compares results across variants
 - Session directory layout with per-command stdout/stderr and metadata

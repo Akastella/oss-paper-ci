@@ -46,7 +46,7 @@ class TestIntakeCLI:
         assert code == 0
         data = json.loads(out)
         assert data["report_type"] == "oss-paper-ci-intake-report"
-        assert data["tool_version"] == "3.3.0rc1"
+        assert data["tool_version"] == "3.4.0rc1"
 
     def test_intake_html(self):
         """Intake outputs self-contained HTML."""

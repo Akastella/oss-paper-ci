@@ -101,6 +101,22 @@ oss-paper-ci eval compare --baseline tests/golden/evaluation_summary.json --curr
 | 来源证明 | `oss-paper-ci trust provenance .` | 生成本地来源证明清单 |
 | 产物验证 | `oss-paper-ci trust verify-artifacts .` | 验证 SHA256 校验和 |
 
+
+## 多语言适配器
+
+多语言适配器用于把不同科研代码仓库整理成统一的复现证据结构。Python、R、Julia、MATLAB、Node.js、Rust、Java、C/C++、Make、Snakemake、Nextflow 和 Shell 项目可以被检测、解释并生成复现计划。默认情况下工具只生成计划与报告，不会执行未知代码，也不会自动安装运行时。
+
+```bash
+# 列出所有适配器
+oss-paper-ci adapters list
+
+# 检测仓库的适配器
+oss-paper-ci adapters inspect /path/to/repo
+
+# 生成复现计划
+oss-paper-ci adapters plan /path/to/repo
+```
+
 ## 安全模型
 
 - 默认模式是 **dry-run**：不执行代码，不安装依赖
