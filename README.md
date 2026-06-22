@@ -93,6 +93,7 @@ The evaluation corpus contains 12+ synthetic repositories covering:
 | Repository intake | `oss-paper-ci intake .` | Analyze repo structure, extract commands, detect ecosystems |
 | Autoplan | `oss-paper-ci autoplan .` | Generate candidate reproducibility plan from repo analysis |
 | Ecosystem detection | `oss-paper-ci ecosystems detect .` | Detect Python, R, Julia, MATLAB, Node, and more |
+| Language adapters | `oss-paper-ci adapters list/inspect/plan` | Multi-language adapter framework with 12 adapters |
 | Terminal workbench | `oss-paper-ci workbench .` | Multi-step pipeline with progress display |
 | Guided wizard | `oss-paper-ci wizard` | Safe next-step recommendations for new users |
 | Trust audit | `oss-paper-ci trust audit .` | Local static trust and workflow audit |

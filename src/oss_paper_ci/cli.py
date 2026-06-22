@@ -309,6 +309,34 @@ def main(argv: list[str] | None = None) -> int:
     ee.add_argument("ecosystem", help="Ecosystem ID (e.g., r, julia, snakemake).")
     ee.add_argument("--format", choices=["json", "markdown"], default="markdown", help="Output format.")
 
+    # adapters command group
+    adapters_parser = subparsers.add_parser("adapters", help="Language adapter management.")
+    adapters_sub = adapters_parser.add_subparsers(dest="adapters_command")
+
+    al = adapters_sub.add_parser("list", help="List all registered language adapters.")
+    al.add_argument("--format", choices=["text", "json"], default="text", help="Output format.")
+
+    ai = adapters_sub.add_parser("inspect", help="Inspect a repository for language adapters.")
+    ai.add_argument("path", nargs="?", default=".", help="Path to repository root.")
+    ai.add_argument("--format", choices=["json", "markdown"], default="markdown", help="Output format.")
+    ai.add_argument("--output", "-o", help="Write output to file.")
+
+    ae = adapters_sub.add_parser("explain", help="Explain a language adapter.")
+    ae.add_argument("adapter", help="Adapter name.")
+    ae.add_argument("--format", choices=["json", "markdown"], default="markdown", help="Output format.")
+
+    ap = adapters_sub.add_parser("plan", help="Generate a reproduction plan using adapters.")
+    ap.add_argument("path", nargs="?", default=".", help="Path to repository root.")
+    ap.add_argument("--adapter", help="Specific adapter to use.")
+    ap.add_argument("--format", choices=["json", "markdown"], default="markdown", help="Output format.")
+    ap.add_argument("--output", "-o", help="Write output to file.")
+
+    av = adapters_sub.add_parser("validate", help="Validate adapter detection.")
+    av.add_argument("path", nargs="?", default=".", help="Path to repository root.")
+
+    adoctor = adapters_sub.add_parser("doctor", help="Diagnose adapter runtime availability.")
+    adoctor.add_argument("path", nargs="?", default=".", help="Path to repository root.")
+
     # data command group
     data_parser = subparsers.add_parser("data", help="Data diagnostics.")
     data_sub = data_parser.add_subparsers(dest="data_command")
@@ -794,6 +822,8 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.command == "ecosystems":
         return _cmd_ecosystems(args)
+    if args.command == "adapters":
+        return _cmd_adapters(args)
 
     if args.command == "data":
         return _cmd_data(args)
@@ -5085,3 +5115,25 @@ def _cmd_matrix_compare(args: argparse.Namespace) -> int:
         print(f"Report written to {output}")
 
     return 0
+def _cmd_adapters(args):
+    from oss_paper_ci.adapter_cli import (
+        cmd_adapters_list, cmd_adapters_inspect, cmd_adapters_explain,
+        cmd_adapters_plan, cmd_adapters_validate, cmd_adapters_doctor,
+    )
+    sub = getattr(args, "adapters_command", None)
+    if sub is None:
+        return cmd_adapters_list()
+    if sub == "list":
+        return cmd_adapters_list(getattr(args, "format", "text"))
+    if sub == "inspect":
+        return cmd_adapters_inspect(getattr(args, "path", "."), getattr(args, "format", "markdown"), getattr(args, "output", None))
+    if sub == "explain":
+        return cmd_adapters_explain(getattr(args, "adapter", ""), getattr(args, "format", "markdown"))
+    if sub == "plan":
+        return cmd_adapters_plan(getattr(args, "path", "."), getattr(args, "format", "markdown"), getattr(args, "output", None), getattr(args, "adapter", None))
+    if sub == "validate":
+        return cmd_adapters_validate(getattr(args, "path", "."))
+    if sub == "doctor":
+        return cmd_adapters_doctor(getattr(args, "path", "."))
+    print(f"Unknown adapters subcommand: {sub}", file=sys.stderr)
+    return 2

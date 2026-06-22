@@ -101,6 +101,22 @@ oss-paper-ci eval compare --baseline tests/golden/evaluation_summary.json --curr
 | プロベナンスマニフェスト | `oss-paper-ci trust provenance .` | ローカルプロベナンスマニフェストを生成 |
 | 成果物検証 | `oss-paper-ci trust verify-artifacts .` | SHA256 チェックサムを検証 |
 
+
+## 言語アダプター
+
+言語アダプターは、異なる研究コードリポジトリを共通の再現性エビデンス構造に変換するための仕組みです。Python、R、Julia、MATLAB、Node.js、Rust、Java、C/C++、Make、Snakemake、Nextflow、Shell のプロジェクトを検出し、説明し、再現計画を生成できます。デフォルトでは計画とレポートのみを作成し、未知のコード実行やランタイムの自動インストールは行いません。
+
+```bash
+# アダプターの一覧表示
+oss-paper-ci adapters list
+
+# リポジトリのアダプター検出
+oss-paper-ci adapters inspect /path/to/repo
+
+# 再現計画の生成
+oss-paper-ci adapters plan /path/to/repo
+```
+
 ## セキュリティモデル
 
 - デフォルトモードは **dry-run**：コードは実行されず、依存関係はインストールされない

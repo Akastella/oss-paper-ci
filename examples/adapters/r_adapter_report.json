@@ -1,0 +1,28 @@
+{
+  "schema_version": "0.1",
+  "report_type": "oss-paper-ci-language-adapter-report",
+  "tool_version": "3.4.0rc1",
+  "path": ".",
+  "detected_adapters": [
+    {
+      "name": "r",
+      "display_name": "R",
+      "confidence": 0.4,
+      "evidence": [
+        "DESCRIPTION",
+        "scripts\\analyze.R"
+      ],
+      "supports_dry_run": true,
+      "supports_execute": false,
+      "runtime": {
+        "name": "Rscript",
+        "available": false
+      },
+      "limitations": [
+        "R runtime (Rscript) must be installed separately.",
+        "renv restoration requires renv package."
+      ]
+    }
+  ],
+  "recommended_adapter": "r"
+}

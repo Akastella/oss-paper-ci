@@ -1,0 +1,7 @@
+{
+  "schema_version": "0.1",
+  "report_type": "oss-paper-ci-language-adapter-report",
+  "tool_version": "3.4.0rc1",
+  "path": ".",
+  "detected_adapters": []
+}

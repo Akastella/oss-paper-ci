@@ -1,0 +1,27 @@
+{
+  "adapter_name": "python",
+  "steps": [
+    {
+      "command": "python -m pip install -e .",
+      "description": "Install project in editable mode",
+      "requires_network": true
+    },
+    {
+      "command": "python main.py",
+      "description": "Run main.py"
+    }
+  ],
+  "install_steps": [
+    {
+      "command": "python -m pip install -e .",
+      "description": "Install project in editable mode",
+      "requires_network": true
+    }
+  ],
+  "run_steps": [
+    {
+      "command": "python main.py",
+      "description": "Run main.py"
+    }
+  ]
+}
