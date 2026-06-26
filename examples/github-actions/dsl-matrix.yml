@@ -1,0 +1,90 @@
+# Example: Matrix execution with DSL v1
+#
+# This workflow runs DSL validation and session generation across multiple
+# Python versions.  Missing runtimes are handled gracefully.  No code is
+# executed; results are uploaded per variant.
+
+name: DSL Matrix
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  matrix:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11", "3.12"]
+      fail-fast: false
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install oss-paper-ci
+        run: pip install -e ".[dev]"
+
+      - name: Validate DSL
+        run: |
+          oss-paper-ci dsl validate reproducibility.yml \
+            --format json \
+            --output validation-py${{ matrix.python-version }}.json
+
+      - name: Generate execution plan
+        run: |
+          oss-paper-ci dsl plan reproducibility.yml \
+            --format json \
+            --output plan-py${{ matrix.python-version }}.json
+
+      - name: Detect adapters
+        run: |
+          oss-paper-ci adapters inspect . \
+            --format json \
+            --output adapters-py${{ matrix.python-version }}.json
+
+      - name: Check runtime availability
+        run: |
+          oss-paper-ci adapters doctor . \
+            --format json \
+            --output doctor-py${{ matrix.python-version }}.json
+
+      - name: Start session (dry-run)
+        run: |
+          oss-paper-ci session start . \
+            --name matrix-py${{ matrix.python-version }} \
+            --output-dir .oss-paper-ci-sessions/matrix-py${{ matrix.python-version }}
+
+      - name: Generate session report
+        run: |
+          oss-paper-ci session report \
+            .oss-paper-ci-sessions/matrix-py${{ matrix.python-version }} \
+            --format markdown \
+            --output session-py${{ matrix.python-version }}.md
+
+      - name: Upload matrix variant artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dsl-matrix-py${{ matrix.python-version }}
+          path: |
+            validation-py${{ matrix.python-version }}.json
+            plan-py${{ matrix.python-version }}.json
+            adapters-py${{ matrix.python-version }}.json
+            doctor-py${{ matrix.python-version }}.json
+            session-py${{ matrix.python-version }}.md
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "## DSL Matrix -- Python ${{ matrix.python-version }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          cat session-py${{ matrix.python-version }}.md >> $GITHUB_STEP_SUMMARY

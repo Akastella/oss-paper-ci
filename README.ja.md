@@ -264,6 +264,44 @@ oss-paper-ci matrix compare .oss-paper-ci-matrix --format markdown
 
 マトリクスはPythonバージョンを自動インストールしません。利用できないランタイムは「利用不可」としてマークされます。詳細は [docs/reproduction-matrix.md](docs/reproduction-matrix.md) を参照。
 
+## 再現性 DSL v1
+
+`reproducibility.yml` v1 で再現手順を明示的に宣言：
+
+```yaml
+version: 1
+project:
+  name: my-paper
+steps:
+  train:
+    command: python scripts/train.py
+    needs: []
+    produces: [results/model.json]
+  evaluate:
+    command: python scripts/evaluate.py
+    needs: [train]
+    produces: [results/metrics.json]
+safety:
+  network: false
+  allow_install: false
+```
+
+```bash
+# DSL 検証
+oss-paper-ci dsl validate reproducibility.yml
+
+# 実行計画生成（デフォルト dry-run）
+oss-paper-ci dsl plan reproducibility.yml --format markdown
+
+# DAG 出力（DOT 形式）
+oss-paper-ci dsl graph reproducibility.yml
+
+# レガシー設定移行
+oss-paper-ci dsl migrate old-reproducibility.yml --output reproducibility.yml
+```
+
+reproducibility.yml v1 は、再現手順を明示的に記述するための仕様です。ツールは手順を DAG に変換し、依存関係、成果物、指標、データ、ランタイム、安全境界を検査します。デフォルトでは計画とレポートのみを生成し、宣言されたコマンドを実行するには明示的な `--execute` が必要です。
+
 ## ドキュメント
 
 | トピック | リンク |

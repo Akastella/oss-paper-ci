@@ -1,0 +1,106 @@
+{
+  "steps": [
+    {
+      "step_id": "preprocess",
+      "command": "python scripts/preprocess.py",
+      "needs": [],
+      "produces": [
+        "data/processed/"
+      ],
+      "timeout": 120,
+      "depth": 0,
+      "parallel_group": 0,
+      "status": "ready"
+    },
+    {
+      "step_id": "train",
+      "command": "python scripts/train.py",
+      "needs": [
+        "preprocess"
+      ],
+      "produces": [
+        "results/model.json"
+      ],
+      "timeout": 600,
+      "depth": 1,
+      "parallel_group": 1,
+      "status": "ready"
+    },
+    {
+      "step_id": "evaluate",
+      "command": "python scripts/evaluate.py",
+      "needs": [
+        "train"
+      ],
+      "produces": [
+        "results/metrics.json"
+      ],
+      "timeout": 120,
+      "depth": 2,
+      "parallel_group": 2,
+      "status": "ready"
+    },
+    {
+      "step_id": "visualize",
+      "command": "python scripts/visualize.py",
+      "needs": [
+        "evaluate"
+      ],
+      "produces": [
+        "figures/"
+      ],
+      "timeout": 60,
+      "depth": 3,
+      "parallel_group": 3,
+      "status": "ready"
+    }
+  ],
+  "dag_summary": {
+    "topological_order": [
+      "preprocess",
+      "train",
+      "evaluate",
+      "visualize"
+    ],
+    "parallel_groups": [
+      [
+        "preprocess"
+      ],
+      [
+        "train"
+      ],
+      [
+        "evaluate"
+      ],
+      [
+        "visualize"
+      ]
+    ],
+    "critical_path": [
+      "preprocess",
+      "train",
+      "evaluate",
+      "visualize"
+    ],
+    "critical_path_duration": 900,
+    "cycles": [],
+    "missing_deps": {}
+  },
+  "validation": {
+    "findings": [],
+    "is_valid": true,
+    "checked_fields": 25
+  },
+  "safety": {
+    "findings": [],
+    "blocked_commands": [],
+    "requires_explicit_execute": false,
+    "requires_network": false,
+    "requires_install": false,
+    "safety_level": "safe"
+  },
+  "total_timeout": 900,
+  "parallel_group_count": 4,
+  "dry_run": true,
+  "warnings": []
+}

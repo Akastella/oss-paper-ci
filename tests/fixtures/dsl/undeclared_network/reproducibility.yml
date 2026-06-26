@@ -1,0 +1,37 @@
+version: 1
+project:
+  name: undeclared-network-pipeline
+  description: Pipeline with network=false but step uses wget
+environments:
+  default:
+    adapter: python
+    runtime: python
+    python: ">=3.10"
+    install:
+      - requirements.txt
+datasets:
+  demo-data:
+    path: data/
+    required: true
+    description: demo data
+steps:
+  download:
+    command: wget https://example.com/model.bin -O results/model.bin
+    adapter: python
+    needs: []
+    produces:
+      - results/model.bin
+    timeout: 60
+  evaluate:
+    command: python scripts/evaluate.py
+    adapter: python
+    needs: [download]
+    produces:
+      - results/metrics.json
+    timeout: 30
+artifacts:
+  - results/metrics.json
+safety:
+  network: false
+  allow_install: false
+  allow_gpu: false

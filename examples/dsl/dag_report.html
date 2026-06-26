@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>DAG Explanation</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:system-ui,-apple-system,sans-serif;background:#f5f5f5;color:#222;padding:24px;line-height:1.5}
+h1{font-size:1.5rem;margin-bottom:8px}
+h2{font-size:1.1rem;margin:16px 0 8px;border-bottom:1px solid #ccc;padding-bottom:4px}
+table{border-collapse:collapse;width:100%;margin:8px 0 16px;font-size:0.9rem}
+th,td{border:1px solid #ccc;padding:6px 10px;text-align:left}
+th{background:#e8e8e8;font-weight:600}
+tr:nth-child(even){background:#fafafa}
+.code{font-family:monospace;font-size:0.85rem;background:#f0f0f0;padding:2px 5px;border-radius:3px}
+.badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:0.78rem;font-weight:600}
+.badge-error{background:#fdd;color:#900}
+.badge-warning{background:#ffd;color:#660}
+.badge-ok{background:#dfd;color:#060}
+.badge-blocked{background:#fdd;color:#900}
+.summary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:12px 0}
+.summary-card{background:#fff;border:1px solid #ddd;border-radius:6px;padding:12px;text-align:center}
+.summary-card .value{font-size:1.4rem;font-weight:700}
+.summary-card .label{font-size:0.8rem;color:#666}
+.critical{background:#ffecec}
+.graph-container{background:#fff;border:1px solid #ddd;border-radius:6px;padding:16px;margin:12px 0;overflow-x:auto}
+.graph-container svg{max-width:100%;height:auto}
+</style>
+</head>
+<body>
+<h1>DAG Explanation</h1>
+<div class="summary-grid">
+<div class="summary-card"><div class="value">4</div><div class="label">Nodes</div></div>
+<div class="summary-card"><div class="value">3</div><div class="label">Edges</div></div>
+<div class="summary-card"><div class="value">4</div><div class="label">Parallel Groups</div></div>
+<div class="summary-card"><div class="value">900s</div><div class="label">Critical Path Duration</div></div>
+<div class="summary-card"><div class="value"><span class="badge badge-ok">&#10003; Valid</span></div><div class="label">DAG Status</div></div>
+</div>
+
+<h2>Parallel Groups</h2>
+<table>
+<tr><th>Group</th><th>Steps</th></tr>
+<tr><td>0</td><td><span class="code">preprocess</span></td></tr>
+<tr><td>1</td><td><span class="code">train</span></td></tr>
+<tr><td>2</td><td><span class="code">evaluate</span></td></tr>
+<tr><td>3</td><td><span class="code">visualize</span></td></tr>
+</table>
+
+<h2>Critical Path</h2>
+<p><span class="code">preprocess</span> &rarr; <span class="code">train</span> &rarr; <span class="code">evaluate</span> &rarr; <span class="code">visualize</span></p>
+<p><strong>Total duration:</strong> 900s</p>
+
+<h2>Nodes</h2>
+<table>
+<tr><th>Step ID</th><th>Command</th><th>In</th><th>Out</th><th>Depth</th><th>Level</th><th>Timeout</th></tr>
+<tr class="critical"><td class="code">evaluate</td><td>python scripts/evaluate.py</td><td>1</td><td>1</td><td>2</td><td>2</td><td>120s</td></tr>
+<tr class="critical"><td class="code">preprocess</td><td>python scripts/preprocess.py</td><td>0</td><td>1</td><td>0</td><td>0</td><td>120s</td></tr>
+<tr class="critical"><td class="code">train</td><td>python scripts/train.py</td><td>1</td><td>1</td><td>1</td><td>1</td><td>600s</td></tr>
+<tr class="critical"><td class="code">visualize</td><td>python scripts/visualize.py</td><td>1</td><td>0</td><td>3</td><td>3</td><td>60s</td></tr>
+</table>
+
+<h2>Edges</h2>
+<table>
+<tr><th>#</th><th>From</th><th>To</th></tr>
+<tr><td>1</td><td class="code">evaluate</td><td class="code">visualize</td></tr>
+<tr><td>2</td><td class="code">preprocess</td><td class="code">train</td></tr>
+<tr><td>3</td><td class="code">train</td><td class="code">evaluate</td></tr>
+</table>
+
+</body>
+</html>

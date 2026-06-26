@@ -1,0 +1,53 @@
+version: 1
+project:
+  name: multistep-pipeline
+  description: A pipeline with complex dependencies (A->B->D, A->C->D)
+environments:
+  default:
+    adapter: python
+    runtime: python
+    python: ">=3.10"
+    install:
+      - requirements.txt
+datasets:
+  input-data:
+    path: data/
+    required: true
+    description: input dataset
+steps:
+  preprocess:
+    command: python scripts/preprocess.py
+    adapter: python
+    needs: []
+    produces:
+      - results/preprocessed.json
+    timeout: 30
+  feature-engineering:
+    command: python scripts/features.py
+    adapter: python
+    needs: [preprocess]
+    produces:
+      - results/features.json
+    timeout: 30
+  augment:
+    command: python scripts/augment.py
+    adapter: python
+    needs: [preprocess]
+    produces:
+      - results/augmented.json
+    timeout: 30
+  train:
+    command: python scripts/train.py
+    adapter: python
+    needs: [feature-engineering, augment]
+    produces:
+      - results/model.json
+    timeout: 60
+artifacts:
+  - results/model.json
+expected:
+  metrics: {}
+safety:
+  network: false
+  allow_install: false
+  allow_gpu: false

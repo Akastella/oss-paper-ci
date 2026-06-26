@@ -1,5 +1,42 @@
 # Changelog
 
+## [3.6.0rc1] - 2026-06-26
+
+### Added
+- Reproducibility DSL v1: formal schema for declaring reproduction workflows
+- DAG planner: topological sort, cycle detection, missing dependency detection
+- `dsl validate` validates reproducibility.yml v1 schema
+- `dsl normalize` converts any schema version to normalized v1 JSON
+- `dsl graph` outputs DAG in DOT format
+- `dsl plan` generates execution plan with dependency order and parallel groups
+- `dsl explain` generates human-readable DAG report (markdown/HTML)
+- `dsl migrate` migrates legacy reproducibility.yml to v1 format
+- Command safety checks: blocks dangerous commands, warns on undeclared network/install
+- Path safety validation for all declared paths
+- Integration with reproduce plan/run (uses DAG execution order)
+- Integration with session (records dsl_version, dag_hash, step_status)
+- Integration with evidence (includes DSL validation summary)
+- Integration with trust (checks DSL safety declarations)
+- 13 test fixtures for DSL validation scenarios
+- 8 example files with real CLI-generated outputs
+- 4 GitHub Actions workflow examples for DSL
+- 7 new documentation pages for DSL/DAG
+- README i18n updates (English, Chinese, Japanese)
+- 19 new test files for DSL/DAG coverage
+- Truthfulness checks for DSL documentation
+
+### Changed
+- `reproduce plan` now uses DAG execution order when DSL v1 is present
+- `session start` records DSL metadata in manifest
+- `evidence report` includes DSL validation summary section
+- `trust audit` includes DSL safety findings
+- Version bumped to 3.6.0rc1
+
+### Notes
+- Legacy reproducibility.yml (v0.2/v0.3) remains fully supported
+- DSL commands default to dry-run mode; `--execute` required for actual execution
+- No automatic code execution, network access, or dependency installation
+
 ## [3.5.0rc1] - 2026-06-26
 
 ### Added

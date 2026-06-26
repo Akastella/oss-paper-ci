@@ -1,0 +1,8 @@
+this is not valid YAML {{{
+  - broken
+  missing: colon
+  nested:
+    too: [deep: {wrong}
+version: [invalid]
+steps:
+  - no: structure

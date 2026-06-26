@@ -289,6 +289,44 @@ oss-paper-ci matrix compare .oss-paper-ci-matrix --format markdown
 
 Matrix does not auto-install Python versions; missing runtimes are marked unavailable. See [docs/reproduction-matrix.md](docs/reproduction-matrix.md).
 
+## Reproducibility DSL v1
+
+Declare reproduction workflows explicitly with `reproducibility.yml` v1:
+
+```yaml
+version: 1
+project:
+  name: my-paper
+steps:
+  train:
+    command: python scripts/train.py
+    needs: []
+    produces: [results/model.json]
+  evaluate:
+    command: python scripts/evaluate.py
+    needs: [train]
+    produces: [results/metrics.json]
+safety:
+  network: false
+  allow_install: false
+```
+
+```bash
+# Validate the DSL
+oss-paper-ci dsl validate reproducibility.yml
+
+# Generate execution plan (dry-run by default)
+oss-paper-ci dsl plan reproducibility.yml --format markdown
+
+# Output DAG in DOT format
+oss-paper-ci dsl graph reproducibility.yml
+
+# Migrate legacy config
+oss-paper-ci dsl migrate old-reproducibility.yml --output reproducibility.yml
+```
+
+The DSL compiles steps into a DAG, validates dependencies, detects cycles, checks safety, and generates execution plans. Default mode is dry-run only.
+
 ## Documentation
 
 | Topic | Link |

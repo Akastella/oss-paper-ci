@@ -1,0 +1,14 @@
+digraph DAG {
+    rankdir=TB;
+    node [shape=box, style="filled,rounded", fontname="Helvetica"];
+    edge [fontname="Helvetica", fontsize=10];
+
+    evaluate [label="evaluate\\n120s", fillcolor="#ffcccc"];
+    preprocess [label="preprocess\\n120s", fillcolor="#ffcccc"];
+    train [label="train\\n600s", fillcolor="#ffcccc"];
+    visualize [label="visualize\\n60s", fillcolor="#ffcccc"];
+
+    evaluate -> visualize [color="red", penwidth=2];
+    preprocess -> train [color="red", penwidth=2];
+    train -> evaluate [color="red", penwidth=2];
+}

@@ -1,0 +1,37 @@
+version: 1
+project:
+  name: unsafe-command-pipeline
+  description: Pipeline with a step containing unsafe sudo command
+environments:
+  default:
+    adapter: python
+    runtime: python
+    python: ">=3.10"
+    install:
+      - requirements.txt
+datasets:
+  demo-data:
+    path: data/
+    required: true
+    description: demo data
+steps:
+  setup:
+    command: sudo pip install torch
+    adapter: python
+    needs: []
+    produces:
+      - results/setup.json
+    timeout: 60
+  train:
+    command: python scripts/train.py
+    adapter: python
+    needs: [setup]
+    produces:
+      - results/model.json
+    timeout: 60
+artifacts:
+  - results/model.json
+safety:
+  network: false
+  allow_install: false
+  allow_gpu: false

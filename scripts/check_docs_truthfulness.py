@@ -588,7 +588,7 @@ def check_evidence_docs_no_overclaim(root: Path) -> list[dict]:
                 if pattern in content:
                     lines_with_pattern = [l for l in content.splitlines() if pattern in l]
                     for line in lines_with_pattern:
-                        if not any(neg in line for neg in ["not", "no ", "don't", "doesn't", "do not", "isn't", "does not"]):
+                        if not any(neg in line for neg in ["not", "no ", "don't", "doesn't", "do not", "isn't", "does not", "never"]):
                             issues.append({
                                 "file": doc_path,
                                 "line": 0,
@@ -612,6 +612,7 @@ VALID_CLI_COMMANDS = {
     "intake", "autoplan",
     "session", "matrix",
     "adapters",
+    "dsl",
 }
 
 
@@ -666,6 +667,316 @@ def check_adapter_limitations_linked(root: Path) -> list[dict]:
                 "message": "README.md does not link to adapter-limitations.md",
             })
     return issues
+
+
+# --- DSL check functions ---
+
+def _check_dsl_subcommand_exists(root: Path, subcommand: str, rule_name: str) -> list[dict]:
+    """Check that a dsl subcommand exists in CLI source."""
+    issues = []
+    cli_path = root / "src" / "oss_paper_ci" / "cli.py"
+    if cli_path.exists():
+        content = cli_path.read_text(encoding="utf-8")
+        if subcommand not in content:
+            issues.append({
+                "file": "src/oss_paper_ci/cli.py",
+                "line": 0,
+                "severity": "major",
+                "rule": rule_name,
+                "message": f"dsl {subcommand} subcommand not found in cli.py",
+            })
+    return issues
+
+
+def check_dsl_validate_command(root: Path) -> list[dict]:
+    """Check that 'dsl validate' subcommand exists in CLI."""
+    return _check_dsl_subcommand_exists(root, "validate", "dsl-validate-command-missing")
+
+
+def check_dsl_normalize_command(root: Path) -> list[dict]:
+    """Check that 'dsl normalize' subcommand exists in CLI."""
+    return _check_dsl_subcommand_exists(root, "normalize", "dsl-normalize-command-missing")
+
+
+def check_dsl_graph_command(root: Path) -> list[dict]:
+    """Check that 'dsl graph' subcommand exists in CLI."""
+    return _check_dsl_subcommand_exists(root, "graph", "dsl-graph-command-missing")
+
+
+def check_dsl_plan_command(root: Path) -> list[dict]:
+    """Check that 'dsl plan' subcommand exists in CLI."""
+    return _check_dsl_subcommand_exists(root, "plan", "dsl-plan-command-missing")
+
+
+def check_dsl_explain_command(root: Path) -> list[dict]:
+    """Check that 'dsl explain' subcommand exists in CLI."""
+    return _check_dsl_subcommand_exists(root, "explain", "dsl-explain-command-missing")
+
+
+def check_dsl_migrate_command(root: Path) -> list[dict]:
+    """Check that 'dsl migrate' subcommand exists in CLI."""
+    return _check_dsl_subcommand_exists(root, "migrate", "dsl-migrate-command-missing")
+
+
+def check_dsl_no_auto_execute_claim(root: Path) -> list[dict]:
+    """Check docs don't claim DSL auto-executes or runs automatically."""
+    issues = []
+    docs_to_check = [
+        "README.md", "README.zh-CN.md", "README.ja.md",
+        "docs/dsl.md", "docs/dsl-spec.md", "docs/reproducibility-dsl.md",
+    ]
+    auto_execute_patterns = [
+        "auto-execute",
+        "automatically runs",
+        "one-click",
+    ]
+    for doc_path in docs_to_check:
+        path = root / doc_path
+        if path.exists():
+            content = path.read_text(encoding="utf-8").lower()
+            for pattern in auto_execute_patterns:
+                if pattern in content:
+                    lines_with_pattern = [l for l in content.splitlines() if pattern in l]
+                    for line in lines_with_pattern:
+                        if not any(neg in line for neg in ["not", "no ", "don't", "doesn't", "do not", "isn't", "does not", "never"]):
+                            issues.append({
+                                "file": doc_path,
+                                "line": 0,
+                                "severity": "blocker",
+                                "rule": "dsl-auto-execute-claim",
+                                "message": f"{doc_path} claims auto-execution: '{pattern}'",
+                            })
+    return issues
+
+
+def check_dsl_no_guaranteed_reproduction(root: Path) -> list[dict]:
+    """Check docs don't claim guaranteed reproduction success."""
+    issues = []
+    docs_to_check = [
+        "README.md", "README.zh-CN.md", "README.ja.md",
+        "docs/dsl.md", "docs/dsl-spec.md", "docs/reproducibility-dsl.md",
+    ]
+    guarantee_patterns = [
+        "guaranteed reproduction",
+        "guarantee reproducibility",
+        "always reproduce",
+        "reproduction is guaranteed",
+    ]
+    for doc_path in docs_to_check:
+        path = root / doc_path
+        if path.exists():
+            content = path.read_text(encoding="utf-8").lower()
+            for pattern in guarantee_patterns:
+                if pattern in content:
+                    lines_with_pattern = [l for l in content.splitlines() if pattern in l]
+                    for line in lines_with_pattern:
+                        if not any(neg in line for neg in ["not", "no ", "don't", "doesn't", "do not", "isn't", "does not", "never"]):
+                            issues.append({
+                                "file": doc_path,
+                                "line": 0,
+                                "severity": "blocker",
+                                "rule": "dsl-guaranteed-reproduction",
+                                "message": f"{doc_path} claims guaranteed reproduction: '{pattern}'",
+                            })
+    return issues
+
+
+def check_dsl_no_judge_correctness(root: Path) -> list[dict]:
+    """Check docs don't claim DSL judges scientific correctness."""
+    issues = []
+    docs_to_check = [
+        "README.md", "README.zh-CN.md", "README.ja.md",
+        "docs/dsl.md", "docs/dsl-spec.md", "docs/reproducibility-dsl.md",
+    ]
+    judge_patterns = [
+        "judges scientific",
+        "judging scientific",
+        "determines correctness",
+        "verifies scientific correctness",
+        "proves scientific correctness",
+    ]
+    for doc_path in docs_to_check:
+        path = root / doc_path
+        if path.exists():
+            content = path.read_text(encoding="utf-8").lower()
+            for pattern in judge_patterns:
+                if pattern in content:
+                    lines_with_pattern = [l for l in content.splitlines() if pattern in l]
+                    for line in lines_with_pattern:
+                        if not any(neg in line for neg in ["not", "no ", "don't", "doesn't", "do not", "isn't", "does not", "never"]):
+                            issues.append({
+                                "file": doc_path,
+                                "line": 0,
+                                "severity": "blocker",
+                                "rule": "dsl-judge-correctness",
+                                "message": f"{doc_path} claims judging scientific correctness: '{pattern}'",
+                            })
+    return issues
+
+
+def check_dsl_no_auto_fix(root: Path) -> list[dict]:
+    """Check docs don't claim DSL auto-fixes code."""
+    issues = []
+    docs_to_check = [
+        "README.md", "README.zh-CN.md", "README.ja.md",
+        "docs/dsl.md", "docs/dsl-spec.md", "docs/reproducibility-dsl.md",
+    ]
+    auto_fix_patterns = [
+        "auto-fix",
+        "autofix",
+        "automatically fix",
+        "auto-correct",
+        "self-healing",
+    ]
+    for doc_path in docs_to_check:
+        path = root / doc_path
+        if path.exists():
+            content = path.read_text(encoding="utf-8").lower()
+            for pattern in auto_fix_patterns:
+                if pattern in content:
+                    lines_with_pattern = [l for l in content.splitlines() if pattern in l]
+                    for line in lines_with_pattern:
+                        if not any(neg in line for neg in ["not", "no ", "don't", "doesn't", "do not", "isn't", "does not", "never"]):
+                            issues.append({
+                                "file": doc_path,
+                                "line": 0,
+                                "severity": "blocker",
+                                "rule": "dsl-auto-fix-claim",
+                                "message": f"{doc_path} claims auto-fixing: '{pattern}'",
+                            })
+    return issues
+
+
+def check_dsl_no_auto_install_deps(root: Path) -> list[dict]:
+    """Check docs don't claim DSL auto-installs dependencies."""
+    issues = []
+    docs_to_check = [
+        "README.md", "README.zh-CN.md", "README.ja.md",
+        "docs/dsl.md", "docs/dsl-spec.md", "docs/reproducibility-dsl.md",
+    ]
+    auto_install_patterns = [
+        "auto-install",
+        "automatically install",
+        "installs dependencies",
+        "auto-setup",
+    ]
+    for doc_path in docs_to_check:
+        path = root / doc_path
+        if path.exists():
+            content = path.read_text(encoding="utf-8").lower()
+            for pattern in auto_install_patterns:
+                if pattern in content:
+                    lines_with_pattern = [l for l in content.splitlines() if pattern in l]
+                    for line in lines_with_pattern:
+                        if not any(neg in line for neg in ["not", "no ", "don't", "doesn't", "do not", "isn't", "does not", "never"]):
+                            issues.append({
+                                "file": doc_path,
+                                "line": 0,
+                                "severity": "blocker",
+                                "rule": "dsl-auto-install-deps",
+                                "message": f"{doc_path} claims auto-installing dependencies: '{pattern}'",
+                            })
+    return issues
+
+
+def check_dsl_dry_run_default(root: Path) -> list[dict]:
+    """Check that README mentions DSL defaults to dry-run."""
+    issues = []
+    readme = root / "README.md"
+    if readme.exists():
+        content = readme.read_text(encoding="utf-8").lower()
+        if "dsl" in content and "dry-run" not in content and "dry run" not in content:
+            issues.append({
+                "file": "README.md",
+                "line": 0,
+                "severity": "major",
+                "rule": "dsl-dry-run-not-mentioned",
+                "message": "README.md mentions DSL but doesn't state it defaults to dry-run",
+            })
+    return issues
+
+
+def check_reproducibility_schema_exists(root: Path) -> list[dict]:
+    """Check that docs/reproducibility-schema-v1.md exists."""
+    issues = []
+    schema_path = root / "docs" / "reproducibility-schema-v1.md"
+    if not schema_path.exists():
+        issues.append({
+            "file": "docs/reproducibility-schema-v1.md",
+            "line": 0,
+            "severity": "major",
+            "rule": "reproducibility-schema-missing",
+            "message": "docs/reproducibility-schema-v1.md not found",
+        })
+    return issues
+
+
+def check_dsl_examples_exist(root: Path) -> list[dict]:
+    """Check that examples/dsl directory exists."""
+    issues = []
+    dsl_dir = root / "examples" / "dsl"
+    if not dsl_dir.exists():
+        issues.append({
+            "file": "examples/dsl",
+            "line": 0,
+            "severity": "major",
+            "rule": "dsl-examples-missing",
+            "message": "examples/dsl/ directory not found",
+        })
+    return issues
+
+
+def check_github_actions_dsl_examples(root: Path) -> list[dict]:
+    """Check that GitHub Actions DSL examples exist."""
+    issues = []
+    has_dsl_example = False
+
+    # Check examples/github-actions/ for DSL examples
+    examples_dir = root / "examples" / "github-actions"
+    if examples_dir.exists():
+        for wf in examples_dir.glob("dsl-*.yml"):
+            has_dsl_example = True
+            break
+
+    # Also check .github/workflows/ for DSL references
+    if not has_dsl_example:
+        workflows_dir = root / ".github" / "workflows"
+        if workflows_dir.exists():
+            for wf in workflows_dir.glob("*.yml"):
+                content = wf.read_text(encoding="utf-8", errors="replace")
+                if "dsl" in content.lower() or "reproducibility" in content.lower():
+                    has_dsl_example = True
+                    break
+
+    if not has_dsl_example:
+        issues.append({
+            "file": ".github/workflows/",
+            "line": 0,
+            "severity": "major",
+            "rule": "github-actions-dsl-example-missing",
+            "message": "No GitHub Actions workflow references DSL or reproducibility",
+        })
+    return issues
+
+
+def check_no_absolute_paths_in_dsl_reports(root: Path) -> list[dict]:
+    """Check DSL example reports don't contain absolute paths."""
+    issues = []
+    reports_dir = root / "examples" / "dsl"
+    if reports_dir.exists():
+        for report in reports_dir.rglob("*"):
+            if report.is_file() and report.suffix in (".json", ".md", ".yml", ".yaml"):
+                content = report.read_text(encoding="utf-8", errors="replace")
+                if "C:\\" in content or "/home/" in content or "/Users/" in content:
+                    issues.append({
+                        "file": f"examples/dsl/{report.name}",
+                        "line": 0,
+                        "severity": "major",
+                        "rule": "dsl-absolute-path-in-report",
+                        "message": f"examples/dsl/{report.name} contains absolute paths",
+                    })
+    return issues
+
 
 # Files that exist in the project
 VALID_DOCS = set()
@@ -1102,6 +1413,24 @@ def scan_project(root: Path) -> list[dict]:
     all_issues.extend(check_adapter_docs_exist(root))
     all_issues.extend(check_adapter_examples_exist(root))
     all_issues.extend(check_adapter_limitations_linked(root))
+
+    # DSL checks
+    all_issues.extend(check_dsl_validate_command(root))
+    all_issues.extend(check_dsl_normalize_command(root))
+    all_issues.extend(check_dsl_graph_command(root))
+    all_issues.extend(check_dsl_plan_command(root))
+    all_issues.extend(check_dsl_explain_command(root))
+    all_issues.extend(check_dsl_migrate_command(root))
+    all_issues.extend(check_dsl_no_auto_execute_claim(root))
+    all_issues.extend(check_dsl_no_guaranteed_reproduction(root))
+    all_issues.extend(check_dsl_no_judge_correctness(root))
+    all_issues.extend(check_dsl_no_auto_fix(root))
+    all_issues.extend(check_dsl_no_auto_install_deps(root))
+    all_issues.extend(check_dsl_dry_run_default(root))
+    all_issues.extend(check_reproducibility_schema_exists(root))
+    all_issues.extend(check_dsl_examples_exist(root))
+    all_issues.extend(check_github_actions_dsl_examples(root))
+    all_issues.extend(check_no_absolute_paths_in_dsl_reports(root))
 
     return all_issues
 
