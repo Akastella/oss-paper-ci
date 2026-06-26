@@ -611,7 +611,61 @@ VALID_CLI_COMMANDS = {
     "trust", "security", "evidence",
     "intake", "autoplan",
     "session", "matrix",
+    "adapters",
 }
+
+
+def check_adapter_docs_exist(root: Path) -> list[dict]:
+    """Check that adapter documentation files exist."""
+    issues = []
+    required_docs = [
+        "docs/adapter-schema.md",
+        "docs/adapter-registry.md",
+        "docs/adapter-safety.md",
+        "docs/adapter-limitations.md",
+    ]
+    for doc_path in required_docs:
+        if not (root / doc_path).exists():
+            issues.append({
+                "file": doc_path,
+                "line": 0,
+                "severity": "major",
+                "rule": "adapter-doc-missing",
+                "message": f"Required adapter doc missing: {doc_path}",
+            })
+    return issues
+
+
+def check_adapter_examples_exist(root: Path) -> list[dict]:
+    """Check that adapter examples exist."""
+    issues = []
+    examples_dir = root / "examples" / "adapters"
+    if not examples_dir.exists():
+        issues.append({
+            "file": "examples/adapters",
+            "line": 0,
+            "severity": "major",
+            "rule": "adapter-examples-missing",
+            "message": "examples/adapters/ directory not found",
+        })
+    return issues
+
+
+def check_adapter_limitations_linked(root: Path) -> list[dict]:
+    """Check that adapter-limitations.md is linked from README."""
+    issues = []
+    readme = root / "README.md"
+    if readme.exists():
+        content = readme.read_text(encoding="utf-8")
+        if "adapter-limitations" not in content:
+            issues.append({
+                "file": "README.md",
+                "line": 0,
+                "severity": "major",
+                "rule": "adapter-limitations-not-linked",
+                "message": "README.md does not link to adapter-limitations.md",
+            })
+    return issues
 
 # Files that exist in the project
 VALID_DOCS = set()
@@ -1032,12 +1086,22 @@ def scan_project(root: Path) -> list[dict]:
     all_issues.extend(check_evidence_examples_exist(root))
     all_issues.extend(check_evidence_docs_no_overclaim(root))
 
+    # Adapter checks
+    all_issues.extend(check_adapter_docs_exist(root))
+    all_issues.extend(check_adapter_examples_exist(root))
+    all_issues.extend(check_adapter_limitations_linked(root))
+
     # Intake & autoplan checks
     all_issues.extend(check_intake_command_exists(root))
     all_issues.extend(check_autoplan_command_exists(root))
     all_issues.extend(check_intake_examples_exist(root))
     all_issues.extend(check_intake_docs_no_overclaim(root))
     all_issues.extend(check_i18n_intake_section(root))
+
+    # Adapter checks
+    all_issues.extend(check_adapter_docs_exist(root))
+    all_issues.extend(check_adapter_examples_exist(root))
+    all_issues.extend(check_adapter_limitations_linked(root))
 
     return all_issues
 

@@ -1,0 +1,8 @@
+[project]
+name = "example-python-research"
+version = "0.1.0"
+description = "Example Python research project for adapter testing"
+requires-python = ">=3.10"
+dependencies = [
+    "numpy>=1.20",
+]

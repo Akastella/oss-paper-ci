@@ -1,9 +1,18 @@
 """Shell script adapter."""
 from __future__ import annotations
+import re
 from pathlib import Path
 from .base import AdapterBase, AdapterDetection, AdapterPlan, ArtifactRule, SafetyRule, Step
 
 _DANGEROUS_PATTERNS = ["rm -rf /", "rm -rf ~", "rm -rf /*", "mkfs.", "dd if=", "> /dev/sd", "chmod -R 777 /", "curl | bash", "wget | bash", "curl | sh", "wget | sh", "eval $(curl", "eval $(wget"]
+
+# Regex patterns for dangerous commands with arguments
+_DANGEROUS_REGEX = [
+    re.compile(r"curl\s+.*\|\s*(ba)?sh"),
+    re.compile(r"wget\s+.*\|\s*(ba)?sh"),
+    re.compile(r"eval\s+\$\(curl"),
+    re.compile(r"eval\s+\$\(wget"),
+]
 
 class ShellAdapter(AdapterBase):
     @property
@@ -41,6 +50,8 @@ class ShellAdapter(AdapterBase):
             content = script_path.read_text(encoding="utf-8", errors="ignore")
             for pattern in _DANGEROUS_PATTERNS:
                 if pattern in content: return True
+            for regex in _DANGEROUS_REGEX:
+                if regex.search(content): return True
         except Exception: pass
         return False
     def safety_rules(self, path):

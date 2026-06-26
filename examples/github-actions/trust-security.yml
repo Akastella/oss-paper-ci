@@ -1,0 +1,43 @@
+name: Trust & Security Scan
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  trust-security:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install oss-paper-ci
+        run: pip install -e .
+
+      - name: Run security scan
+        run: |
+          oss-paper-ci security scan . --format json > security_report.json || true
+
+      - name: Run trust audit
+        run: |
+          oss-paper-ci trust audit . --format json > trust_report.json || true
+
+      - name: Run evidence report
+        run: |
+          oss-paper-ci evidence report . --format json > evidence_report.json || true
+
+      - name: Upload reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: trust-security-reports
+          path: |
+            security_report.json
+            trust_report.json
+            evidence_report.json

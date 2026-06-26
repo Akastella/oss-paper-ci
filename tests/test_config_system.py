@@ -383,7 +383,7 @@ class TestCLIIntegration:
             capture_output=True, text=True, cwd=ROOT, timeout=10,
         )
         assert result.returncode == 0
-        assert "3.4.0rc1" in result.stdout
+        assert "3.5.0rc1" in result.stdout
 
     def test_scan_with_profile(self):
         result = subprocess.run(
@@ -616,15 +616,15 @@ class TestVersionConsistency:
 
     def test_init_version(self):
         content = (ROOT / "src" / "oss_paper_ci" / "__init__.py").read_text()
-        assert "3.4.0rc1" in content
+        assert "3.5.0rc1" in content
 
     def test_pyproject_version(self):
         content = (ROOT / "pyproject.toml").read_text()
-        assert 'version = "3.4.0rc1"' in content
+        assert 'version = "3.5.0rc1"' in content
 
     def test_cli_version_output(self):
         result = subprocess.run(
             [sys.executable, "-m", "oss_paper_ci", "version"],
             capture_output=True, text=True, cwd=ROOT, timeout=10,
         )
-        assert "3.4.0rc1" in result.stdout
+        assert "3.5.0rc1" in result.stdout

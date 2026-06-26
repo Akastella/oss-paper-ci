@@ -1,0 +1,6 @@
+{
+  "name": "example-node-research",
+  "version": "1.0.0",
+  "description": "Example Node.js project for adapter testing",
+  "main": "index.js"
+}
