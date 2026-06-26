@@ -264,6 +264,44 @@ oss-paper-ci matrix compare .oss-paper-ci-matrix --format markdown
 
 矩阵不会自动安装 Python 版本；缺失的运行时标记为不可用。详见 [docs/reproduction-matrix.md](docs/reproduction-matrix.md)。
 
+## 复现 DSL v1
+
+使用 `reproducibility.yml` v1 显式声明复现流程：
+
+```yaml
+version: 1
+project:
+  name: my-paper
+steps:
+  train:
+    command: python scripts/train.py
+    needs: []
+    produces: [results/model.json]
+  evaluate:
+    command: python scripts/evaluate.py
+    needs: [train]
+    produces: [results/metrics.json]
+safety:
+  network: false
+  allow_install: false
+```
+
+```bash
+# 验证 DSL
+oss-paper-ci dsl validate reproducibility.yml
+
+# 生成执行计划（默认 dry-run）
+oss-paper-ci dsl plan reproducibility.yml --format markdown
+
+# 输出 DAG（DOT 格式）
+oss-paper-ci dsl graph reproducibility.yml
+
+# 迁移旧配置
+oss-paper-ci dsl migrate old-reproducibility.yml --output reproducibility.yml
+```
+
+reproducibility.yml v1 用来声明复现流程，而不是隐式猜测命令。工具会把步骤编译成 DAG，检查依赖、产物、指标、数据、运行时和安全边界。默认只生成计划和报告；只有显式使用 `--execute` 才会运行声明的命令。
+
 ## 文档
 
 | 主题 | 链接 |

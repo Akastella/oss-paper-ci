@@ -1,0 +1,21 @@
+version: "0.3"
+project_name: demo
+project_type: ml
+environment:
+  type: python
+  file: requirements.txt
+  python: "3.11"
+data:
+  - id: demo-data
+    path: data/input.csv
+    availability: public
+experiments:
+  - id: train
+    command: python scripts/train.py
+    timeout_seconds: 3600
+    safe_to_run: true
+    expected_outputs: [results/model.pkl]
+figures:
+  - id: loss-curve
+    path: figures/loss_curve.png
+    generated_by: [train]

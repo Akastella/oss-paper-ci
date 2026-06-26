@@ -252,6 +252,45 @@ def main(argv: list[str] | None = None) -> int:
     rvb.add_argument("--format", choices=["markdown", "json"], default="markdown", help="Output format (default: markdown).")
     rvb.add_argument("--output", "-o", help="Write output to file instead of stdout.")
 
+    # dsl command group
+    dsl_parser = subparsers.add_parser("dsl", help="Reproducibility DSL v1: validate, normalize, graph, plan, explain, migrate.")
+    dsl_sub = dsl_parser.add_subparsers(dest="dsl_command")
+
+    # dsl validate
+    dv = dsl_sub.add_parser("validate", help="Validate a reproducibility.yml file.")
+    dv.add_argument("path", help="Path to reproducibility.yml")
+    dv.add_argument("--format", choices=["markdown", "json"], default="markdown", help="Output format (default: markdown).")
+    dv.add_argument("--output", "-o", help="Write report to file instead of stdout.")
+
+    # dsl normalize
+    dn = dsl_sub.add_parser("normalize", help="Normalize reproducibility.yml to canonical v1 JSON.")
+    dn.add_argument("path", help="Path to reproducibility.yml")
+    dn.add_argument("--format", choices=["json"], default="json", help="Output format (default: json).")
+    dn.add_argument("--output", "-o", help="Write output to file instead of stdout.")
+
+    # dsl graph
+    dg = dsl_sub.add_parser("graph", help="Output DAG in DOT graph format.")
+    dg.add_argument("path", help="Path to reproducibility.yml")
+    dg.add_argument("--output", "-o", help="Write DOT output to file instead of stdout.")
+
+    # dsl plan
+    dp = dsl_sub.add_parser("plan", help="Generate execution plan from DSL.")
+    dp.add_argument("path", help="Path to reproducibility.yml")
+    dp.add_argument("--format", choices=["markdown", "json", "html"], default="markdown", help="Output format (default: markdown).")
+    dp.add_argument("--output", "-o", help="Write plan to file instead of stdout.")
+
+    # dsl explain
+    de = dsl_sub.add_parser("explain", help="Generate human-readable DAG report.")
+    de.add_argument("path", help="Path to reproducibility.yml")
+    de.add_argument("--format", choices=["markdown", "json", "html"], default="markdown", help="Output format (default: markdown).")
+    de.add_argument("--output", "-o", help="Write report to file instead of stdout.")
+
+    # dsl migrate
+    dm = dsl_sub.add_parser("migrate", help="Migrate legacy reproducibility.yml to v1.")
+    dm.add_argument("path", help="Path to legacy reproducibility.yml")
+    dm.add_argument("--output", "-o", help="Write migrated file to path.")
+    dm.add_argument("--format", choices=["json", "markdown"], default="json", help="Output format (default: json).")
+
     # capsule command group
     capsule_parser = subparsers.add_parser("capsule", help="Capsule management.")
     capsule_sub = capsule_parser.add_subparsers(dest="capsule_command")
@@ -961,6 +1000,9 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.command == "matrix":
         return _cmd_matrix(args)
+
+    if args.command == "dsl":
+        return _cmd_dsl(args)
 
     parser.print_help()
     return 0
@@ -5120,6 +5162,39 @@ def _cmd_matrix_compare(args: argparse.Namespace) -> int:
         print(f"Report written to {output}")
 
     return 0
+
+def _cmd_dsl(args: argparse.Namespace) -> int:
+    """Handle dsl command group."""
+    from oss_paper_ci.dsl_cli import (
+        cmd_dsl_validate, cmd_dsl_normalize, cmd_dsl_graph,
+        cmd_dsl_plan, cmd_dsl_explain, cmd_dsl_migrate,
+    )
+
+    sub = getattr(args, "dsl_command", None)
+    if sub is None:
+        print("Usage: oss-paper-ci dsl {validate|normalize|graph|plan|explain|migrate}", file=sys.stderr)
+        return 1
+
+    path = getattr(args, "path", None)
+    fmt = getattr(args, "format", "markdown")
+    output = getattr(args, "output", None)
+
+    if sub == "validate":
+        return cmd_dsl_validate(path, fmt, output)
+    if sub == "normalize":
+        return cmd_dsl_normalize(path, fmt, output)
+    if sub == "graph":
+        return cmd_dsl_graph(path, output)
+    if sub == "plan":
+        return cmd_dsl_plan(path, fmt, output)
+    if sub == "explain":
+        return cmd_dsl_explain(path, fmt, output)
+    if sub == "migrate":
+        return cmd_dsl_migrate(path, output, fmt)
+
+    print(f"Unknown dsl subcommand: {sub}", file=sys.stderr)
+    return 1
+
 def _cmd_adapters(args):
     from oss_paper_ci.adapter_cli import (
         cmd_adapters_list, cmd_adapters_inspect, cmd_adapters_explain,

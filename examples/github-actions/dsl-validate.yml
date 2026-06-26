@@ -1,0 +1,76 @@
+# Example: Validate a Reproducibility DSL v1 file on push/PR
+#
+# This workflow validates the reproducibility.yml DSL file, outputs the
+# dependency graph, and uploads the validation report as an artifact.
+# No code is executed; no network access is required.
+
+name: DSL Validate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Install oss-paper-ci
+        run: pip install -e ".[dev]"
+
+      - name: Validate DSL
+        run: |
+          oss-paper-ci dsl validate reproducibility.yml \
+            --format markdown \
+            --output validation-report.md
+
+      - name: Validate DSL (JSON)
+        run: |
+          oss-paper-ci dsl validate reproducibility.yml \
+            --format json \
+            --output validation-report.json
+
+      - name: Generate dependency graph
+        run: |
+          oss-paper-ci dsl graph reproducibility.yml \
+            --output dag.dot
+
+      - name: Generate execution plan (dry-run)
+        run: |
+          oss-paper-ci dsl plan reproducibility.yml \
+            --format markdown \
+            --output plan-report.md
+
+      - name: Explain DAG
+        run: |
+          oss-paper-ci dsl explain reproducibility.yml \
+            --format markdown \
+            --output dag-explain.md
+
+      - name: Upload validation artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dsl-validation
+          path: |
+            validation-report.md
+            validation-report.json
+            dag.dot
+            plan-report.md
+            dag-explain.md
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "## DSL Validation" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          cat validation-report.md >> $GITHUB_STEP_SUMMARY

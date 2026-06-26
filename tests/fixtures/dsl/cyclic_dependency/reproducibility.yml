@@ -1,0 +1,44 @@
+version: 1
+project:
+  name: cyclic-pipeline
+  description: Pipeline with A->B->C->A cycle
+environments:
+  default:
+    adapter: python
+    runtime: python
+    python: ">=3.10"
+    install:
+      - requirements.txt
+datasets:
+  demo-data:
+    path: data/
+    required: true
+    description: demo data
+steps:
+  step-a:
+    command: python scripts/step_a.py
+    adapter: python
+    needs: [step-c]
+    produces:
+      - results/a.json
+    timeout: 30
+  step-b:
+    command: python scripts/step_b.py
+    adapter: python
+    needs: [step-a]
+    produces:
+      - results/b.json
+    timeout: 30
+  step-c:
+    command: python scripts/step_c.py
+    adapter: python
+    needs: [step-b]
+    produces:
+      - results/c.json
+    timeout: 30
+artifacts:
+  - results/c.json
+safety:
+  network: false
+  allow_install: false
+  allow_gpu: false

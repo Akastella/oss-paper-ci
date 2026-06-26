@@ -1,0 +1,150 @@
+# Reproducibility DSL v1 -- Complete ML Pipeline Example
+#
+# This file demonstrates all v1 DSL features for a typical ML paper
+# reproduction: data loading, preprocessing, training, evaluation,
+# and figure generation, organized as a directed acyclic graph (DAG).
+#
+# Validate with:  oss-paper-ci dsl validate reproducibility.v1.yml
+# Plan with:      oss-paper-ci dsl plan reproducibility.v1.yml
+# Graph with:     oss-paper-ci dsl graph reproducibility.v1.yml
+
+version: 1
+
+# ---------------------------------------------------------------------------
+# Project identification
+# ---------------------------------------------------------------------------
+
+project:
+  name: ml-paper-demo
+  description: "Demo ML pipeline for paper reproducibility"
+  paper: "https://arxiv.org/abs/xxxx.xxxxx"
+  repository: "https://github.com/example/ml-paper"
+
+# ---------------------------------------------------------------------------
+# Environments
+#
+# Each environment declares a language adapter, runtime, version constraint,
+# and install steps.  The adapter auto-detects the language and toolchain.
+# ---------------------------------------------------------------------------
+
+environments:
+  default:
+    adapter: python
+    runtime: python
+    python: ">=3.10"
+    install:
+      - requirements.txt
+
+# ---------------------------------------------------------------------------
+# Datasets
+#
+# Input data referenced by pipeline steps.  Paths are relative to the
+# repository root.  Mark datasets as required so validation fails if
+# they are missing.
+# ---------------------------------------------------------------------------
+
+datasets:
+  training-data:
+    path: data/train.csv
+    required: true
+    description: "Training dataset"
+
+  test-data:
+    path: data/test.csv
+    required: true
+    description: "Test dataset"
+
+# ---------------------------------------------------------------------------
+# Steps
+#
+# Each step defines a command, its adapter, dependencies (needs), outputs
+# (produces), and optional timeout/metrics.  The dependency graph must be
+# a DAG -- no cycles allowed.
+#
+# Execution order is resolved automatically from the needs graph:
+#   preprocess --> train --> evaluate --> visualize
+# ---------------------------------------------------------------------------
+
+steps:
+  preprocess:
+    command: python scripts/preprocess.py
+    adapter: python
+    needs: []
+    produces:
+      - data/processed/
+    timeout: 120
+    description: "Preprocess raw data"
+
+  train:
+    command: python scripts/train.py
+    adapter: python
+    needs: [preprocess]
+    produces:
+      - results/model.json
+    timeout: 600
+    description: "Train the model"
+
+  evaluate:
+    command: python scripts/evaluate.py
+    adapter: python
+    needs: [train]
+    produces:
+      - results/metrics.json
+    timeout: 120
+    metrics:
+      - path: results/metrics.json
+        keys: [accuracy, f1, precision, recall]
+    description: "Evaluate model on test set"
+
+  visualize:
+    command: python scripts/visualize.py
+    adapter: python
+    needs: [evaluate]
+    produces:
+      - figures/
+    timeout: 60
+    description: "Generate visualization figures"
+
+# ---------------------------------------------------------------------------
+# Artifacts
+#
+# Files and directories to preserve after execution.  These are uploaded
+# as CI artifacts and included in evidence bundles.
+# ---------------------------------------------------------------------------
+
+artifacts:
+  - results/metrics.json
+  - results/model.json
+  - figures/
+
+# ---------------------------------------------------------------------------
+# Expected metrics
+#
+# Metric bounds used for pass/fail checks.  If a metric falls outside
+# [min, max], the reproduction is flagged as failed.
+# ---------------------------------------------------------------------------
+
+expected:
+  metrics:
+    accuracy:
+      min: 0.80
+      max: 1.0
+    f1:
+      min: 0.75
+      max: 1.0
+
+# ---------------------------------------------------------------------------
+# Safety
+#
+# Declares sandbox restrictions for CI execution.  All flags default to
+# the most restrictive setting (false).
+#
+#   network       -- whether steps may access the network
+#   allow_install -- whether steps may install packages at runtime
+#   allow_gpu     -- whether steps may request GPU resources
+# ---------------------------------------------------------------------------
+
+safety:
+  network: false
+  allow_install: false
+  allow_gpu: false

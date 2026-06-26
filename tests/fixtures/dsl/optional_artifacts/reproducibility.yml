@@ -1,0 +1,57 @@
+version: 1
+project:
+  name: optional-artifacts-pipeline
+  description: Pipeline where some steps don't produce artifacts
+environments:
+  default:
+    adapter: python
+    runtime: python
+    python: ">=3.10"
+    install:
+      - requirements.txt
+datasets:
+  demo-data:
+    path: data/
+    required: true
+    description: demo data
+steps:
+  preprocess:
+    command: python scripts/preprocess.py
+    adapter: python
+    needs: []
+    produces: []
+    timeout: 30
+  train:
+    command: python scripts/train.py
+    adapter: python
+    needs: [preprocess]
+    produces:
+      - results/model.json
+    timeout: 60
+  evaluate:
+    command: python scripts/evaluate.py
+    adapter: python
+    needs: [train]
+    produces:
+      - results/metrics.json
+    metrics:
+      - path: results/metrics.json
+        keys: [accuracy]
+  report:
+    command: python scripts/report.py
+    adapter: python
+    needs: [evaluate]
+    produces: []
+    timeout: 30
+artifacts:
+  - results/metrics.json
+  - figures/
+expected:
+  metrics:
+    accuracy:
+      min: 0.0
+      max: 1.0
+safety:
+  network: false
+  allow_install: false
+  allow_gpu: false

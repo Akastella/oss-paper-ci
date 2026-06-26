@@ -1,0 +1,42 @@
+{
+  "version": 1,
+  "project": {
+    "name": "demo",
+    "description": "Type: ml"
+  },
+  "environments": {
+    "python": {
+      "adapter": "python",
+      "python": "3.11",
+      "install": [
+        "requirements.txt"
+      ]
+    }
+  },
+  "datasets": {
+    "demo-data": {
+      "path": "data/input.csv",
+      "required": true
+    }
+  },
+  "steps": {
+    "train": {
+      "id": "train",
+      "command": "python scripts/train.py",
+      "produces": [
+        "results/model.pkl"
+      ]
+    }
+  },
+  "artifacts": [
+    {
+      "path": "figures/loss_curve.png",
+      "type": "figure"
+    }
+  ],
+  "safety": {
+    "network": false,
+    "allow_install": false,
+    "allow_gpu": false
+  }
+}

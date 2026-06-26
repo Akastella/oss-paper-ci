@@ -1,0 +1,126 @@
+{
+  "version": 1,
+  "project": {
+    "name": "ml-paper-demo",
+    "description": "Demo ML pipeline for paper reproducibility",
+    "paper": "https://arxiv.org/abs/xxxx.xxxxx",
+    "repository": "https://github.com/example/ml-paper"
+  },
+  "environments": {
+    "default": {
+      "adapter": "python",
+      "runtime": "python",
+      "python": ">=3.10",
+      "install": [
+        "requirements.txt"
+      ]
+    }
+  },
+  "datasets": {
+    "test-data": {
+      "path": "data/test.csv",
+      "required": true,
+      "description": "Test dataset"
+    },
+    "training-data": {
+      "path": "data/train.csv",
+      "required": true,
+      "description": "Training dataset"
+    }
+  },
+  "steps": {
+    "evaluate": {
+      "id": "evaluate",
+      "command": "python scripts/evaluate.py",
+      "adapter": "python",
+      "needs": [
+        "train"
+      ],
+      "produces": [
+        "results/metrics.json"
+      ],
+      "timeout": 120,
+      "metrics": [
+        {
+          "path": "results/metrics.json",
+          "keys": [
+            "accuracy",
+            "f1",
+            "precision",
+            "recall"
+          ]
+        }
+      ],
+      "description": "Evaluate model on test set"
+    },
+    "preprocess": {
+      "id": "preprocess",
+      "command": "python scripts/preprocess.py",
+      "adapter": "python",
+      "produces": [
+        "data/processed/"
+      ],
+      "timeout": 120,
+      "description": "Preprocess raw data"
+    },
+    "train": {
+      "id": "train",
+      "command": "python scripts/train.py",
+      "adapter": "python",
+      "needs": [
+        "preprocess"
+      ],
+      "produces": [
+        "results/model.json"
+      ],
+      "timeout": 600,
+      "description": "Train the model"
+    },
+    "visualize": {
+      "id": "visualize",
+      "command": "python scripts/visualize.py",
+      "adapter": "python",
+      "needs": [
+        "evaluate"
+      ],
+      "produces": [
+        "figures/"
+      ],
+      "timeout": 60,
+      "description": "Generate visualization figures"
+    }
+  },
+  "artifacts": [
+    {
+      "path": "results/metrics.json",
+      "type": "file"
+    },
+    {
+      "path": "results/model.json",
+      "type": "file"
+    },
+    {
+      "path": "figures/",
+      "type": "file"
+    }
+  ],
+  "expected": {
+    "metrics": {
+      "accuracy": {
+        "key": "accuracy",
+        "min": 0.8,
+        "max": 1.0
+      },
+      "f1": {
+        "key": "f1",
+        "min": 0.75,
+        "max": 1.0
+      }
+    }
+  },
+  "safety": {
+    "network": false,
+    "allow_install": false,
+    "allow_gpu": false
+  }
+}

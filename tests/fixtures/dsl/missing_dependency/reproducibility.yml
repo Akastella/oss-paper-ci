@@ -1,0 +1,37 @@
+version: 1
+project:
+  name: missing-dep-pipeline
+  description: Pipeline where evaluate depends on non-existent step
+environments:
+  default:
+    adapter: python
+    runtime: python
+    python: ">=3.10"
+    install:
+      - requirements.txt
+datasets:
+  demo-data:
+    path: data/
+    required: true
+    description: demo data
+steps:
+  train:
+    command: python scripts/train.py
+    adapter: python
+    needs: []
+    produces:
+      - results/model.json
+    timeout: 60
+  evaluate:
+    command: python scripts/evaluate.py
+    adapter: python
+    needs: [train, nonexistent-step]
+    produces:
+      - results/metrics.json
+    timeout: 30
+artifacts:
+  - results/metrics.json
+safety:
+  network: false
+  allow_install: false
+  allow_gpu: false

@@ -1,0 +1,52 @@
+version: 1
+project:
+  name: multilang-pipeline
+  description: A pipeline with Python and R steps
+environments:
+  python-env:
+    adapter: python
+    runtime: python
+    python: ">=3.10"
+    install:
+      - requirements.txt
+  r-env:
+    adapter: r
+    runtime: R
+    install:
+      - renv.lock
+datasets:
+  input-data:
+    path: data/
+    required: true
+    description: shared input data
+steps:
+  preprocess:
+    command: python scripts/preprocess.py
+    adapter: python
+    needs: []
+    produces:
+      - results/clean_data.csv
+    timeout: 30
+  analyze:
+    command: Rscript scripts/analyze.R
+    adapter: r
+    needs: [preprocess]
+    produces:
+      - results/analysis.json
+    timeout: 60
+  visualize:
+    command: python scripts/visualize.py
+    adapter: python
+    needs: [analyze]
+    produces:
+      - figures/plot.png
+    timeout: 30
+artifacts:
+  - results/analysis.json
+  - figures/plot.png
+expected:
+  metrics: {}
+safety:
+  network: false
+  allow_install: false
+  allow_gpu: false

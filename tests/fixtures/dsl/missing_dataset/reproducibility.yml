@@ -1,0 +1,30 @@
+version: 1
+project:
+  name: missing-dataset-pipeline
+  description: Pipeline referencing a dataset path that doesn't exist
+environments:
+  default:
+    adapter: python
+    runtime: python
+    python: ">=3.10"
+    install:
+      - requirements.txt
+datasets:
+  missing-data:
+    path: nonexistent_data_dir/
+    required: true
+    description: this path does not exist
+steps:
+  train:
+    command: python scripts/train.py
+    adapter: python
+    needs: []
+    produces:
+      - results/model.json
+    timeout: 60
+artifacts:
+  - results/model.json
+safety:
+  network: false
+  allow_install: false
+  allow_gpu: false
