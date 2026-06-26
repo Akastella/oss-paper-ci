@@ -1,0 +1,40 @@
+name: Reproduce Python Project
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  reproduce:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install oss-paper-ci
+        run: pip install -e .
+
+      - name: Detect adapters
+        run: oss-paper-ci adapters inspect . --format json > adapter_report.json
+
+      - name: Generate reproduction plan
+        run: oss-paper-ci adapters plan . --format json > reproduction_plan.json
+
+      - name: Validate adapter detection
+        run: oss-paper-ci adapters validate . --format json > validation.json
+
+      - name: Upload reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: reproduce-reports
+          path: |
+            adapter_report.json
+            reproduction_plan.json
+            validation.json

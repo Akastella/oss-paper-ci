@@ -81,6 +81,10 @@ See [Evaluation](evaluation.md) for details.
 - [Policy profiles](policy-profiles.md) — lenient, default, strict, publication
 - [Report formats](report-formats.md) — Markdown, JSON, SARIF, HTML
 - [Security model](security-model.md) — dry-run, execute, capsule safety
+- [Adapter registry](adapter-registry.md) — multi-language adapter system
+- [Adapter schema](adapter-schema.md) — adapter report JSON format
+- [Adapter safety](adapter-safety.md) — safety boundaries per adapter
+- [Adapter limitations](adapter-limitations.md) — what adapters can and cannot do
 
 ### Features
 
@@ -88,6 +92,18 @@ See [Evaluation](evaluation.md) for details.
 - [Result validation](result-validation.md) — result artifact existence and format
 - [Evidence scores](evidence-scores.md) — score components and meaning
 - [Language ecosystems](language-ecosystems.md) — multi-language detection and support
+- [Language adapters](language-adapters.md) — adapter framework overview
+- [Python adapter](python-adapter.md) — Python detection and planning
+- [R adapter](r-adapter.md) — R detection and planning
+- [Julia adapter](julia-adapter.md) — Julia detection and planning
+- [Node.js adapter](node-adapter.md) — Node.js detection and planning
+- [Rust adapter](rust-adapter.md) — Rust detection and planning
+- [Java adapter](java-adapter.md) — Java detection and planning
+- [C/C++ adapter](cpp-adapter.md) — C/C++ detection and planning
+- [Make adapter](make-adapter.md) — Make detection and planning
+- [Snakemake adapter](snakemake-adapter.md) — Snakemake detection (dry-run only)
+- [Nextflow adapter](nextflow-adapter.md) — Nextflow detection (dry-run only)
+- [Shell adapter](shell-adapter.md) — Shell script detection with safety blocking
 - [Repository intake](repository-intake.md) — analyze repo structure, extract commands
 - [Autoplan](autoplan.md) — generate candidate reproducibility plan
 - [Reproduction](reproduce.md) — one-command reproduction attempt

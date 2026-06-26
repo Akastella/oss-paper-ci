@@ -61,4 +61,4 @@ class TestWizardCLI:
             capture_output=True, text=True, timeout=10,
             encoding="utf-8", errors="replace",
         )
-        assert "3.4.0rc1" in result.stdout
+        assert "3.5.0rc1" in result.stdout

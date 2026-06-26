@@ -314,7 +314,8 @@ def main(argv: list[str] | None = None) -> int:
     adapters_sub = adapters_parser.add_subparsers(dest="adapters_command")
 
     al = adapters_sub.add_parser("list", help="List all registered language adapters.")
-    al.add_argument("--format", choices=["text", "json"], default="text", help="Output format.")
+    al.add_argument("--format", choices=["text", "json", "markdown"], default="text", help="Output format.")
+    al.add_argument("--output", "-o", help="Write output to file.")
 
     ai = adapters_sub.add_parser("inspect", help="Inspect a repository for language adapters.")
     ai.add_argument("path", nargs="?", default=".", help="Path to repository root.")
@@ -333,9 +334,13 @@ def main(argv: list[str] | None = None) -> int:
 
     av = adapters_sub.add_parser("validate", help="Validate adapter detection.")
     av.add_argument("path", nargs="?", default=".", help="Path to repository root.")
+    av.add_argument("--format", choices=["json", "markdown"], default="markdown", help="Output format.")
+    av.add_argument("--output", "-o", help="Write output to file.")
 
     adoctor = adapters_sub.add_parser("doctor", help="Diagnose adapter runtime availability.")
     adoctor.add_argument("path", nargs="?", default=".", help="Path to repository root.")
+    adoctor.add_argument("--format", choices=["json", "markdown"], default="markdown", help="Output format.")
+    adoctor.add_argument("--output", "-o", help="Write output to file.")
 
     # data command group
     data_parser = subparsers.add_parser("data", help="Data diagnostics.")
@@ -5124,7 +5129,7 @@ def _cmd_adapters(args):
     if sub is None:
         return cmd_adapters_list()
     if sub == "list":
-        return cmd_adapters_list(getattr(args, "format", "text"))
+        return cmd_adapters_list(getattr(args, "format", "text"), getattr(args, "output", None))
     if sub == "inspect":
         return cmd_adapters_inspect(getattr(args, "path", "."), getattr(args, "format", "markdown"), getattr(args, "output", None))
     if sub == "explain":
@@ -5132,8 +5137,8 @@ def _cmd_adapters(args):
     if sub == "plan":
         return cmd_adapters_plan(getattr(args, "path", "."), getattr(args, "format", "markdown"), getattr(args, "output", None), getattr(args, "adapter", None))
     if sub == "validate":
-        return cmd_adapters_validate(getattr(args, "path", "."))
+        return cmd_adapters_validate(getattr(args, "path", "."), getattr(args, "format", "markdown"), getattr(args, "output", None))
     if sub == "doctor":
-        return cmd_adapters_doctor(getattr(args, "path", "."))
+        return cmd_adapters_doctor(getattr(args, "path", "."), getattr(args, "format", "markdown"), getattr(args, "output", None))
     print(f"Unknown adapters subcommand: {sub}", file=sys.stderr)
     return 2

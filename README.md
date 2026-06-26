@@ -104,6 +104,43 @@ The evaluation corpus contains 12+ synthetic repositories covering:
 | Evidence report | `oss-paper-ci evidence .` | Unified evidence report (all checks) |
 | Evidence bundle | `oss-paper-ci evidence bundle .` | Shareable evidence package |
 
+## Language Adapters
+
+OSS-Paper-CI uses an **adapter registry** to detect and plan reproduction for 12 programming languages:
+
+| Language | Detect | Plan | Execute | Runtime |
+|----------|--------|------|---------|---------|
+| Python | ✅ | ✅ | ✅ | python3 |
+| R | ✅ | ✅ | ⚠️ | Rscript |
+| Julia | ✅ | ✅ | ⚠️ | julia |
+| Node.js | ✅ | ✅ | ⚠️ | node |
+| Rust | ✅ | ✅ | ⚠️ | cargo |
+| Java | ✅ | ✅ | ⚠️ | java |
+| C/C++ | ✅ | ✅ | ⚠️ | g++ |
+| Make | ✅ | ✅ | ⚠️ | make |
+| Shell | ✅ | ✅ | ⚠️ | bash |
+| MATLAB | ✅ | ✅ | ❌ | - |
+| Snakemake | ✅ | ✅ | ❌ | - |
+| Nextflow | ✅ | ✅ | ❌ | - |
+
+Legend: ✅ Full support, ⚠️ Requires runtime, ❌ Dry-run only
+
+```bash
+# List all adapters
+oss-paper-ci adapters list
+
+# Inspect a repository
+oss-paper-ci adapters inspect .
+
+# Generate reproduction plan
+oss-paper-ci adapters plan .
+
+# Diagnose runtime availability
+oss-paper-ci adapters doctor .
+```
+
+See [docs/adapter-registry.md](docs/adapter-registry.md) and [docs/adapter-limitations.md](docs/adapter-limitations.md).
+
 ## Safety model
 
 - Default mode is **dry-run**: no code executed, no dependencies installed
@@ -258,6 +295,9 @@ Matrix does not auto-install Python versions; missing runtimes are marked unavai
 |-------|------|
 | Getting started | [docs/getting-started.md](docs/getting-started.md) |
 | CLI reference | [docs/cli-reference.md](docs/cli-reference.md) |
+| Adapter registry | [docs/adapter-registry.md](docs/adapter-registry.md) |
+| Adapter safety | [docs/adapter-safety.md](docs/adapter-safety.md) |
+| Adapter limitations | [docs/adapter-limitations.md](docs/adapter-limitations.md) |
 | Terminal workbench | [docs/terminal-workbench.md](docs/terminal-workbench.md) |
 | Project summary | [docs/project-summary.md](docs/project-summary.md) |
 | Demo gallery | [docs/demo-gallery.md](docs/demo-gallery.md) |

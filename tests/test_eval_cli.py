@@ -109,7 +109,7 @@ class TestEvalJSON:
 
     def test_has_version(self, eval_result):
         assert "version" in eval_result
-        assert eval_result["version"] == "3.4.0rc1"
+        assert eval_result["version"] == "3.5.0rc1"
 
     def test_has_summary(self, eval_result):
         summary = eval_result["summary"]

@@ -1,0 +1,40 @@
+name: Adapter Detection
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  detect:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11", "3.12"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install oss-paper-ci
+        run: pip install -e .
+
+      - name: Detect language adapters
+        run: |
+          oss-paper-ci adapters list --format json > adapters_list.json
+          oss-paper-ci adapters inspect . --format json > adapters_report.json
+          oss-paper-ci adapters doctor . --format json > adapters_doctor.json
+
+      - name: Upload adapter reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: adapter-reports-py${{ matrix.python-version }}
+          path: |
+            adapters_list.json
+            adapters_report.json
+            adapters_doctor.json

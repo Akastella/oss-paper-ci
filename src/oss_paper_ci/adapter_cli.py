@@ -7,6 +7,7 @@ from typing import Any
 from .adapters.registry import get_registry
 from .adapters.schema import build_adapter_report, validate_report
 
+
 def _format_detection_markdown(detections):
     lines = ["# Language Adapter Detection\n"]
     if not detections:
@@ -34,6 +35,7 @@ def _format_detection_markdown(detections):
         lines.append(f"- **Execute**: {'yes' if det.get('supports_execute') else 'no'}")
         lines.append("")
     return "\n".join(lines)
+
 
 def _format_plan_markdown(plan):
     lines = [f"# Adapter Plan: {plan['adapter_name']}\n"]
@@ -65,21 +67,48 @@ def _format_plan_markdown(plan):
         lines.append("")
     return "\n".join(lines)
 
-def cmd_adapters_list(fmt="text"):
+
+def _output(text: str, output: str | None = None) -> None:
+    """Write output to file or stdout."""
+    if output:
+        Path(output).parent.mkdir(parents=True, exist_ok=True)
+        Path(output).write_text(text, encoding="utf-8")
+        print(f"Output written to {output}")
+    else:
+        print(text)
+
+
+def cmd_adapters_list(fmt="text", output=None):
+    """List all registered adapters."""
     registry = get_registry()
     adapters = registry.list_adapters()
     if fmt == "json":
-        print(json.dumps(adapters, indent=2))
-    else:
-        print(f"Registered language adapters ({len(adapters)}):\n")
+        text = json.dumps(adapters, indent=2)
+    elif fmt == "markdown":
+        lines = ["# Registered Language Adapters\n"]
+        lines.append(f"| Name | Display Name | Execute | Dry-run | Runtime |")
+        lines.append(f"|------|-------------|---------|---------|---------|")
         for a in adapters:
             execute = "yes" if a["supports_execute"] else "no"
             dry_run = "yes" if a["supports_dry_run"] else "no"
             runtimes = ", ".join(a["requires_runtime"]) or "none"
-            print(f"  {a['name']:<12} {a['display_name']:<20} execute={execute} dry-run={dry_run} runtime={runtimes}")
+            lines.append(f"| {a['name']} | {a['display_name']} | {execute} | {dry_run} | {runtimes} |")
+        lines.append("")
+        text = "\n".join(lines)
+    else:
+        lines = [f"Registered language adapters ({len(adapters)}):\n"]
+        for a in adapters:
+            execute = "yes" if a["supports_execute"] else "no"
+            dry_run = "yes" if a["supports_dry_run"] else "no"
+            runtimes = ", ".join(a["requires_runtime"]) or "none"
+            lines.append(f"  {a['name']:<12} {a['display_name']:<20} execute={execute} dry-run={dry_run} runtime={runtimes}")
+        text = "\n".join(lines)
+    _output(text, output)
     return 0
 
+
 def cmd_adapters_inspect(path, fmt="markdown", output=None):
+    """Inspect a repository for language adapters."""
     registry = get_registry()
     repo_path = Path(path).resolve()
     if not repo_path.exists():
@@ -92,22 +121,27 @@ def cmd_adapters_inspect(path, fmt="markdown", output=None):
         text = json.dumps(report, indent=2)
     else:
         text = _format_detection_markdown(det_dicts)
-    if output:
-        Path(output).parent.mkdir(parents=True, exist_ok=True)
-        Path(output).write_text(text, encoding="utf-8")
-        print(f"Report written to {output}")
-    else:
-        print(text)
+    _output(text, output)
     return 0
 
+
 def cmd_adapters_explain(adapter_name, fmt="markdown"):
+    """Explain a specific adapter."""
     registry = get_registry()
     adapter = registry.get(adapter_name)
     if not adapter:
         print(f"Error: unknown adapter: {adapter_name}", file=sys.stderr)
         return 2
     if fmt == "json":
-        info = {"name": adapter.name, "display_name": adapter.display_name, "aliases": adapter.aliases, "ecosystem": adapter.ecosystem, "supports_execute": adapter.supports_execute, "supports_dry_run": adapter.supports_dry_run, "requires_runtime": adapter.requires_runtime}
+        info = {
+            "name": adapter.name,
+            "display_name": adapter.display_name,
+            "aliases": adapter.aliases,
+            "ecosystem": adapter.ecosystem,
+            "supports_execute": adapter.supports_execute,
+            "supports_dry_run": adapter.supports_dry_run,
+            "requires_runtime": adapter.requires_runtime,
+        }
         print(json.dumps(info, indent=2))
     else:
         print(f"# {adapter.display_name} ({adapter.name})\n")
@@ -120,7 +154,9 @@ def cmd_adapters_explain(adapter_name, fmt="markdown"):
             print(f"Required runtime: {', '.join(adapter.requires_runtime)}")
     return 0
 
+
 def cmd_adapters_plan(path, fmt="markdown", output=None, adapter_name=None):
+    """Generate a reproduction plan for a repository."""
     registry = get_registry()
     repo_path = Path(path).resolve()
     if not repo_path.exists():
@@ -136,15 +172,12 @@ def cmd_adapters_plan(path, fmt="markdown", output=None, adapter_name=None):
         text = json.dumps(plan_dict, indent=2)
     else:
         text = _format_plan_markdown(plan_dict)
-    if output:
-        Path(output).parent.mkdir(parents=True, exist_ok=True)
-        Path(output).write_text(text, encoding="utf-8")
-        print(f"Plan written to {output}")
-    else:
-        print(text)
+    _output(text, output)
     return 0
 
-def cmd_adapters_validate(path):
+
+def cmd_adapters_validate(path, fmt="markdown", output=None):
+    """Validate adapter detection for a repository."""
     registry = get_registry()
     repo_path = Path(path).resolve()
     if not repo_path.exists():
@@ -154,35 +187,83 @@ def cmd_adapters_validate(path):
     det_dicts = [d.to_dict() for d in detections]
     report = build_adapter_report(repo_path, det_dicts)
     errors = validate_report(report)
-    if errors:
-        print("Validation errors:")
-        for err in errors:
-            print(f"  - {err}")
-        return 1
-    print("Adapter report is valid.")
-    return 0
+    if fmt == "json":
+        result = {"valid": len(errors) == 0, "errors": errors, "adapter_count": len(det_dicts)}
+        text = json.dumps(result, indent=2)
+    else:
+        if errors:
+            lines = ["# Adapter Validation\n", "**Status:** INVALID\n", "## Errors\n"]
+            for err in errors:
+                lines.append(f"- {err}")
+            text = "\n".join(lines)
+        else:
+            text = f"# Adapter Validation\n\n**Status:** VALID\n\nDetected {len(det_dicts)} adapter(s).\n"
+    _output(text, output)
+    return 1 if errors else 0
 
-def cmd_adapters_doctor(path):
+
+def cmd_adapters_doctor(path, fmt="markdown", output=None):
+    """Diagnose adapter runtime availability."""
     registry = get_registry()
     repo_path = Path(path).resolve()
     if not repo_path.exists():
         print(f"Error: path does not exist: {path}", file=sys.stderr)
         return 2
     detections = registry.detect(repo_path)
-    print("Adapter Runtime Diagnostics\n")
-    if not detections:
-        print("No adapters detected for this repository.")
-        return 0
-    for det in detections:
-        runtime = det.runtime
-        if runtime:
-            status = "available" if runtime.available else "not available"
-            print(f"  {det.display_name}: {runtime.name} -- {status}")
-            if runtime.version:
-                print(f"    Version: {runtime.version}")
-        else:
-            print(f"  {det.display_name}: no runtime required")
-    available = sum(1 for d in detections if d.runtime and d.runtime.available)
-    total = len(detections)
-    print(f"\n{available}/{total} detected adapters have runtimes available.")
+
+    if fmt == "json":
+        results = []
+        for det in detections:
+            runtime_info = det.runtime.to_dict() if det.runtime else None
+            results.append({
+                "adapter": det.name,
+                "display_name": det.display_name,
+                "confidence": round(det.confidence, 2),
+                "runtime": runtime_info,
+                "supports_dry_run": det.supports_dry_run,
+                "supports_execute": det.supports_execute,
+                "limitations": det.limitations,
+            })
+        available = sum(1 for d in detections if d.runtime and d.runtime.available)
+        output_data = {
+            "detected_adapters": results,
+            "total": len(detections),
+            "runtime_available": available,
+        }
+        text = json.dumps(output_data, indent=2)
+    else:
+        lines = ["# Adapter Runtime Diagnostics\n"]
+        if not detections:
+            lines.append("No adapters detected for this repository.\n")
+            text = "\n".join(lines)
+            _output(text, output)
+            return 0
+
+        lines.append(f"| Adapter | Runtime | Status | Version |")
+        lines.append(f"|---------|---------|--------|---------|")
+        for det in detections:
+            runtime = det.runtime
+            if runtime:
+                status = "available" if runtime.available else "not available"
+                version = runtime.version[:40] if runtime.version else "-"
+                lines.append(f"| {det.display_name} | {runtime.name} | {status} | {version} |")
+            else:
+                lines.append(f"| {det.display_name} | - | no runtime required | - |")
+        lines.append("")
+
+        available = sum(1 for d in detections if d.runtime and d.runtime.available)
+        total = len(detections)
+        lines.append(f"**{available}/{total}** detected adapters have runtimes available.\n")
+
+        # Show missing runtime install suggestions
+        missing = [d for d in detections if d.runtime and not d.runtime.available]
+        if missing:
+            lines.append("## Missing Runtime Suggestions\n")
+            for det in missing:
+                rt = det.runtime.name
+                lines.append(f"- **{det.display_name}**: Install `{rt}` runtime")
+            lines.append("")
+
+        text = "\n".join(lines)
+    _output(text, output)
     return 0

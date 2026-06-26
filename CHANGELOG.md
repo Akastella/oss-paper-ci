@@ -1,5 +1,34 @@
 # Changelog
 
+## [3.5.0rc1] - 2026-06-26
+
+### Added
+- Adapter registry integration across reproducibility systems
+- `ecosystems.py` now delegates to AdapterRegistry for language detection
+- `adapters list --format markdown` output format
+- `adapters validate --format json/markdown --output FILE` options
+- `adapters doctor --format json/markdown --output FILE` options
+- `adapters list --output FILE` option
+- Adapter-specific test suite (16 new test files)
+- Adapter documentation for all 12 supported languages
+- Adapter schema documentation
+- Adapter safety documentation
+- Adapter limitations documentation
+- GitHub Actions examples for adapter detection and reproduction
+- Example projects for all supported languages
+- Truthfulness checks for adapter documentation
+- Release gate checks for adapter docs and examples
+
+### Changed
+- `ecosystems.py` migrated to use AdapterRegistry (backward-compatible)
+- Version bumped to 3.5.0rc1
+- `adapters validate` and `adapters doctor` now support format/output options
+
+### Notes
+- All existing CLI commands remain backward-compatible
+- ECOSYSTEMS dict is preserved for backward compatibility (deprecated)
+- MATLAB/Snakemake/Nextflow remain dry-run only
+
 ## [3.4.0rc1] - 2026-06-22
 
 ### Added

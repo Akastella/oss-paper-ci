@@ -1,0 +1,9 @@
+rule all:
+    input:
+        "results/output.txt"
+
+rule generate:
+    output:
+        "results/output.txt"
+    shell:
+        "echo 'Hello from Snakemake' > {output}"
